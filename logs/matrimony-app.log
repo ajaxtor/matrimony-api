@@ -1,0 +1,14 @@
+2025-06-09T01:58:26.481+05:30  WARN 15476 --- [matrimony] [HikariPool-1:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=3h11s258ms830µs800ns).
+2025-06-09T09:47:13.440+05:30  WARN 15476 --- [matrimony] [HikariPool-1:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=7h48m49s52ms165µs200ns).
+2025-06-09T09:47:22.744+05:30  INFO 15476 --- [matrimony] [RMI TCP Connection(15)-127.0.0.1] inMXBeanRegistrar$SpringApplicationAdmin : Application shutdown requested.
+2025-06-09T09:47:22.785+05:30  INFO 15476 --- [matrimony] [scheduling-1] c.a.m.s.SubscriptionServiceImpl          : Processing expired subscriptions
+2025-06-09T09:47:22.794+05:30  INFO 15476 --- [matrimony] [RMI TCP Connection(15)-127.0.0.1] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-06-09T09:47:22.858+05:30  INFO 15476 --- [matrimony] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-06-09T09:47:22.893+05:30 DEBUG 15476 --- [matrimony] [scheduling-1] org.hibernate.SQL                        : select us1_0.id,us1_0.amount_paid,us1_0.created_at,us1_0.end_date,us1_0.payment_id,us1_0.plan_id,us1_0.start_date,us1_0.status,us1_0.updated_at,us1_0.user_id from user_subscriptions us1_0 where us1_0.end_date<current_date and us1_0.status='ACTIVE'
+2025-06-09T09:47:22.932+05:30  INFO 15476 --- [matrimony] [scheduling-1] c.a.m.s.SubscriptionServiceImpl          : Processed 0 expired subscriptions
+2025-06-09T09:47:22.936+05:30  INFO 15476 --- [matrimony] [scheduling-1] c.a.m.serviceImpl.MatchServiceImpl       : Processing matching algorithm for all users
+2025-06-09T09:47:22.942+05:30 DEBUG 15476 --- [matrimony] [scheduling-1] org.hibernate.SQL                        : select u1_0.id,u1_0.created_at,u1_0.email,u1_0.email_verified,u1_0.is_active,u1_0.is_verified,u1_0.last_login,u1_0.password,u1_0.phone,u1_0.phone_verified,u1_0.updated_at,u1_0.user_type from users u1_0 where u1_0.is_active
+2025-06-09T09:47:22.951+05:30  INFO 15476 --- [matrimony] [scheduling-1] c.a.m.serviceImpl.MatchServiceImpl       : Completed matching algorithm processing for 0 users
+2025-06-09T09:47:23.062+05:30  INFO 15476 --- [matrimony] [RMI TCP Connection(15)-127.0.0.1] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-09T09:47:23.071+05:30  INFO 15476 --- [matrimony] [RMI TCP Connection(15)-127.0.0.1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-06-09T09:47:23.090+05:30  INFO 15476 --- [matrimony] [RMI TCP Connection(15)-127.0.0.1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
