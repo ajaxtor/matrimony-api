@@ -88,9 +88,9 @@ public class AuthServiceImpl implements AuthService {
         log.info("User registered successfully with ID: {}", savedUser.getId());
 
         // Send OTP for verification
-        otpService.sendOtp(request.getPhone(), OtpPurpose.REGISTRATION);
+        otpService.sendOtp(request.getPhone(),request.getEmail(), OtpPurpose.REGISTRATION);
 
-        return "Registration successful. Please verify your phone number with the OTP sent.";
+        return "Registration successful. Please verify your phone number / Email  with the OTP sent.";
     }
 
     @Override
@@ -123,13 +123,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String resendOtp(String contact, String purpose) {
+    	
         log.info("Resending OTP for contact: {}", contact);
-
-        // Check if user exists
         User user = findUserByEmailOrPhone(contact);
-        
-        // Send OTP
-        otpService.sendOtp(contact, OtpPurpose.valueOf(purpose));
+        otpService.sendOtp(user.getPhone(),user.getEmail(), OtpPurpose.valueOf(purpose));
 
         return "OTP sent successfully";
     }
@@ -210,16 +207,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String forgotPassword(ForgotPasswordRequest request) {
+    	
         log.info("Forgot password request for: {}", request.getEmailOrPhone());
-
-        // Find user
         User user = findUserByEmailOrPhone(request.getEmailOrPhone());
-
-        // Send OTP
-        String contact = request.getEmailOrPhone().contains("@") ? 
-                        user.getPhone() : request.getEmailOrPhone();
-        
-        otpService.sendOtp(contact, OtpPurpose.PASSWORD_RESET);
+        otpService.sendOtp(user.getPhone(),user.getEmail(), OtpPurpose.PASSWORD_RESET);
 
         return "Password reset OTP sent successfully";
     }

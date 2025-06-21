@@ -12,6 +12,7 @@ import com.api.matrimony.entity.OtpVerification;
 import com.api.matrimony.enums.OtpPurpose;
 import com.api.matrimony.exception.CustomException;
 import com.api.matrimony.repository.OtpVerificationRepository;
+import com.api.matrimony.request.RegisterRequest;
 import com.api.matrimony.service.NotificationService;
 import com.api.matrimony.service.OtpService;
 
@@ -42,12 +43,12 @@ public class OtpServiceImpl implements OtpService {
     private int maxAttempts;
 
     @Override
-    public void sendOtp(String contact, OtpPurpose purpose) {
-        log.info("Sending OTP to contact: {}, purpose: {}", contact, purpose);
+    public void sendOtp(String phone,String email, OtpPurpose purpose) {
+        log.info("Sending OTP to contact: {}, purpose: {}", phone, purpose);
         
         // Check rate limiting
         LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
-        Long attempts = otpRepository.countOtpAttempts(contact, oneHourAgo);
+        Long attempts = otpRepository.countOtpAttempts(phone, oneHourAgo);
         
         if (attempts >= maxAttempts) {
             throw new CustomException("Too many OTP attempts. Please try again later.");
@@ -58,10 +59,10 @@ public class OtpServiceImpl implements OtpService {
         
         // Save OTP
         OtpVerification otpVerification = new OtpVerification();
-        if (contact.contains("@")) {
-            otpVerification.setEmail(contact);
+        if (email.contains("@")) {
+            otpVerification.setEmail(email);
         } else {
-            otpVerification.setPhone(contact);
+            otpVerification.setPhone(phone);
         }
         otpVerification.setOtp(otp);
         otpVerification.setPurpose(purpose);
@@ -70,16 +71,16 @@ public class OtpServiceImpl implements OtpService {
         otpRepository.save(otpVerification);
 
         // Send OTP via SMS or Email
-        if (contact.contains("@")) {
-            notificationService.sendEmailNotification(contact, 
+       // if (request.getEmail().contains("@")) {
+            notificationService.sendEmailNotification(email, 
                     "Your OTP for " + purpose.name(), 
                     "Your OTP is: " + otp + ". Valid for " + expirationMinutes + " minutes.");
-        } else {
-            notificationService.sendSmsNotification(contact, 
-                    "Your OTP is: " + otp + ". Valid for " + expirationMinutes + " minutes.");
-        }
+//        } else {
+//            notificationService.sendSmsNotification(request.getPhone(), 
+//                    "Your OTP is: " + otp + ". Valid for " + expirationMinutes + " minutes.");
+//        }
 
-        log.info("OTP sent successfully to: {}", contact);
+        log.info("OTP sent successfully to: {}", email +" or "+phone);
     }
 
     @Override
@@ -119,11 +120,11 @@ public class OtpServiceImpl implements OtpService {
         return false;
     }
 
-    @Override
-    public void resendOtp(String contact, OtpPurpose purpose) {
-        log.info("Resending OTP to contact: {}, purpose: {}", contact, purpose);
-        sendOtp(contact, purpose);
-    }
+//    @Override
+//    public void resendOtp(String phone,String email, OtpPurpose purpose) {
+//        log.info("Resending OTP to contact: {}, purpose: {}", email, purpose);
+//        sendOtp(phone,email, purpose);
+//    }
 
     @Override
     @Scheduled(fixedRate = 3600000) // Run every hour
