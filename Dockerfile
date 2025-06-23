@@ -25,5 +25,8 @@ COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 9999
 
+# Set environment profile to 'prod'
+ENV SPRING_PROFILES_ACTIVE=prod
+
 # Run the Spring Boot app
 CMD ["java", "-jar", "app.jar"]
