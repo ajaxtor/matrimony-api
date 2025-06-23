@@ -159,14 +159,16 @@ public class ValidationUtil {
         if (value == null || value.trim().isEmpty()) {
             return false;
         }
-        
-        try {
-            Enum.valueOf((Class<Enum>) enumClass, value.toUpperCase());
-            return true;
-        } catch (IllegalArgumentException e) {
-            return false;
+
+        for (Enum<?> enumConstant : enumClass.getEnumConstants()) {
+            if (enumConstant.name().equalsIgnoreCase(value)) {
+                return true;
+            }
         }
+        return false;
     }
+
+
 
     /**
      * Sanitize string input (remove harmful characters)
