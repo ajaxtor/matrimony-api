@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,8 +16,8 @@ import com.api.matrimony.entity.SubscriptionPlan;
 import com.api.matrimony.entity.User;
 import com.api.matrimony.entity.UserSubscription;
 import com.api.matrimony.enums.SubscriptionStatus;
-import com.api.matrimony.exception.CustomException;
-import com.api.matrimony.exception.ResourceNotFoundException;
+import com.api.matrimony.exception.ApplicationException;
+import com.api.matrimony.exception.ErrorEnum;
 import com.api.matrimony.repository.SubscriptionPlanRepository;
 import com.api.matrimony.repository.UserRepository;
 import com.api.matrimony.repository.UserSubscriptionRepository;
@@ -59,7 +60,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
      log.info("Getting subscription plan by ID: {}", planId);
      
      SubscriptionPlan plan = planRepository.findById(planId)
-             .orElseThrow(() -> new ResourceNotFoundException("Subscription plan not found"));
+             .orElseThrow(() -> new ApplicationException(ErrorEnum.SUB_NOT_FOUND.toString(),
+						ErrorEnum.SUB_NOT_FOUND.getExceptionError(), HttpStatus.OK));
      
      return mapToPlanResponse(plan);
  }
@@ -78,18 +80,22 @@ public class SubscriptionServiceImpl implements SubscriptionService {
      log.info("Subscribing user: {} to plan: {}, paymentId: {}", userId, planId, paymentId);
      
      User user = userRepository.findById(userId)
-             .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+             .orElseThrow(() ->new ApplicationException(ErrorEnum.USER_NOT_FOUND.toString(),
+						ErrorEnum.USER_NOT_FOUND.getExceptionError(), HttpStatus.OK));
      
      SubscriptionPlan plan = planRepository.findById(planId)
-             .orElseThrow(() -> new ResourceNotFoundException("Subscription plan not found"));
+             .orElseThrow(() -> new ApplicationException(ErrorEnum.SUB_NOT_FOUND.toString(),
+						ErrorEnum.SUB_NOT_FOUND.getExceptionError(), HttpStatus.OK));
 
      if (!plan.getIsActive()) {
-         throw new CustomException("Subscription plan is not active");
+         throw new ApplicationException(ErrorEnum.SUB_NOT_ACTIVE.toString(),
+					ErrorEnum.SUB_NOT_ACTIVE.getExceptionError(), HttpStatus.OK);
      }
 
      // Check if user already has an active subscription
      if (hasActiveSubscription(userId)) {
-         throw new CustomException("User already has an active subscription");
+    	 throw new ApplicationException(ErrorEnum.USER_IN_ACTIVE_SUB.toString(),
+					ErrorEnum.USER_IN_ACTIVE_SUB.getExceptionError(), HttpStatus.OK);
      }
 
      // Create new subscription
@@ -135,7 +141,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
      log.info("Cancelling subscription for user: {}", userId);
      
      UserSubscription activeSubscription = subscriptionRepository.findActiveSubscriptionByUserId(userId)
-             .orElseThrow(() -> new CustomException("No active subscription found"));
+             .orElseThrow(() -> new ApplicationException(ErrorEnum.NO_ACTIVE_SUB.toString(),
+ 					ErrorEnum.NO_ACTIVE_SUB.getExceptionError(), HttpStatus.OK));
 
      activeSubscription.setStatus(SubscriptionStatus.CANCELLED);
      subscriptionRepository.save(activeSubscription);

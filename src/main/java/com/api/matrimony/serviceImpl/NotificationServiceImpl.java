@@ -73,7 +73,7 @@ public class NotificationServiceImpl implements NotificationService {
      User user = userRepository.findById(matchedUserId).orElse(null);
      if (user != null && user.getProfile() != null) {
          String title = "New Match!";
-         String message = user.getProfile().getFirstName() + " is interested in your profile!";
+         String message = user.getProfile().getFullName() + " is interested in your profile!";
          sendPushNotification(userId, title, message, "NEW_MATCH");
      }
  }
@@ -96,7 +96,7 @@ public class NotificationServiceImpl implements NotificationService {
      User sender = userRepository.findById(senderId).orElse(null);
      if (sender != null && sender.getProfile() != null) {
          String title = "New Message";
-         String message = "You have a new message from " + sender.getProfile().getFirstName();
+         String message = "You have a new message from " + sender.getProfile().getFullName();
          sendPushNotification(receiverId, title, message, "NEW_MESSAGE");
      }
  }

@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.api.matrimony.entity.BlockedUser;
@@ -18,8 +19,8 @@ import com.api.matrimony.entity.User;
 import com.api.matrimony.entity.UserProfile;
 import com.api.matrimony.enums.MatchStatus;
 import com.api.matrimony.enums.MessageType;
-import com.api.matrimony.exception.CustomException;
-import com.api.matrimony.exception.ResourceNotFoundException;
+import com.api.matrimony.exception.ApplicationException;
+import com.api.matrimony.exception.ErrorEnum;
 import com.api.matrimony.repository.BlockedUserRepository;
 import com.api.matrimony.repository.ConversationRepository;
 import com.api.matrimony.repository.MatchRepository;
@@ -70,11 +71,13 @@ public class ChatServiceImpl implements ChatService {
         log.info("Getting messages for user: {}, conversationId: {}", userId, conversationId);
         
         Conversation conversation = conversationRepository.findById(conversationId)
-                .orElseThrow(() -> new ResourceNotFoundException("Conversation not found"));
+                .orElseThrow(() -> new ApplicationException(ErrorEnum.CNOV_NOT_FOUND.toString(),
+						ErrorEnum.CNOV_NOT_FOUND.getExceptionError(), HttpStatus.OK));
 
         // Check if user is part of the conversation
         if (!conversation.getUser1().getId().equals(userId) && !conversation.getUser2().getId().equals(userId)) {
-            throw new CustomException("You are not part of this conversation");
+            throw new ApplicationException(ErrorEnum.YOU_ARE_PART_OF_CONV.toString(),
+					ErrorEnum.YOU_ARE_PART_OF_CONV.getExceptionError(), HttpStatus.OK);
         }
 
         Page<Message> messagePage = messageRepository.findByConversationIdOrderBySentAtDesc(conversationId, pageable);
@@ -100,23 +103,28 @@ public class ChatServiceImpl implements ChatService {
         log.info("Sending message from user: {} to user: {}", senderId, request.getReceiverId());
         
         User sender = userRepository.findById(senderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Sender not found"));
+                .orElseThrow(() -> new ApplicationException(ErrorEnum.SENDER_NOT_FUND.toString(),
+    					ErrorEnum.SENDER_NOT_FUND.getExceptionError(), HttpStatus.OK));
         User receiver = userRepository.findById(request.getReceiverId())
-                .orElseThrow(() -> new ResourceNotFoundException("Receiver not found"));
+                .orElseThrow(() -> new ApplicationException(ErrorEnum.RECIVER_NOT_FUND.toString(),
+    					ErrorEnum.RECIVER_NOT_FUND.getExceptionError(), HttpStatus.OK));
 
         // Check if users are blocked
         if (blockedUserRepository.existsByBlockerIdAndBlockedUserId(request.getReceiverId(), senderId)) {
-            throw new CustomException("You are blocked by this user");
+            throw new ApplicationException(ErrorEnum.YOU_BLOCK_BY_USER.toString(),
+					ErrorEnum.YOU_BLOCK_BY_USER.getExceptionError(), HttpStatus.OK);
         }
 
         if (blockedUserRepository.existsByBlockerIdAndBlockedUserId(senderId, request.getReceiverId())) {
-            throw new CustomException("You have blocked this user");
+            throw new ApplicationException(ErrorEnum.YOU_BLOCK_USER.toString(),
+					ErrorEnum.YOU_BLOCK_USER.getExceptionError(), HttpStatus.OK);
         }
 
         // Check if users have mutual match
         Optional<Match> mutualMatch = matchRepository.findMatchBetweenUsers(senderId, request.getReceiverId());
         if (mutualMatch.isEmpty() || mutualMatch.get().getStatus() != MatchStatus.MUTUAL) {
-            throw new CustomException("You can only message users with mutual matches");
+            throw new ApplicationException(ErrorEnum.ONLY_MUTUAL_MATCH_CAN_MSG.toString(),
+					ErrorEnum.ONLY_MUTUAL_MATCH_CAN_MSG.getExceptionError(), HttpStatus.OK);
         }
 
         // Get or create conversation
@@ -149,10 +157,12 @@ public class ChatServiceImpl implements ChatService {
         log.info("Marking messages as read for user: {}, conversationId: {}", userId, conversationId);
         
         Conversation conversation = conversationRepository.findById(conversationId)
-                .orElseThrow(() -> new ResourceNotFoundException("Conversation not found"));
+                .orElseThrow(() -> new ApplicationException(ErrorEnum.CNOV_NOT_FOUND.toString(),
+    					ErrorEnum.CNOV_NOT_FOUND.getExceptionError(), HttpStatus.OK));
 
         if (!conversation.getUser1().getId().equals(userId) && !conversation.getUser2().getId().equals(userId)) {
-            throw new CustomException("You are not part of this conversation");
+            throw new ApplicationException(ErrorEnum.YOU_ARE_PART_OF_CONV.toString(),
+					ErrorEnum.YOU_ARE_PART_OF_CONV.getExceptionError(), HttpStatus.OK);
         }
 
         messageRepository.markMessagesAsRead(conversationId, userId);
@@ -182,10 +192,12 @@ public class ChatServiceImpl implements ChatService {
         log.info("Deleting message: {} by user: {}", messageId, userId);
         
         Message message = messageRepository.findById(messageId)
-                .orElseThrow(() -> new ResourceNotFoundException("Message not found"));
+                .orElseThrow(() -> new ApplicationException(ErrorEnum.MESSAGE_NOT_FUND.toString(),
+    					ErrorEnum.MESSAGE_NOT_FUND.getExceptionError(), HttpStatus.OK));
 
         if (!message.getSender().getId().equals(userId)) {
-            throw new CustomException("You can only delete your own messages");
+            throw new ApplicationException(ErrorEnum.ONLY_CAN_DELETE_OWN_MSG.toString(),
+					ErrorEnum.ONLY_CAN_DELETE_OWN_MSG.getExceptionError(), HttpStatus.OK);
         }
 
         messageRepository.delete(message);
@@ -196,7 +208,8 @@ public class ChatServiceImpl implements ChatService {
         log.info("Blocking conversation: {} by user: {}", conversationId, userId);
         
         Conversation conversation = conversationRepository.findById(conversationId)
-                .orElseThrow(() -> new ResourceNotFoundException("Conversation not found"));
+                .orElseThrow(() -> new ApplicationException(ErrorEnum.CNOV_NOT_FOUND.toString(),
+    					ErrorEnum.CNOV_NOT_FOUND.getExceptionError(), HttpStatus.OK));
 
         Long otherUserId = conversation.getUser1().getId().equals(userId) ? 
                           conversation.getUser2().getId() : conversation.getUser1().getId();
@@ -224,10 +237,12 @@ public class ChatServiceImpl implements ChatService {
         log.info("Getting conversation details for user: {}, conversationId: {}", userId, conversationId);
         
         Conversation conversation = conversationRepository.findById(conversationId)
-                .orElseThrow(() -> new ResourceNotFoundException("Conversation not found"));
+                .orElseThrow(() -> new ApplicationException(ErrorEnum.CNOV_NOT_FOUND.toString(),
+    					ErrorEnum.CNOV_NOT_FOUND.getExceptionError(), HttpStatus.OK));
 
         if (!conversation.getUser1().getId().equals(userId) && !conversation.getUser2().getId().equals(userId)) {
-            throw new CustomException("You are not part of this conversation");
+            throw new ApplicationException(ErrorEnum.YOU_ARE_PART_OF_CONV.toString(),
+					ErrorEnum.YOU_ARE_PART_OF_CONV.getExceptionError(), HttpStatus.OK);
         }
 
         return mapToConversationResponse(conversation, userId);
@@ -243,7 +258,8 @@ public class ChatServiceImpl implements ChatService {
         List<Conversation> conversations;
         if (conversationId != null) {
             Conversation conversation = conversationRepository.findById(conversationId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Conversation not found"));
+                    .orElseThrow(() -> new ApplicationException(ErrorEnum.CNOV_NOT_FOUND.toString(),
+        					ErrorEnum.CNOV_NOT_FOUND.getExceptionError(), HttpStatus.OK));
             conversations = List.of(conversation);
         } else {
             conversations = conversationRepository.findByUserIdOrderByUpdatedAtDesc(userId);
@@ -268,13 +284,16 @@ public class ChatServiceImpl implements ChatService {
 
         // Create new conversation
         User user1 = userRepository.findById(userId1)
-                .orElseThrow(() -> new ResourceNotFoundException("User1 not found"));
+                .orElseThrow(() -> new ApplicationException(ErrorEnum.USER_1_NOT_FOUND.toString(),
+						ErrorEnum.USER_1_NOT_FOUND.getExceptionError(), HttpStatus.OK));
         User user2 = userRepository.findById(userId2)
-                .orElseThrow(() -> new ResourceNotFoundException("User2 not found"));
+                .orElseThrow(() -> new ApplicationException(ErrorEnum.USER_2_NOT_FOUND.toString(),
+						ErrorEnum.USER_2_NOT_FOUND.getExceptionError(), HttpStatus.OK));
 
         // Find mutual match
         Match match = matchRepository.findMatchBetweenUsers(userId1, userId2)
-                .orElseThrow(() -> new CustomException("No mutual match found between users"));
+                .orElseThrow(() -> new ApplicationException(ErrorEnum.NO_MATCH_FUND_BTWN_USER.toString(),
+						ErrorEnum.NO_MATCH_FUND_BTWN_USER.getExceptionError(), HttpStatus.OK));
 
         Conversation conversation = new Conversation();
         conversation.setUser1(user1);
@@ -327,8 +346,7 @@ public class ChatServiceImpl implements ChatService {
         response.setSentAt(message.getSentAt());
         
         if (message.getSender().getProfile() != null) {
-            response.setSenderName(message.getSender().getProfile().getFirstName() + " " + 
-                                  message.getSender().getProfile().getLastName());
+            response.setSenderName(message.getSender().getProfile().getFullName());
         }
 
         return response;
@@ -337,9 +355,7 @@ public class ChatServiceImpl implements ChatService {
     private ProfileResponse mapToProfileResponse(UserProfile profile) {
         ProfileResponse response = new ProfileResponse();
         response.setId(profile.getId());
-        response.setFirstName(profile.getFirstName());
-        response.setLastName(profile.getLastName());
-        response.setFullName(profile.getFirstName() + " " + profile.getLastName());
+        response.setFullName(profile.getFullName());
         // Add other fields as needed for chat context
         return response;
     }

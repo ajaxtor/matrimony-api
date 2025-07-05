@@ -1,4 +1,4 @@
-package com.api.matrimony.serviceImpl;
+ package com.api.matrimony.serviceImpl;
 
 
 import java.math.BigDecimal;
@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +25,8 @@ import com.api.matrimony.entity.UserPreference;
 import com.api.matrimony.entity.UserProfile;
 import com.api.matrimony.enums.MatchStatus;
 import com.api.matrimony.enums.UserType;
-import com.api.matrimony.exception.CustomException;
-import com.api.matrimony.exception.ResourceNotFoundException;
+import com.api.matrimony.exception.ApplicationException;
+import com.api.matrimony.exception.ErrorEnum;
 import com.api.matrimony.repository.BlockedUserRepository;
 import com.api.matrimony.repository.MatchRepository;
 import com.api.matrimony.repository.UserPhotoRepository;
@@ -113,10 +114,12 @@ public class MatchServiceImpl implements MatchService {
         log.info("Handling match action for user: {}, matchId: {}, action: {}", userId, matchId, action);
         
         Match match = matchRepository.findById(matchId)
-                .orElseThrow(() -> new ResourceNotFoundException("Match not found"));
+                .orElseThrow(() -> new ApplicationException(ErrorEnum.MATCH_NOT_FOUND.toString(),
+    					ErrorEnum.MATCH_NOT_FOUND.getExceptionError(), HttpStatus.OK));
 
         if (!match.getUser().getId().equals(userId)) {
-            throw new CustomException("You can only act on your own matches");
+            throw new ApplicationException(ErrorEnum.ONLY_ACT_OWN_MATCH.toString(),
+					ErrorEnum.ONLY_ACT_OWN_MATCH.getExceptionError(), HttpStatus.OK);
         }
 
         MatchStatus newStatus = MatchStatus.valueOf(action.toUpperCase());
@@ -154,7 +157,8 @@ public class MatchServiceImpl implements MatchService {
         log.info("Searching profiles for user: {}, criteria: {}", userId, criteria);
         
         User currentUser = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ApplicationException(ErrorEnum.INVALID_USER.toString(),
+						ErrorEnum.INVALID_USER.getExceptionError(), HttpStatus.OK));
 
         // Get opposite gender profiles
         UserType oppositeType = currentUser.getUserType() == UserType.BRIDE ? UserType.GROOM : UserType.BRIDE;
@@ -194,7 +198,8 @@ public class MatchServiceImpl implements MatchService {
         log.info("Getting recommendations for user: {}, limit: {}", userId, limit);
         
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ApplicationException(ErrorEnum.INVALID_USER.toString(),
+						ErrorEnum.INVALID_USER.getExceptionError(), HttpStatus.OK));
 
         UserPreference preferences = user.getPreferences();
         if (preferences == null) {
@@ -228,10 +233,12 @@ public class MatchServiceImpl implements MatchService {
         log.info("Getting match details for user: {}, matchId: {}", userId, matchId);
         
         Match match = matchRepository.findById(matchId)
-                .orElseThrow(() -> new ResourceNotFoundException("Match not found"));
+                .orElseThrow(() -> new ApplicationException(ErrorEnum.MATCH_NOT_FOUND.toString(),
+						ErrorEnum.MATCH_NOT_FOUND.getExceptionError(), HttpStatus.OK));
 
         if (!match.getUser().getId().equals(userId) && !match.getMatchedUser().getId().equals(userId)) {
-            throw new CustomException("You can only view your own matches");
+            throw new ApplicationException(ErrorEnum.ONLY_VIEW_OWN_MATCH.toString(),
+					ErrorEnum.ONLY_VIEW_OWN_MATCH.getExceptionError(), HttpStatus.OK);
         }
 
         return mapToMatchResponse(match);
@@ -242,7 +249,8 @@ public class MatchServiceImpl implements MatchService {
         log.info("Generating matches for user: {}", userId);
         
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ApplicationException(ErrorEnum.INVALID_USER.toString(),
+						ErrorEnum.INVALID_USER.getExceptionError(), HttpStatus.OK));
 
         List<MatchResponse> recommendations = getRecommendations(userId, 6);
         
@@ -502,9 +510,7 @@ public class MatchServiceImpl implements MatchService {
     private ProfileResponse mapToProfileResponse(UserProfile profile) {
         ProfileResponse response = new ProfileResponse();
         response.setId(profile.getId());
-        response.setFirstName(profile.getFirstName());
-        response.setLastName(profile.getLastName());
-        response.setFullName(profile.getFirstName() + " " + profile.getLastName());
+        response.setFullName(profile.getFullName());
         response.setDateOfBirth(profile.getDateOfBirth());
         
         if (profile.getDateOfBirth() != null) {

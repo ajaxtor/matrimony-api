@@ -14,8 +14,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class VerifyOtpRequest {
     
-    @NotBlank(message = "Contact (email or phone) is required")
-    private String contact;
+//   // @NotBlank(message = "Contact (email or phone) is required")
+//    private String contact;
+    
+    @NotBlank(message = "email (email or phone) is required")
+    private String email;
     
     @NotBlank(message = "OTP is required")
     @Size(min = 6, max = 6, message = "OTP must be 6 digits")

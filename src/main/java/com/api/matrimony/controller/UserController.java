@@ -3,6 +3,7 @@ package com.api.matrimony.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.api.matrimony.entity.User;
 import com.api.matrimony.request.PreferenceRequest;
 import com.api.matrimony.request.ProfileUpdateRequest;
-import com.api.matrimony.response.ApiResponse;
+import com.api.matrimony.response.APIResonse;
 import com.api.matrimony.response.UserResponse;
 import com.api.matrimony.service.UserService;
 
@@ -45,217 +46,173 @@ public class UserController {
      * Get current user profile
      */
     @GetMapping("/profile")
-    public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser(
+    public ResponseEntity<APIResonse<UserResponse>> getCurrentUser(
             @AuthenticationPrincipal User currentUser) {
         
         log.info("Getting current user profile: {}", currentUser.getId());
-        
-        try {
+        APIResonse<UserResponse> response = new APIResonse<>();
+       
             UserResponse userResponse = userService.getCurrentUser(currentUser.getId());
-            return ResponseEntity.ok(ApiResponse.success(userResponse, "Profile retrieved successfully"));
-        } catch (Exception e) {
-            log.error("Error getting current user profile: {}", currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(userResponse);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Get user profile by ID
      */
     @GetMapping("/{userId}/profile")
-    public ResponseEntity<ApiResponse<UserResponse>> getUserById(
+    public ResponseEntity<APIResonse<UserResponse>> getUserById(
             @AuthenticationPrincipal User currentUser,
             @PathVariable Long userId) {
         
         log.info("Getting user profile: {} by user: {}", userId, currentUser.getId());
-        
-        try {
+        APIResonse<UserResponse> response = new APIResonse<>();
+       
             UserResponse userResponse = userService.getUserById(userId);
-            return ResponseEntity.ok(ApiResponse.success(userResponse, "Profile retrieved successfully"));
-        } catch (Exception e) {
-            log.error("Error getting user profile: {} by user: {}", userId, currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(userResponse);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Update user profile
      */
-    @PutMapping("/profile")
-    public ResponseEntity<ApiResponse<UserResponse>> updateProfile(
+    @PutMapping("/editProfile")
+    public ResponseEntity<APIResonse<UserResponse>> updateProfile(
             @AuthenticationPrincipal User currentUser,
             @Valid @RequestBody ProfileUpdateRequest request) {
         
         log.info("Updating profile for user: {}", currentUser.getId());
-        
-        try {
+        APIResonse<UserResponse> response = new APIResonse<>();
+       
             UserResponse userResponse = userService.updateProfile(currentUser.getId(), request);
-            return ResponseEntity.ok(ApiResponse.success(userResponse, "Profile updated successfully"));
-        } catch (Exception e) {
-            log.error("Error updating profile for user: {}", currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(userResponse);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Update user preferences
      */
-    @PutMapping("/preferences")
-    public ResponseEntity<ApiResponse<UserResponse>> updatePreferences(
+    @PutMapping("/editPreferences")
+    public ResponseEntity<APIResonse<UserResponse>> updatePreferences(
             @AuthenticationPrincipal User currentUser,
             @Valid @RequestBody PreferenceRequest request) {
         
         log.info("Updating preferences for user: {}", currentUser.getId());
         
-        try {
+        APIResonse<UserResponse> response = new APIResonse<>();
             UserResponse userResponse = userService.updatePreferences(currentUser.getId(), request);
-            return ResponseEntity.ok(ApiResponse.success(userResponse, "Preferences updated successfully"));
-        } catch (Exception e) {
-            log.error("Error updating preferences for user: {}", currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(userResponse);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Get user preferences
      */
-    @GetMapping("/preferences")
-    public ResponseEntity<ApiResponse<UserResponse>> getPreferences(
+    @GetMapping("/getPreferences")
+    public ResponseEntity<APIResonse<UserResponse>> getPreferences(
             @AuthenticationPrincipal User currentUser) {
         
         log.info("Getting preferences for user: {}", currentUser.getId());
         
-        try {
+        APIResonse<UserResponse> response = new APIResonse<>();
             UserResponse userResponse = userService.getCurrentUser(currentUser.getId());
-            return ResponseEntity.ok(ApiResponse.success(userResponse, "Preferences retrieved successfully"));
-        } catch (Exception e) {
-            log.error("Error getting preferences for user: {}", currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(userResponse);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Upload user photo
      */
     @PostMapping("/photos")
-    public ResponseEntity<ApiResponse<String>> uploadPhoto(
+    public ResponseEntity<APIResonse<String>> uploadPhoto(
             @AuthenticationPrincipal User currentUser,
             @RequestParam("photo") MultipartFile file,
             @RequestParam(defaultValue = "false") Boolean isPrimary) {
         
         log.info("Uploading photo for user: {}, isPrimary: {}", currentUser.getId(), isPrimary);
         
-        try {
+        APIResonse<String> response = new APIResonse<>();
             String photoUrl = userService.uploadPhoto(currentUser.getId(), file, isPrimary);
-            return ResponseEntity.ok(ApiResponse.success(photoUrl, "Photo uploaded successfully"));
-        } catch (Exception e) {
-            log.error("Error uploading photo for user: {}", currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(photoUrl);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Get user photos
      */
     @GetMapping("/photos")
-    public ResponseEntity<ApiResponse<List<String>>> getUserPhotos(
+    public ResponseEntity<APIResonse<List<String>>> getUserPhotos(
             @AuthenticationPrincipal User currentUser) {
         
         log.info("Getting photos for user: {}", currentUser.getId());
         
-        try {
+        APIResonse<List<String>> response = new APIResonse<>();
             List<String> photos = userService.getUserPhotos(currentUser.getId());
-            return ResponseEntity.ok(ApiResponse.success(photos, "Photos retrieved successfully"));
-        } catch (Exception e) {
-            log.error("Error getting photos for user: {}", currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(photos);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Delete user photo
      */
     @DeleteMapping("/photos/{photoId}")
-    public ResponseEntity<ApiResponse<String>> deletePhoto(
+    public ResponseEntity<APIResonse<String>> deletePhoto(
             @AuthenticationPrincipal User currentUser,
             @PathVariable Long photoId) {
         
         log.info("Deleting photo: {} for user: {}", photoId, currentUser.getId());
-        
-        try {
+        APIResonse<String> response = new APIResonse<>();
+       
             userService.deletePhoto(currentUser.getId(), photoId);
-            return ResponseEntity.ok(ApiResponse.success("Success", "Photo deleted successfully"));
-        } catch (Exception e) {
-            log.error("Error deleting photo: {} for user: {}", photoId, currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData("User Deleted");
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Block user
      */
     @PostMapping("/{userId}/block")
-    public ResponseEntity<ApiResponse<String>> blockUser(
+    public ResponseEntity<APIResonse<String>> blockUser(
             @AuthenticationPrincipal User currentUser,
             @PathVariable Long userId) {
         
         log.info("User {} blocking user {}", currentUser.getId(), userId);
-        
-        try {
+        APIResonse<String> response = new APIResonse<>();
+       
             userService.blockUser(currentUser.getId(), userId);
-            return ResponseEntity.ok(ApiResponse.success("Success", "User blocked successfully"));
-        } catch (Exception e) {
-            log.error("Error blocking user: {} by user: {}", userId, currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData("User is Blocked");
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Unblock user
      */
     @DeleteMapping("/{userId}/unblock")
-    public ResponseEntity<ApiResponse<String>> unblockUser(
+    public ResponseEntity<APIResonse<String>> unblockUser(
             @AuthenticationPrincipal User currentUser,
             @PathVariable Long userId) {
         
         log.info("User {} unblocking user {}", currentUser.getId(), userId);
-        
-        try {
+        APIResonse<String> response = new APIResonse<>();
+       
             userService.unblockUser(currentUser.getId(), userId);
-            return ResponseEntity.ok(ApiResponse.success("Success", "User unblocked successfully"));
-        } catch (Exception e) {
-            log.error("Error unblocking user: {} by user: {}", userId, currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData("User Has been unblock");
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Get blocked users
      */
     @GetMapping("/blocked")
-    public ResponseEntity<ApiResponse<List<UserResponse>>> getBlockedUsers(
+    public ResponseEntity<APIResonse<List<UserResponse>>> getBlockedUsers(
             @AuthenticationPrincipal User currentUser) {
         
         log.info("Getting blocked users for user: {}", currentUser.getId());
         
-        try {
+        APIResonse<List<UserResponse>> response = new APIResonse<>();
             List<UserResponse> blockedUsers = userService.getBlockedUsers(currentUser.getId());
-            return ResponseEntity.ok(ApiResponse.success(blockedUsers, "Blocked users retrieved successfully"));
-        } catch (Exception e) {
-            log.error("Error getting blocked users for user: {}", currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
+            response.setData(blockedUsers);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
-    }
+    
 }
-

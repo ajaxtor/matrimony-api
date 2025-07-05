@@ -3,6 +3,7 @@ package com.api.matrimony.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,8 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.api.matrimony.entity.User;
 import com.api.matrimony.request.ProfileUpdateRequest;
-import com.api.matrimony.response.ApiResponse;
+import com.api.matrimony.response.APIResonse;
+import com.api.matrimony.response.APIResonse;
 import com.api.matrimony.response.ProfileResponse;
+import com.api.matrimony.response.UserResponse;
 import com.api.matrimony.service.ProfileService;
 
 import jakarta.validation.Valid;
@@ -40,136 +43,103 @@ public class ProfileController {
   * Get profile by user ID
   */
  @GetMapping("/{userId}")
- public ResponseEntity<ApiResponse<ProfileResponse>> getProfile(
+ public ResponseEntity<APIResonse<ProfileResponse>> getProfile(
          @AuthenticationPrincipal User currentUser,
          @PathVariable Long userId) {
      
      log.info("Getting profile: {} by user: {}", userId, currentUser.getId());
      
-     try {
+     APIResonse<ProfileResponse> response = new APIResonse<>();
          ProfileResponse profile = profileService.getPublicProfile(userId, currentUser.getId());
-         return ResponseEntity.ok(ApiResponse.success(profile, "Profile retrieved successfully"));
-     } catch (Exception e) {
-         log.error("Error getting profile: {} by user: {}", userId, currentUser.getId(), e);
-         return ResponseEntity.badRequest()
-                 .body(ApiResponse.error(e.getMessage()));
-     }
+         response.setData(profile);
+         return new ResponseEntity<>(response, HttpStatus.OK);
  }
 
  /**
   * Update profile
   */
  @PutMapping
- public ResponseEntity<ApiResponse<ProfileResponse>> updateProfile(
+ public ResponseEntity<APIResonse<ProfileResponse>> updateProfile(
          @AuthenticationPrincipal User currentUser,
          @Valid @RequestBody ProfileUpdateRequest request) {
      
      log.info("Updating profile for user: {}", currentUser.getId());
      
-     try {
+     APIResonse<ProfileResponse> response = new APIResonse<>();
          ProfileResponse profile = profileService.updateProfile(currentUser.getId(), request);
-         return ResponseEntity.ok(ApiResponse.success(profile, "Profile updated successfully"));
-     } catch (Exception e) {
-         log.error("Error updating profile for user: {}", currentUser.getId(), e);
-         return ResponseEntity.badRequest()
-                 .body(ApiResponse.error(e.getMessage()));
-     }
+         response.setData(profile);
+         return new ResponseEntity<>(response, HttpStatus.OK);
  }
 
  /**
   * Get recent profiles
   */
  @GetMapping("/recent")
- public ResponseEntity<ApiResponse<List<ProfileResponse>>> getRecentProfiles(
+ public ResponseEntity<APIResonse<List<ProfileResponse>>> getRecentProfiles(
          @RequestParam(defaultValue = "10") int limit) {
      
      log.info("Getting recent profiles, limit: {}", limit);
-     
-     try {
+     APIResonse<List<ProfileResponse>> response = new APIResonse<>();
          List<ProfileResponse> profiles = profileService.getRecentProfiles(limit);
-         return ResponseEntity.ok(ApiResponse.success(profiles, "Recent profiles retrieved successfully"));
-     } catch (Exception e) {
-         log.error("Error getting recent profiles", e);
-         return ResponseEntity.badRequest()
-                 .body(ApiResponse.error(e.getMessage()));
-     }
+         response.setData(profiles);
+         return new ResponseEntity<>(response, HttpStatus.OK);
  }
 
  /**
   * Get featured profiles
   */
- @GetMapping("/featured")
- public ResponseEntity<ApiResponse<List<ProfileResponse>>> getFeaturedProfiles(
+ @GetMapping("/featuredProfiles")
+ public ResponseEntity<APIResonse<List<ProfileResponse>>> getFeaturedProfiles(
          @RequestParam(defaultValue = "10") int limit) {
      
      log.info("Getting featured profiles, limit: {}", limit);
-     
-     try {
+     APIResonse<List<ProfileResponse>> response = new APIResonse<>();
          List<ProfileResponse> profiles = profileService.getFeaturedProfiles(limit);
-         return ResponseEntity.ok(ApiResponse.success(profiles, "Featured profiles retrieved successfully"));
-     } catch (Exception e) {
-         log.error("Error getting featured profiles", e);
-         return ResponseEntity.badRequest()
-                 .body(ApiResponse.error(e.getMessage()));
-     }
+         response.setData(profiles);
+         return new ResponseEntity<>(response, HttpStatus.OK);
  }
 
  /**
   * Get similar profiles
   */
- @GetMapping("/similar")
- public ResponseEntity<ApiResponse<List<ProfileResponse>>> getSimilarProfiles(
+ @GetMapping("/similarProfiles")
+ public ResponseEntity<APIResonse<List<ProfileResponse>>> getSimilarProfiles(
          @AuthenticationPrincipal User currentUser,
          @RequestParam(defaultValue = "10") int limit) {
      
      log.info("Getting similar profiles for user: {}, limit: {}", currentUser.getId(), limit);
-     
-     try {
+     APIResonse< List<ProfileResponse>> response = new APIResonse<>();
          List<ProfileResponse> profiles = profileService.getSimilarProfiles(currentUser.getId(), limit);
-         return ResponseEntity.ok(ApiResponse.success(profiles, "Similar profiles retrieved successfully"));
-     } catch (Exception e) {
-         log.error("Error getting similar profiles for user: {}", currentUser.getId(), e);
-         return ResponseEntity.badRequest()
-                 .body(ApiResponse.error(e.getMessage()));
-     }
+         response.setData(profiles);
+         return new ResponseEntity<>(response, HttpStatus.OK);
  }
 
  /**
   * Check if profile is complete
   */
  @GetMapping("/completeness")
- public ResponseEntity<ApiResponse<Boolean>> checkProfileCompleteness(
+ public ResponseEntity<APIResonse<Boolean>> checkProfileCompleteness(
          @AuthenticationPrincipal User currentUser) {
      
      log.info("Checking profile completeness for user: {}", currentUser.getId());
-     
-     try {
+     APIResonse<Boolean> response = new APIResonse<>();
          boolean isComplete = profileService.isProfileComplete(currentUser.getId());
-         return ResponseEntity.ok(ApiResponse.success(isComplete, "Profile completeness checked"));
-     } catch (Exception e) {
-         log.error("Error checking profile completeness for user: {}", currentUser.getId(), e);
-         return ResponseEntity.badRequest()
-                 .body(ApiResponse.error(e.getMessage()));
-     }
+         response.setData(isComplete);
+         return new ResponseEntity<>(response, HttpStatus.OK);
  }
 
  /**
   * Get profile view count
   */
- @GetMapping("/views")
- public ResponseEntity<ApiResponse<Long>> getProfileViewCount(
+ @GetMapping("/profileViewCount")
+ public ResponseEntity<APIResonse<Long>> getProfileViewCount(
          @AuthenticationPrincipal User currentUser) {
      
      log.info("Getting profile view count for user: {}", currentUser.getId());
-     
-     try {
+     APIResonse<Long> response = new APIResonse<>();
          Long viewCount = profileService.getProfileViewCount(currentUser.getId());
-         return ResponseEntity.ok(ApiResponse.success(viewCount, "Profile view count retrieved"));
-     } catch (Exception e) {
-         log.error("Error getting profile view count for user: {}", currentUser.getId(), e);
-         return ResponseEntity.badRequest()
-                 .body(ApiResponse.error(e.getMessage()));
-     }
+         response.setData(viewCount);
+         return new ResponseEntity<>(response, HttpStatus.OK);
  }
 }
 

@@ -1,10 +1,13 @@
 package com.api.matrimony.request;
 
-import com.api.matrimony.enums.UserType;
+import java.time.LocalDate;
+
+import com.api.matrimony.enums.Gender;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -32,14 +35,15 @@ public class RegisterRequest {
     private String password;
     
     @NotNull(message = "User type is required")
-    private UserType userType;
+    private Gender gender;
     
     @NotBlank(message = "First name is required")
     @Size(max = 50, message = "First name cannot exceed 50 characters")
-    private String firstName;
+    private String fullName;
     
-    @NotBlank(message = "Last name is required")
-    @Size(max = 50, message = "Last name cannot exceed 50 characters")
-    private String lastName;
+    @NotNull(message = "Date of birth is required")
+    @Past(message = "Date of birth must be in the past")
+    private LocalDate dateOfBirth; 
+    
 }
 

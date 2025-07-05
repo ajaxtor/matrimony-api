@@ -24,9 +24,12 @@ public class UserResponse {
     private String userType;
     private Boolean isVerified;
     private Boolean isActive;
+  //  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
+  //  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastLogin;
     private ProfileResponse profile;
+    private PreferenceResponse preference;
 }
 
 

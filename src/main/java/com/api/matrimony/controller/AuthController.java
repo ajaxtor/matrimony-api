@@ -18,7 +18,7 @@ import com.api.matrimony.request.RefreshTokenRequest;
 import com.api.matrimony.request.RegisterRequest;
 import com.api.matrimony.request.ResetPasswordRequest;
 import com.api.matrimony.request.VerifyOtpRequest;
-import com.api.matrimony.response.ApiResponse;
+import com.api.matrimony.response.APIResonse;
 import com.api.matrimony.response.LoginResponse;
 import com.api.matrimony.service.AuthService;
 
@@ -42,165 +42,117 @@ public class AuthController {
      * Register a new user
      */
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<String>> register(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<APIResonse<String>> register(@Valid @RequestBody RegisterRequest request) {
         log.info("Registration attempt for email: {}", request.getEmail());
         
-        try {
+        APIResonse<String> response = new APIResonse<>();
             String result = authService.register(request);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(ApiResponse.success(result, "Registration successful. Please verify your account."));
-        } catch (Exception e) {
-            log.error("Registration failed for email: {}", request.getEmail(), e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(result);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Verify OTP for account activation
      */
     @PostMapping("/verify-otp")
-    public ResponseEntity<ApiResponse<String>> verifyOtp(@Valid @RequestBody VerifyOtpRequest request) {
-        log.info("OTP verification attempt for: {}", request.getContact());
+    public ResponseEntity<APIResonse<String>> verifyOtp(@Valid @RequestBody VerifyOtpRequest request) {
+        log.info("OTP verification attempt for: {}", request.getEmail());
         
-        try {
+        APIResonse<String> response = new APIResonse<>();
             String result = authService.verifyOtp(request);
-            return ResponseEntity.ok(ApiResponse.success(result, "Account verified successfully."));
-        } catch (Exception e) {
-            log.error("OTP verification failed for: {}", request.getContact(), e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(result);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Resend OTP
      */
     @PostMapping("/resend-otp")
-    public ResponseEntity<ApiResponse<String>> resendOtp(@RequestParam String contact, @RequestParam String purpose) {
+    public ResponseEntity<APIResonse<String>> resendOtp(@RequestParam String contact, @RequestParam String purpose) {
         log.info("Resend OTP request for: {}", contact);
         
-        try {
+        APIResonse<String> response = new APIResonse<>();
             String result = authService.resendOtp(contact, purpose);
-            return ResponseEntity.ok(ApiResponse.success(result, "OTP sent successfully."));
-        } catch (Exception e) {
-            log.error("Resend OTP failed for: {}", contact, e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(result);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * User login
      */
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<APIResonse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
         log.info("Login attempt for: {}", request.getEmailOrPhone());
         
-        try {
-            LoginResponse response = authService.login(request);
-            return ResponseEntity.ok(ApiResponse.success(response, "Login successful."));
-        } catch (Exception e) {
-            log.error("Login failed for: {}", request.getEmailOrPhone(), e);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+        APIResonse<LoginResponse> response = new APIResonse<>();
+            LoginResponse logInRes = authService.login(request);
+            response.setData(logInRes);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Refresh JWT token
      */
     @PostMapping("/refresh-token")
-    public ResponseEntity<ApiResponse<LoginResponse>> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
+    public ResponseEntity<APIResonse<LoginResponse>> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
         log.info("Token refresh attempt");
         
-        try {
-            LoginResponse response = authService.refreshToken(request.getRefreshToken());
-            return ResponseEntity.ok(ApiResponse.success(response, "Token refreshed successfully."));
-        } catch (Exception e) {
-            log.error("Token refresh failed", e);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+        APIResonse<LoginResponse> response = new APIResonse<>();
+            LoginResponse refreshToken = authService.refreshToken(request.getRefreshToken());
+            response.setData(refreshToken);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Forgot password - send reset OTP
      */
     @PostMapping("/forgot-password")
-    public ResponseEntity<ApiResponse<String>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+    public ResponseEntity<APIResonse<String>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
         log.info("Forgot password request for: {}", request.getEmailOrPhone());
         
-        try {
+        APIResonse<String> response = new APIResonse<>();
             String result = authService.forgotPassword(request);
-            return ResponseEntity.ok(ApiResponse.success(result, "Password reset OTP sent successfully."));
-        } catch (Exception e) {
-            log.error("Forgot password failed for: {}", request.getEmailOrPhone(), e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(result);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Reset password with OTP
      */
     @PostMapping("/reset-password")
-    public ResponseEntity<ApiResponse<String>> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+    public ResponseEntity<APIResonse<String>> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
         log.info("Password reset attempt for: {}", request.getEmailOrPhone());
         
-        try {
+        APIResonse<String> response = new APIResonse<>();
             String result = authService.resetPassword(request);
-            return ResponseEntity.ok(ApiResponse.success(result, "Password reset successfully."));
-        } catch (Exception e) {
-            log.error("Password reset failed for: {}", request.getEmailOrPhone(), e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(result);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Logout user
      */
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<String>> logout(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<APIResonse<String>> logout(@RequestHeader("Authorization") String authHeader) {
         log.info("Logout request");
         
-        try {
+        APIResonse<String> response = new APIResonse<>();
             String token = authHeader.substring(7); // Remove "Bearer " prefix
             authService.logout(token);
-            return ResponseEntity.ok(ApiResponse.success("Logged out", "Logout successful."));
-        } catch (Exception e) {
-            log.error("Logout failed", e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData("User successfully Logout user");
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Check if email exists
      */
     @GetMapping("/check-email")
-    public ResponseEntity<ApiResponse<Boolean>> checkEmail(@RequestParam String email) {
-        try {
+    public ResponseEntity<APIResonse<Boolean>> checkEmail(@RequestParam String email) {
+    	APIResonse<Boolean> response = new APIResonse<>();
             boolean exists = authService.emailExists(email);
-            return ResponseEntity.ok(ApiResponse.success(exists, "Email check completed."));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(exists);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
 
-    /**
-     * Check if phone exists
-     */
-//    @GetMapping("/check-phone")
-//    public ResponseEntity<ApiResponse<Boolean>> checkPhone(@RequestParam String phone) {
-//        try {
-//            boolean exists = authService.phoneExists(phone);
-//            return ResponseEntity.ok(ApiResponse.success(exists, "Phone check completed."));
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//                    .body(ApiResponse.error( e.getMessage()));
-//}
-//}
+  

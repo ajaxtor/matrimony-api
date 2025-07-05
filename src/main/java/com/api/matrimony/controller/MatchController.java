@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.api.matrimony.entity.User;
 import com.api.matrimony.request.MatchActionRequest;
 import com.api.matrimony.request.SearchCriteria;
-import com.api.matrimony.response.ApiResponse;
+import com.api.matrimony.response.APIResonse;
 import com.api.matrimony.response.MatchResponse;
 import com.api.matrimony.response.MatchStats;
 import com.api.matrimony.response.PagedResponse;
@@ -48,7 +49,7 @@ public class MatchController {
      * Get matches for the current user
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<PagedResponse<MatchResponse>>> getMatches(
+    public ResponseEntity<APIResonse<PagedResponse<MatchResponse>>> getMatches(
             @AuthenticationPrincipal User currentUser,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -56,69 +57,50 @@ public class MatchController {
         
         log.info("Getting matches for user: {}, page: {}, size: {}, status: {}", 
                 currentUser.getId(), page, size, status);
-        
-        try {
+        APIResonse<PagedResponse<MatchResponse>> response = new APIResonse<>();
             Pageable pageable = PageRequest.of(page, size);
             PagedResponse<MatchResponse> matches = matchService.getMatchesForUser(
                     currentUser.getId(), status, pageable);
-            
-            return ResponseEntity.ok(ApiResponse.success(matches, "Matches retrieved successfully"));
-        } catch (Exception e) {
-            log.error("Error getting matches for user: {}", currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(matches);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Get mutual matches for the current user
      */
     @GetMapping("/mutual")
-    public ResponseEntity<ApiResponse<List<MatchResponse>>> getMutualMatches(
+    public ResponseEntity<APIResonse<List<MatchResponse>>> getMutualMatches(
             @AuthenticationPrincipal User currentUser) {
         
         log.info("Getting mutual matches for user: {}", currentUser.getId());
-        
-        try {
+        APIResonse<List<MatchResponse>> response = new APIResonse<>();
             List<MatchResponse> mutualMatches = matchService.getMutualMatches(currentUser.getId());
-            return ResponseEntity.ok(ApiResponse.success(mutualMatches, 
-                    "Mutual matches retrieved successfully"));
-        } catch (Exception e) {
-            log.error("Error getting mutual matches for user: {}", currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(mutualMatches);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Accept or reject a match
      */
     @PostMapping("/action")
-    public ResponseEntity<ApiResponse<String>> handleMatchAction(
+    public ResponseEntity<APIResonse<String>> handleMatchAction(
             @AuthenticationPrincipal User currentUser,
             @Valid @RequestBody MatchActionRequest request) {
         
         log.info("Match action by user: {}, matchId: {}, action: {}", 
                 currentUser.getId(), request.getMatchId(), request.getAction());
-        
-        try {
+        APIResonse<String> response = new APIResonse<>();
             String result = matchService.handleMatchAction(currentUser.getId(), 
                     request.getMatchId(), request.getAction());
-            
-            return ResponseEntity.ok(ApiResponse.success(result, "Match action processed successfully"));
-        } catch (Exception e) {
-            log.error("Error processing match action for user: {}, matchId: {}", 
-                    currentUser.getId(), request.getMatchId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(result);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Search profiles based on criteria
      */
     @GetMapping("/search")
-    public ResponseEntity<ApiResponse<PagedResponse<ProfileResponse>>> searchProfiles(
+    public ResponseEntity<APIResonse<PagedResponse<ProfileResponse>>> searchProfiles(
             @AuthenticationPrincipal User currentUser,
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String state,
@@ -136,8 +118,7 @@ public class MatchController {
         
         log.info("Profile search by user: {}, filters - city: {}, religion: {}, minAge: {}, maxAge: {}", 
                 currentUser.getId(), city, religion, minAge, maxAge);
-        
-        try {
+        APIResonse<PagedResponse<ProfileResponse>> response = new APIResonse<>();
             Pageable pageable = PageRequest.of(page, size);
             
             // Create search criteria object
@@ -157,96 +138,66 @@ public class MatchController {
             
             PagedResponse<ProfileResponse> profiles = matchService.searchProfiles(
                     currentUser.getId(), criteria, pageable);
-            
-            return ResponseEntity.ok(ApiResponse.success(profiles, "Profile search completed"));
-        } catch (Exception e) {
-            log.error("Error searching profiles for user: {}", currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(profiles);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Get recommended matches for user
      */
     @GetMapping("/recommendations")
-    public ResponseEntity<ApiResponse<List<MatchResponse>>> getRecommendations(
+    public ResponseEntity<APIResonse<List<MatchResponse>>> getRecommendations(
             @AuthenticationPrincipal User currentUser,
             @RequestParam(defaultValue = "6") int limit) {
         
         log.info("Getting recommendations for user: {}, limit: {}", currentUser.getId(), limit);
-        
-        try {
+        APIResonse<List<MatchResponse>> response = new APIResonse<>();
             List<MatchResponse> recommendations = matchService.getRecommendations(
                     currentUser.getId(), limit);
-            
-            return ResponseEntity.ok(ApiResponse.success(recommendations, 
-                    "Recommendations retrieved successfully"));
-        } catch (Exception e) {
-            log.error("Error getting recommendations for user: {}", currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(recommendations);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Get match details by ID
      */
-    @GetMapping("/{matchId}")
-    public ResponseEntity<ApiResponse<MatchResponse>> getMatchDetails(
+    @GetMapping("matchDetailsByID/{matchId}")
+    public ResponseEntity<APIResonse<MatchResponse>> getMatchDetails(
             @AuthenticationPrincipal User currentUser,
             @PathVariable Long matchId) {
         
         log.info("Getting match details for user: {}, matchId: {}", currentUser.getId(), matchId);
-        
-        try {
+        APIResonse<MatchResponse> response = new APIResonse<>();
             MatchResponse matchDetails = matchService.getMatchDetails(currentUser.getId(), matchId);
-            return ResponseEntity.ok(ApiResponse.success(matchDetails, 
-                    "Match details retrieved successfully"));
-        } catch (Exception e) {
-            log.error("Error getting match details for user: {}, matchId: {}", 
-                    currentUser.getId(), matchId, e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(matchDetails);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Generate new matches for user (admin or scheduled operation)
      */
-    @PostMapping("/generate")
-    public ResponseEntity<ApiResponse<String>> generateMatches(
+    @PostMapping("/generateMatch")
+    public ResponseEntity<APIResonse<String>> generateMatches(
             @AuthenticationPrincipal User currentUser) {
         
         log.info("Generating new matches for user: {}", currentUser.getId());
-        
-        try {
+        APIResonse<String> response = new APIResonse<>();
             String result = matchService.generateMatchesForUser(currentUser.getId());
-            return ResponseEntity.ok(ApiResponse.success(result, "New matches generated successfully"));
-        } catch (Exception e) {
-            log.error("Error generating matches for user: {}", currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(result);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Get match statistics for user
      */
-    @GetMapping("/stats")
-    public ResponseEntity<ApiResponse<MatchStats>> getMatchStats(
+    @GetMapping("/matchStats")
+    public ResponseEntity<APIResonse<MatchStats>> getMatchStats(
             @AuthenticationPrincipal User currentUser) {
         
         log.info("Getting match statistics for user: {}", currentUser.getId());
-        
-        try {
+        APIResonse<MatchStats> response = new APIResonse<>();
             MatchStats stats = matchService.getMatchStats(currentUser.getId());
-            return ResponseEntity.ok(ApiResponse.success(stats, 
-                    "Match statistics retrieved successfully"));
-        } catch (Exception e) {
-            log.error("Error getting match stats for user: {}", currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(stats);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

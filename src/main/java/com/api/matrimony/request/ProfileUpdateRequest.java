@@ -16,8 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProfileUpdateRequest {
     
-    private String firstName;
-    private String lastName;
+    private String fullName;
     private LocalDate dateOfBirth;
     private String gender;
     private Integer height;

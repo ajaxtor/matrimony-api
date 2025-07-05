@@ -1,5 +1,6 @@
 package com.api.matrimony.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.api.matrimony.enums.Gender;
@@ -36,14 +37,11 @@ public class UserProfile {
  @JoinColumn(name = "user_id", nullable = false)
  private User user;
 
- @Column(name = "first_name", nullable = false, length = 50)
- private String firstName;
-
- @Column(name = "last_name", nullable = false, length = 50)
- private String lastName;
+ @Column(name = "full_name", nullable = false, length = 50)
+ private String fullName;
 
  @Column(name = "date_of_birth", nullable = false)
- private java.time.LocalDate dateOfBirth;
+ private LocalDate dateOfBirth;
 
  @Enumerated(EnumType.STRING)
  @Column(nullable = false)

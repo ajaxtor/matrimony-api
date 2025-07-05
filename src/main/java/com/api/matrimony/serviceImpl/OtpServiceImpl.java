@@ -5,14 +5,15 @@ import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.api.matrimony.entity.OtpVerification;
 import com.api.matrimony.enums.OtpPurpose;
-import com.api.matrimony.exception.CustomException;
+import com.api.matrimony.exception.ApplicationException;
+import com.api.matrimony.exception.ErrorEnum;
 import com.api.matrimony.repository.OtpVerificationRepository;
-import com.api.matrimony.request.RegisterRequest;
 import com.api.matrimony.service.NotificationService;
 import com.api.matrimony.service.OtpService;
 
@@ -51,7 +52,8 @@ public class OtpServiceImpl implements OtpService {
         Long attempts = otpRepository.countOtpAttempts(phone, oneHourAgo);
         
         if (attempts >= maxAttempts) {
-            throw new CustomException("Too many OTP attempts. Please try again later.");
+        	throw new ApplicationException(ErrorEnum.TOO_MANY_APTEMT_FOR_OTP.toString(),
+					ErrorEnum.TOO_MANY_APTEMT_FOR_OTP.getExceptionError(), HttpStatus.OK);
         }
 
         // Generate OTP

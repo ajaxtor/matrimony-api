@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
@@ -22,9 +23,8 @@ import lombok.NoArgsConstructor;
 public class ProfileResponse {
     
     private Long id;
-    private String firstName;
-    private String lastName;
     private String fullName;
+   // @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDate dateOfBirth;
     private Integer age;
     private String gender;
@@ -48,6 +48,8 @@ public class ProfileResponse {
     private String profileCreatedBy;
     private List<String> photoUrls;
     private String primaryPhotoUrl;
+   // @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
+   // @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.api.matrimony.entity.User;
 import com.api.matrimony.request.MessageRequest;
-import com.api.matrimony.response.ApiResponse;
+import com.api.matrimony.response.APIResonse;
 import com.api.matrimony.response.ConversationResponse;
 import com.api.matrimony.response.MessageResponse;
 import com.api.matrimony.response.PagedResponse;
@@ -46,29 +47,23 @@ public class ChatController {
      * Get all conversations for the current user
      */
     @GetMapping("/conversations")
-    public ResponseEntity<ApiResponse<List<ConversationResponse>>> getConversations(
+    public ResponseEntity<APIResonse<List<ConversationResponse>>> getConversations(
             @AuthenticationPrincipal User currentUser) {
         
         log.info("Getting conversations for user: {}", currentUser.getId());
         
-        try {
+        APIResonse<List<ConversationResponse>> response = new APIResonse<>();
             List<ConversationResponse> conversations = chatService.getConversationsForUser(
                     currentUser.getId());
-            
-            return ResponseEntity.ok(ApiResponse.success(conversations, 
-                    "Conversations retrieved successfully"));
-        } catch (Exception e) {
-            log.error("Error getting conversations for user: {}", currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(conversations);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Get messages for a specific conversation
      */
     @GetMapping("/conversations/{conversationId}/messages")
-    public ResponseEntity<ApiResponse<PagedResponse<MessageResponse>>> getMessages(
+    public ResponseEntity<APIResonse<PagedResponse<MessageResponse>>> getMessages(
             @AuthenticationPrincipal User currentUser,
             @PathVariable Long conversationId,
             @RequestParam(defaultValue = "0") int page,
@@ -77,181 +72,137 @@ public class ChatController {
         log.info("Getting messages for user: {}, conversationId: {}, page: {}, size: {}", 
                 currentUser.getId(), conversationId, page, size);
         
-        try {
+        APIResonse<PagedResponse<MessageResponse>> response = new APIResonse<>();
             Pageable pageable = PageRequest.of(page, size);
             PagedResponse<MessageResponse> messages = chatService.getMessagesForConversation(
                     currentUser.getId(), conversationId, pageable);
             
-            return ResponseEntity.ok(ApiResponse.success(messages, 
-                    "Messages retrieved successfully"));
-        } catch (Exception e) {
-            log.error("Error getting messages for user: {}, conversationId: {}", 
-                    currentUser.getId(), conversationId, e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(messages);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Send a message
      */
     @PostMapping("/send")
-    public ResponseEntity<ApiResponse<MessageResponse>> sendMessage(
+    public ResponseEntity<APIResonse<MessageResponse>> sendMessage(
             @AuthenticationPrincipal User currentUser,
             @Valid @RequestBody MessageRequest request) {
         
         log.info("Sending message from user: {} to user: {}", 
                 currentUser.getId(), request.getReceiverId());
         
-        try {
+        APIResonse<MessageResponse> response = new APIResonse<>();
             MessageResponse message = chatService.sendMessage(currentUser.getId(), request);
-            return ResponseEntity.ok(ApiResponse.success(message, "Message sent successfully"));
-        } catch (Exception e) {
-            log.error("Error sending message from user: {} to user: {}", 
-                    currentUser.getId(), request.getReceiverId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(message);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Mark messages as read in a conversation
      */
     @PutMapping("/conversations/{conversationId}/read")
-    public ResponseEntity<ApiResponse<String>> markMessagesAsRead(
+    public ResponseEntity<APIResonse<String>> markMessagesAsRead(
             @AuthenticationPrincipal User currentUser,
             @PathVariable Long conversationId) {
         
         log.info("Marking messages as read for user: {}, conversationId: {}", 
                 currentUser.getId(), conversationId);
         
-        try {
+        APIResonse<String> response = new APIResonse<>();
             chatService.markMessagesAsRead(currentUser.getId(), conversationId);
-            return ResponseEntity.ok(ApiResponse.success("Success", "Messages marked as read"));
-        } catch (Exception e) {
-            log.error("Error marking messages as read for user: {}, conversationId: {}", 
-                    currentUser.getId(), conversationId, e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData("Mark messages as read in a conversation");
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Get conversation between current user and another user
      */
     @GetMapping("/conversations/with/{userId}")
-    public ResponseEntity<ApiResponse<ConversationResponse>> getConversationWithUser(
+    public ResponseEntity<APIResonse<ConversationResponse>> getConversationWithUser(
             @AuthenticationPrincipal User currentUser,
             @PathVariable Long userId) {
         
         log.info("Getting conversation between user: {} and user: {}", 
                 currentUser.getId(), userId);
         
-        try {
+        APIResonse<ConversationResponse> response = new APIResonse<>();
             ConversationResponse conversation = chatService.getOrCreateConversation(
                     currentUser.getId(), userId);
-            
-            return ResponseEntity.ok(ApiResponse.success(conversation, 
-                    "Conversation retrieved successfully"));
-        } catch (Exception e) {
-            log.error("Error getting conversation between user: {} and user: {}", 
-                    currentUser.getId(), userId, e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(conversation);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Get unread message count for user
      */
-    @GetMapping("/unread-count")
-    public ResponseEntity<ApiResponse<Long>> getUnreadMessageCount(
+    @GetMapping("/unreadCount")
+    public ResponseEntity<APIResonse<Long>> getUnreadMessageCount(
             @AuthenticationPrincipal User currentUser) {
         
         log.info("Getting unread message count for user: {}", currentUser.getId());
         
-        try {
+        APIResonse<Long> response = new APIResonse<>();
             Long unreadCount = chatService.getUnreadMessageCount(currentUser.getId());
-            return ResponseEntity.ok(ApiResponse.success(unreadCount, 
-                    "Unread count retrieved successfully"));
-        } catch (Exception e) {
-            log.error("Error getting unread count for user: {}", currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(unreadCount);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Delete a message (soft delete)
      */
     @DeleteMapping("/messages/{messageId}")
-    public ResponseEntity<ApiResponse<String>> deleteMessage(
+    public ResponseEntity<APIResonse<String>> deleteMessage(
             @AuthenticationPrincipal User currentUser,
             @PathVariable Long messageId) {
         
         log.info("Deleting message: {} by user: {}", messageId, currentUser.getId());
         
-        try {
+        APIResonse<String> response = new APIResonse<>();
             chatService.deleteMessage(currentUser.getId(), messageId);
-            return ResponseEntity.ok(ApiResponse.success("Success", "Message deleted successfully"));
-        } catch (Exception e) {
-            log.error("Error deleting message: {} by user: {}", messageId, currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData("Delete a message (soft delete)");
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Block user from conversation
      */
     @PostMapping("/conversations/{conversationId}/block")
-    public ResponseEntity<ApiResponse<String>> blockUserInConversation(
+    public ResponseEntity<APIResonse<String>> blockUserInConversation(
             @AuthenticationPrincipal User currentUser,
             @PathVariable Long conversationId) {
         
         log.info("Blocking conversation: {} by user: {}", conversationId, currentUser.getId());
         
-        try {
+        APIResonse<String> response = new APIResonse<>();
             chatService.blockConversation(currentUser.getId(), conversationId);
-            return ResponseEntity.ok(ApiResponse.success("Success", "User blocked successfully"));
-        } catch (Exception e) {
-            log.error("Error blocking conversation: {} by user: {}", 
-                    conversationId, currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(" Block user from conversation ");
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Get conversation details
      */
     @GetMapping("/conversations/{conversationId}")
-    public ResponseEntity<ApiResponse<ConversationResponse>> getConversationDetails(
+    public ResponseEntity<APIResonse<ConversationResponse>> getConversationDetails(
             @AuthenticationPrincipal User currentUser,
             @PathVariable Long conversationId) {
         
         log.info("Getting conversation details for user: {}, conversationId: {}", 
                 currentUser.getId(), conversationId);
         
-        try {
+        APIResonse<ConversationResponse> response = new APIResonse<>();
             ConversationResponse conversation = chatService.getConversationDetails(
                     currentUser.getId(), conversationId);
-            
-            return ResponseEntity.ok(ApiResponse.success(conversation, 
-                    "Conversation details retrieved successfully"));
-        } catch (Exception e) {
-            log.error("Error getting conversation details for user: {}, conversationId: {}", 
-                    currentUser.getId(), conversationId, e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(conversation);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Search messages in conversations
      */
-    @GetMapping("/search")
-    public ResponseEntity<ApiResponse<List<MessageResponse>>> searchMessages(
+    @GetMapping("/searchMessages")
+    public ResponseEntity<APIResonse<List<MessageResponse>>> searchMessages(
             @AuthenticationPrincipal User currentUser,
             @RequestParam String query,
             @RequestParam(required = false) Long conversationId,
@@ -261,18 +212,11 @@ public class ChatController {
         log.info("Searching messages for user: {}, query: {}, conversationId: {}", 
                 currentUser.getId(), query, conversationId);
         
-        try {
+        APIResonse<List<MessageResponse>> response = new APIResonse<>();
             Pageable pageable = PageRequest.of(page, size);
             List<MessageResponse> messages = chatService.searchMessages(
                     currentUser.getId(), query, conversationId, pageable);
-            
-            return ResponseEntity.ok(ApiResponse.success(messages, 
-                    "Message search completed successfully"));
-        } catch (Exception e) {
-            log.error("Error searching messages for user: {}, query: {}", 
-                    currentUser.getId(), query, e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(messages);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

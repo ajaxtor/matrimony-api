@@ -4,6 +4,7 @@ package com.api.matrimony.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,7 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.api.matrimony.entity.User;
 import com.api.matrimony.request.SubscribeRequest;
-import com.api.matrimony.response.ApiResponse;
+import com.api.matrimony.response.APIResonse;
+import com.api.matrimony.response.ProfileResponse;
 import com.api.matrimony.response.SubscriptionPlanResponse;
 import com.api.matrimony.response.UserSubscriptionResponse;
 import com.api.matrimony.service.SubscriptionService;
@@ -42,153 +44,113 @@ public class SubscriptionController {
      * Get all active subscription plans
      */
     @GetMapping("/plans")
-    public ResponseEntity<ApiResponse<List<SubscriptionPlanResponse>>> getSubscriptionPlans() {
+    public ResponseEntity<APIResonse<List<SubscriptionPlanResponse>>> getSubscriptionPlans() {
         log.info("Getting all subscription plans");
-        
-        try {
+        APIResonse< List<SubscriptionPlanResponse>> response = new APIResonse<>();
             List<SubscriptionPlanResponse> plans = subscriptionService.getAllActivePlans();
-            return ResponseEntity.ok(ApiResponse.success(plans, "Subscription plans retrieved successfully"));
-        } catch (Exception e) {
-            log.error("Error getting subscription plans", e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(plans);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Get subscription plan by ID
      */
     @GetMapping("/plans/{planId}")
-    public ResponseEntity<ApiResponse<SubscriptionPlanResponse>> getSubscriptionPlan(
+    public ResponseEntity<APIResonse<SubscriptionPlanResponse>> getSubscriptionPlan(
             @PathVariable Long planId) {
         
         log.info("Getting subscription plan: {}", planId);
-        
-        try {
+        APIResonse<SubscriptionPlanResponse> response = new APIResonse<>();
             SubscriptionPlanResponse plan = subscriptionService.getPlanById(planId);
-            return ResponseEntity.ok(ApiResponse.success(plan, "Subscription plan retrieved successfully"));
-        } catch (Exception e) {
-            log.error("Error getting subscription plan: {}", planId, e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(plan);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Get current user subscription
      */
     @GetMapping("/my-subscription")
-    public ResponseEntity<ApiResponse<UserSubscriptionResponse>> getCurrentSubscription(
+    public ResponseEntity<APIResonse<UserSubscriptionResponse>> getCurrentSubscription(
             @AuthenticationPrincipal User currentUser) {
         
         log.info("Getting current subscription for user: {}", currentUser.getId());
-        
-        try {
+        APIResonse<UserSubscriptionResponse> response = new APIResonse<>();
             UserSubscriptionResponse subscription = subscriptionService.getCurrentSubscription(currentUser.getId());
-            return ResponseEntity.ok(ApiResponse.success(subscription, "Current subscription retrieved successfully"));
-        } catch (Exception e) {
-            log.error("Error getting current subscription for user: {}", currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(subscription);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Subscribe to a plan
      */
     @PostMapping("/subscribe")
-    public ResponseEntity<ApiResponse<UserSubscriptionResponse>> subscribeToPlan(
+    public ResponseEntity<APIResonse<UserSubscriptionResponse>> subscribeToPlan(
             @AuthenticationPrincipal User currentUser,
             @Valid @RequestBody SubscribeRequest request) {
         
         log.info("Subscribing user: {} to plan: {}", currentUser.getId(), request.getPlanId());
-        
-        try {
+        APIResonse<UserSubscriptionResponse> response = new APIResonse<>();
             UserSubscriptionResponse subscription = subscriptionService.subscribeToPlan(
                     currentUser.getId(), request.getPlanId(), request.getPaymentId());
-            return ResponseEntity.ok(ApiResponse.success(subscription, "Subscription created successfully"));
-        } catch (Exception e) {
-            log.error("Error subscribing user: {} to plan: {}", currentUser.getId(), request.getPlanId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(subscription);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Cancel subscription
      */
     @PostMapping("/cancel")
-    public ResponseEntity<ApiResponse<String>> cancelSubscription(
+    public ResponseEntity<APIResonse<String>> cancelSubscription(
             @AuthenticationPrincipal User currentUser) {
         
         log.info("Cancelling subscription for user: {}", currentUser.getId());
-        
-        try {
+        APIResonse<String> response = new APIResonse<>();
             subscriptionService.cancelSubscription(currentUser.getId());
-            return ResponseEntity.ok(ApiResponse.success("Success", "Subscription cancelled successfully"));
-        } catch (Exception e) {
-            log.error("Error cancelling subscription for user: {}", currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData("Cancel subscription");
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Get subscription history
      */
     @GetMapping("/history")
-    public ResponseEntity<ApiResponse<List<UserSubscriptionResponse>>> getSubscriptionHistory(
+    public ResponseEntity<APIResonse<List<UserSubscriptionResponse>>> getSubscriptionHistory(
             @AuthenticationPrincipal User currentUser) {
         
         log.info("Getting subscription history for user: {}", currentUser.getId());
-        
-        try {
+        APIResonse<List<UserSubscriptionResponse>> response = new APIResonse<>();
             List<UserSubscriptionResponse> history = subscriptionService.getSubscriptionHistory(currentUser.getId());
-            return ResponseEntity.ok(ApiResponse.success(history, "Subscription history retrieved successfully"));
-        } catch (Exception e) {
-            log.error("Error getting subscription history for user: {}", currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(history);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Check if user has active subscription
      */
     @GetMapping("/status")
-    public ResponseEntity<ApiResponse<Boolean>> hasActiveSubscription(
+    public ResponseEntity<APIResonse<Boolean>> hasActiveSubscription(
             @AuthenticationPrincipal User currentUser) {
         
         log.info("Checking subscription status for user: {}", currentUser.getId());
-        
-        try {
+        APIResonse<Boolean> response = new APIResonse<>();
             boolean hasActive = subscriptionService.hasActiveSubscription(currentUser.getId());
-            return ResponseEntity.ok(ApiResponse.success(hasActive, "Subscription status checked"));
-        } catch (Exception e) {
-            log.error("Error checking subscription status for user: {}", currentUser.getId(), e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(hasActive);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * Check feature access
      */
     @GetMapping("/features/{feature}")
-    public ResponseEntity<ApiResponse<Boolean>> checkFeatureAccess(
+    public ResponseEntity<APIResonse<Boolean>> checkFeatureAccess(
             @AuthenticationPrincipal User currentUser,
             @PathVariable String feature) {
         
         log.info("Checking feature access for user: {}, feature: {}", currentUser.getId(), feature);
-        
-        try {
+        APIResonse<Boolean> response = new APIResonse<>();
             boolean hasAccess = subscriptionService.hasFeatureAccess(currentUser.getId(), feature);
-            return ResponseEntity.ok(ApiResponse.success(hasAccess, "Feature access checked"));
-        } catch (Exception e) {
-            log.error("Error checking feature access for user: {}, feature: {}", currentUser.getId(), feature, e);
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
-        }
+            response.setData(hasAccess);
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
 

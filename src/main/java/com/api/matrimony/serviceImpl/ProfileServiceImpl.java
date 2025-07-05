@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +17,8 @@ import com.api.matrimony.entity.UserPhoto;
 import com.api.matrimony.entity.UserProfile;
 import com.api.matrimony.enums.Gender;
 import com.api.matrimony.enums.MaritalStatus;
-import com.api.matrimony.exception.ResourceNotFoundException;
+import com.api.matrimony.exception.ApplicationException;
+import com.api.matrimony.exception.ErrorEnum;
 import com.api.matrimony.repository.BlockedUserRepository;
 import com.api.matrimony.repository.UserPhotoRepository;
 import com.api.matrimony.repository.UserProfileRepository;
@@ -47,7 +49,8 @@ public class ProfileServiceImpl implements ProfileService {
         log.info("Getting profile for user: {}", userId);
         
         UserProfile profile = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Profile not found for user: " + userId));
+                .orElseThrow(() -> new ApplicationException(ErrorEnum.PROFILE_NOT_FOUND_FOR_USER.toString(),
+						ErrorEnum.PROFILE_NOT_FOUND_FOR_USER.getExceptionError(), HttpStatus.OK));
         
         return mapToProfileResponse(profile);
     }
@@ -57,7 +60,8 @@ public class ProfileServiceImpl implements ProfileService {
         log.info("Updating profile for user: {}", userId);
         
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() ->new ApplicationException(ErrorEnum.USER_NOT_FOUND.toString(),
+						ErrorEnum.USER_NOT_FOUND.getExceptionError(), HttpStatus.OK));
 
         UserProfile profile = user.getProfile();
         if (profile == null) {
@@ -80,16 +84,19 @@ public class ProfileServiceImpl implements ProfileService {
         
         // Check if viewer is blocked by the profile owner
         if (blockedUserRepository.existsByBlockerIdAndBlockedUserId(userId, viewerId)) {
-            throw new ResourceNotFoundException("Profile not accessible");
+            throw new ApplicationException(ErrorEnum.PROFILE_NOT_ACCESSABLE.toString(),
+					ErrorEnum.PROFILE_NOT_ACCESSABLE.getExceptionError(), HttpStatus.OK);
         }
 
         // Check if profile owner is blocked by viewer
         if (blockedUserRepository.existsByBlockerIdAndBlockedUserId(viewerId, userId)) {
-            throw new ResourceNotFoundException("Profile not accessible");
+        	 throw new ApplicationException(ErrorEnum.PROFILE_NOT_ACCESSABLE.toString(),
+ 					ErrorEnum.PROFILE_NOT_ACCESSABLE.getExceptionError(), HttpStatus.OK);
         }
 
         UserProfile profile = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
+                .orElseThrow(() -> new ApplicationException(ErrorEnum.PROFILE_NOT_FOUND_FOR_USER.toString(),
+    					ErrorEnum.PROFILE_NOT_FOUND_FOR_USER.getExceptionError(), HttpStatus.OK));
 
         // Increment profile view count
         incrementProfileView(userId, viewerId);
@@ -158,8 +165,7 @@ public class ProfileServiceImpl implements ProfileService {
         }
 
         // Check required fields
-        boolean hasBasicInfo = profile.getFirstName() != null && 
-                              profile.getLastName() != null &&
+        boolean hasBasicInfo = profile.getFullName() != null && 
                               profile.getDateOfBirth() != null &&
                               profile.getGender() != null;
 
@@ -181,7 +187,8 @@ public class ProfileServiceImpl implements ProfileService {
         log.info("Getting similar profiles for user: {}, limit: {}", userId, limit);
         
         UserProfile userProfile = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
+                .orElseThrow(() -> new ApplicationException(ErrorEnum.PROFILE_NOT_FOUND_FOR_USER.toString(),
+    					ErrorEnum.PROFILE_NOT_FOUND_FOR_USER.getExceptionError(), HttpStatus.OK));
 
         // Find profiles with similar criteria
         Pageable pageable = PageRequest.of(0, limit);
@@ -202,11 +209,8 @@ public class ProfileServiceImpl implements ProfileService {
 
     // Helper methods
     private void updateProfileFields(UserProfile profile, ProfileUpdateRequest request) {
-        if (request.getFirstName() != null) {
-            profile.setFirstName(request.getFirstName());
-        }
-        if (request.getLastName() != null) {
-            profile.setLastName(request.getLastName());
+        if (request.getFullName() != null) {
+            profile.setFullName(request.getFullName());
         }
         if (request.getDateOfBirth() != null) {
             profile.setDateOfBirth(request.getDateOfBirth());
@@ -273,11 +277,8 @@ public class ProfileServiceImpl implements ProfileService {
     private ProfileResponse mapToProfileResponse(UserProfile profile) {
         ProfileResponse response = new ProfileResponse();
         response.setId(profile.getId());
-        response.setFirstName(profile.getFirstName());
-        response.setLastName(profile.getLastName());
-        response.setFullName(profile.getFirstName() + " " + profile.getLastName());
+        response.setFullName(profile.getFullName() );
         response.setDateOfBirth(profile.getDateOfBirth());
-        
         if (profile.getDateOfBirth() != null) {
             response.setAge(Period.between(profile.getDateOfBirth(), LocalDate.now()).getYears());
         }
