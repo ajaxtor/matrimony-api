@@ -23,7 +23,7 @@ WORKDIR /app
 # Copy the JAR file from the build stage
 COPY --from=build /app/target/*.jar app.jar
 
-EXPOSE 9999
+EXPOSE 8585
 
 # Set environment profile to 'prod'
 ENV SPRING_PROFILES_ACTIVE=prod

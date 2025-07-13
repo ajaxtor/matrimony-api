@@ -1,129 +1,339 @@
-2025-06-18T01:07:00.772+05:30  WARN 19720 --- [matrimony] [HikariPool-20:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-20 - Thread starvation or clock leap detected (housekeeper delta=1h19s95ms163µs700ns).
-2025-06-18T01:24:23.719+05:30  INFO 19720 --- [matrimony] [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
-2025-06-18T01:24:23.729+05:30  INFO 19720 --- [matrimony] [Thread-79] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
-2025-06-18T01:24:23.735+05:30  INFO 19720 --- [matrimony] [scheduling-1] c.a.m.s.SubscriptionServiceImpl          : Processing expired subscriptions
-2025-06-18T01:24:23.793+05:30  INFO 19720 --- [matrimony] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
-2025-06-18T01:24:23.836+05:30 DEBUG 19720 --- [matrimony] [scheduling-1] org.hibernate.SQL                        : select us1_0.id,us1_0.amount_paid,us1_0.created_at,us1_0.end_date,us1_0.payment_id,us1_0.plan_id,us1_0.start_date,us1_0.status,us1_0.updated_at,us1_0.user_id from user_subscriptions us1_0 where us1_0.end_date<current_date and us1_0.status='ACTIVE'
-2025-06-18T01:24:23.853+05:30  INFO 19720 --- [matrimony] [scheduling-1] c.a.m.s.SubscriptionServiceImpl          : Processed 0 expired subscriptions
-2025-06-18T01:24:23.858+05:30  INFO 19720 --- [matrimony] [Thread-79] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
-2025-06-18T01:24:23.859+05:30  INFO 19720 --- [matrimony] [Thread-79] com.zaxxer.hikari.HikariDataSource       : HikariPool-20 - Shutdown initiated...
-2025-06-18T01:24:23.861+05:30  INFO 19720 --- [matrimony] [Thread-79] com.zaxxer.hikari.HikariDataSource       : HikariPool-20 - Shutdown completed.
-2025-06-18T01:24:24.077+05:30  INFO 19720 --- [matrimony] [restartedMain] com.api.matrimony.MatrimonyApplication   : Starting MatrimonyApplication using Java 21.0.2 with PID 19720 (C:\Users\goswa\OneDrive\Documents\sts-project-code\matrimony\matrimony\target\classes started by goswa in C:\Users\goswa\OneDrive\Documents\sts-project-code\matrimony\matrimony)
-2025-06-18T01:24:24.077+05:30  INFO 19720 --- [matrimony] [restartedMain] com.api.matrimony.MatrimonyApplication   : The following 1 profile is active: "dev"
-2025-06-18T01:24:24.411+05:30  INFO 19720 --- [matrimony] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2025-06-18T01:24:24.459+05:30  INFO 19720 --- [matrimony] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 47 ms. Found 13 JPA repository interfaces.
-2025-06-18T01:24:24.679+05:30  INFO 19720 --- [matrimony] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 9999 (http)
-2025-06-18T01:24:24.681+05:30  INFO 19720 --- [matrimony] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2025-06-18T01:24:24.681+05:30  INFO 19720 --- [matrimony] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
-2025-06-18T01:24:24.706+05:30  INFO 19720 --- [matrimony] [restartedMain] o.a.c.c.C.[.[localhost].[/api/v1]        : Initializing Spring embedded WebApplicationContext
-2025-06-18T01:24:24.706+05:30  INFO 19720 --- [matrimony] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 626 ms
-2025-06-18T01:24:24.777+05:30  INFO 19720 --- [matrimony] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2025-06-18T01:24:24.780+05:30  INFO 19720 --- [matrimony] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2025-06-18T01:24:24.790+05:30  INFO 19720 --- [matrimony] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2025-06-18T01:24:24.793+05:30  INFO 19720 --- [matrimony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-21 - Starting...
-2025-06-18T01:24:24.797+05:30  INFO 19720 --- [matrimony] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-21 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6ae0d02f
-2025-06-18T01:24:24.798+05:30  INFO 19720 --- [matrimony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-21 - Start completed.
-2025-06-18T01:24:24.799+05:30  WARN 19720 --- [matrimony] [restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.7.35 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
-2025-06-18T01:24:24.800+05:30  WARN 19720 --- [matrimony] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2025-06-18T01:24:24.800+05:30  INFO 19720 --- [matrimony] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
-	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-21)']
-	Database driver: undefined/unknown
-	Database version: 5.7.35
-	Autocommit mode: undefined/unknown
-	Isolation level: undefined/unknown
-	Minimum pool size: undefined/unknown
-	Maximum pool size: undefined/unknown
-2025-06-18T01:24:25.037+05:30  INFO 19720 --- [matrimony] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2025-06-18T01:24:25.037+05:30  INFO 19720 --- [matrimony] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2025-06-18T01:24:25.448+05:30  INFO 19720 --- [matrimony] [restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
-2025-06-18T01:24:25.449+05:30  WARN 19720 --- [matrimony] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
-2025-06-18T01:24:25.537+05:30  WARN 19720 --- [matrimony] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2025-06-18T01:24:25.554+05:30  INFO 19720 --- [matrimony] [restartedMain] com.api.matrimony.config.CorsConfig      : Configuring CORS with origins: http://localhost:3000, http://localhost:8081
-2025-06-18T01:24:25.660+05:30  INFO 19720 --- [matrimony] [restartedMain] c.api.matrimony.config.SecurityConfig    : Configuring Security Filter Chain...
-2025-06-18T01:24:25.663+05:30  INFO 19720 --- [matrimony] [restartedMain] c.api.matrimony.config.SecurityConfig    : Configuring request authorization...
-2025-06-18T01:24:25.677+05:30  INFO 19720 --- [matrimony] [restartedMain] c.api.matrimony.config.SecurityConfig    : Security Filter Chain configured successfully
-2025-06-18T01:24:25.702+05:30 DEBUG 19720 --- [matrimony] [restartedMain] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
-2025-06-18T01:24:25.936+05:30  INFO 19720 --- [matrimony] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
-2025-06-18T01:24:25.963+05:30  INFO 19720 --- [matrimony] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 9999 (http) with context path '/api/v1'
-2025-06-18T01:24:25.967+05:30  INFO 19720 --- [matrimony] [restartedMain] com.api.matrimony.MatrimonyApplication   : Started MatrimonyApplication in 1.929 seconds (process running for 8673.97)
-2025-06-18T01:24:25.968+05:30  INFO 19720 --- [matrimony] [scheduling-1] c.a.m.serviceImpl.OtpServiceImpl         : Cleaning up expired OTPs
-2025-06-18T01:24:25.968+05:30  INFO 19720 --- [matrimony] [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
-2025-06-18T01:24:25.970+05:30 DEBUG 19720 --- [matrimony] [scheduling-1] org.hibernate.SQL                        : select ov1_0.id,ov1_0.created_at,ov1_0.email,ov1_0.expires_at,ov1_0.is_verified,ov1_0.otp,ov1_0.phone,ov1_0.purpose from otp_verification ov1_0 where ov1_0.expires_at<?
-2025-06-18T01:24:47.423+05:30  INFO 19720 --- [matrimony] [RMI TCP Connection(146)-127.0.0.1] inMXBeanRegistrar$SpringApplicationAdmin : Application shutdown requested.
-2025-06-18T01:24:47.424+05:30  INFO 19720 --- [matrimony] [RMI TCP Connection(146)-127.0.0.1] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
-2025-06-18T01:24:47.437+05:30  INFO 19720 --- [matrimony] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
-2025-06-18T01:24:47.440+05:30  INFO 19720 --- [matrimony] [RMI TCP Connection(146)-127.0.0.1] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
-2025-06-18T01:24:47.441+05:30  INFO 19720 --- [matrimony] [RMI TCP Connection(146)-127.0.0.1] com.zaxxer.hikari.HikariDataSource       : HikariPool-21 - Shutdown initiated...
-2025-06-18T01:24:47.442+05:30  INFO 19720 --- [matrimony] [RMI TCP Connection(146)-127.0.0.1] com.zaxxer.hikari.HikariDataSource       : HikariPool-21 - Shutdown completed.
-2025-06-18T01:24:50.812+05:30  INFO 10056 --- [matrimony] [restartedMain] com.api.matrimony.MatrimonyApplication   : Starting MatrimonyApplication using Java 21.0.2 with PID 10056 (C:\Users\goswa\OneDrive\Documents\sts-project-code\matrimony\matrimony\target\classes started by goswa in C:\Users\goswa\OneDrive\Documents\sts-project-code\matrimony\matrimony)
-2025-06-18T01:24:50.814+05:30  INFO 10056 --- [matrimony] [restartedMain] com.api.matrimony.MatrimonyApplication   : The following 1 profile is active: "dev"
-2025-06-18T01:24:50.861+05:30  INFO 10056 --- [matrimony] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
-2025-06-18T01:24:50.861+05:30  INFO 10056 --- [matrimony] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
-2025-06-18T01:24:51.675+05:30  INFO 10056 --- [matrimony] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2025-06-18T01:24:51.875+05:30  INFO 10056 --- [matrimony] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 189 ms. Found 13 JPA repository interfaces.
-2025-06-18T01:24:52.559+05:30  INFO 10056 --- [matrimony] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 9999 (http)
-2025-06-18T01:24:52.571+05:30  INFO 10056 --- [matrimony] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2025-06-18T01:24:52.571+05:30  INFO 10056 --- [matrimony] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
-2025-06-18T01:24:52.616+05:30  INFO 10056 --- [matrimony] [restartedMain] o.a.c.c.C.[.[localhost].[/api/v1]        : Initializing Spring embedded WebApplicationContext
-2025-06-18T01:24:52.617+05:30  INFO 10056 --- [matrimony] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1756 ms
-2025-06-18T01:24:52.776+05:30  INFO 10056 --- [matrimony] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2025-06-18T01:24:52.823+05:30  INFO 10056 --- [matrimony] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.15.Final
-2025-06-18T01:24:52.852+05:30  INFO 10056 --- [matrimony] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2025-06-18T01:24:53.092+05:30  INFO 10056 --- [matrimony] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2025-06-18T01:24:53.120+05:30  INFO 10056 --- [matrimony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2025-06-18T01:24:53.254+05:30  INFO 10056 --- [matrimony] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@aadaab3
-2025-06-18T01:24:53.256+05:30  INFO 10056 --- [matrimony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2025-06-18T01:24:53.289+05:30  WARN 10056 --- [matrimony] [restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.7.35 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
-2025-06-18T01:24:53.294+05:30  WARN 10056 --- [matrimony] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2025-06-18T01:24:53.309+05:30  INFO 10056 --- [matrimony] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
-	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
-	Database driver: undefined/unknown
-	Database version: 5.7.35
-	Autocommit mode: undefined/unknown
-	Isolation level: undefined/unknown
-	Minimum pool size: undefined/unknown
-	Maximum pool size: undefined/unknown
-2025-06-18T01:24:54.428+05:30  INFO 10056 --- [matrimony] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2025-06-18T01:24:54.431+05:30  INFO 10056 --- [matrimony] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2025-06-18T01:24:54.736+05:30  INFO 10056 --- [matrimony] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
-2025-06-18T01:24:56.585+05:30  INFO 10056 --- [matrimony] [restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
-2025-06-18T01:24:56.586+05:30  WARN 10056 --- [matrimony] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
-2025-06-18T01:24:57.181+05:30  WARN 10056 --- [matrimony] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2025-06-18T01:24:57.226+05:30  INFO 10056 --- [matrimony] [restartedMain] com.api.matrimony.config.CorsConfig      : Configuring CORS with origins: http://localhost:3000, http://localhost:8081
-2025-06-18T01:24:57.503+05:30  INFO 10056 --- [matrimony] [restartedMain] c.api.matrimony.config.SecurityConfig    : Configuring Security Filter Chain...
-2025-06-18T01:24:57.511+05:30  INFO 10056 --- [matrimony] [restartedMain] c.api.matrimony.config.SecurityConfig    : Configuring request authorization...
-2025-06-18T01:24:57.534+05:30  INFO 10056 --- [matrimony] [restartedMain] c.api.matrimony.config.SecurityConfig    : Security Filter Chain configured successfully
-2025-06-18T01:24:57.578+05:30 DEBUG 10056 --- [matrimony] [restartedMain] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
-2025-06-18T01:24:58.001+05:30  INFO 10056 --- [matrimony] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
-2025-06-18T01:24:58.202+05:30  INFO 10056 --- [matrimony] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 9999 (http) with context path '/api/v1'
-2025-06-18T01:24:58.218+05:30  INFO 10056 --- [matrimony] [restartedMain] com.api.matrimony.MatrimonyApplication   : Started MatrimonyApplication in 7.819 seconds (process running for 8.492)
-2025-06-18T01:24:58.235+05:30  INFO 10056 --- [matrimony] [scheduling-1] c.a.m.serviceImpl.OtpServiceImpl         : Cleaning up expired OTPs
-2025-06-18T01:24:58.359+05:30 DEBUG 10056 --- [matrimony] [scheduling-1] org.hibernate.SQL                        : select ov1_0.id,ov1_0.created_at,ov1_0.email,ov1_0.expires_at,ov1_0.is_verified,ov1_0.otp,ov1_0.phone,ov1_0.purpose from otp_verification ov1_0 where ov1_0.expires_at<?
-2025-06-18T01:25:51.253+05:30  INFO 10056 --- [matrimony] [http-nio-9999-exec-1] o.a.c.c.C.[.[localhost].[/api/v1]        : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2025-06-18T01:25:51.253+05:30  INFO 10056 --- [matrimony] [http-nio-9999-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2025-06-18T01:25:51.255+05:30  INFO 10056 --- [matrimony] [http-nio-9999-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
-2025-06-18T01:25:51.277+05:30 DEBUG 10056 --- [matrimony] [http-nio-9999-exec-1] o.s.security.web.FilterChainProxy        : Securing POST /auth/register
-2025-06-18T01:25:51.283+05:30 DEBUG 10056 --- [matrimony] [http-nio-9999-exec-1] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
-2025-06-18T01:25:51.286+05:30 DEBUG 10056 --- [matrimony] [http-nio-9999-exec-1] o.s.security.web.FilterChainProxy        : Secured POST /auth/register
-2025-06-18T01:25:51.519+05:30  INFO 10056 --- [matrimony] [http-nio-9999-exec-1] c.a.matrimony.controller.AuthController  : Registration attempt for email: goswamiavishek22@gmail.com
-2025-06-18T01:25:51.521+05:30  INFO 10056 --- [matrimony] [http-nio-9999-exec-1] c.a.m.serviceImpl.AuthServiceImpl        : Starting registration process for email: goswamiavishek22@gmail.com
-2025-06-18T01:25:51.526+05:30 DEBUG 10056 --- [matrimony] [http-nio-9999-exec-1] org.hibernate.SQL                        : select u1_0.id from users u1_0 where u1_0.email=? limit ?
-2025-06-18T01:25:51.533+05:30 DEBUG 10056 --- [matrimony] [http-nio-9999-exec-1] org.hibernate.SQL                        : select u1_0.id from users u1_0 where u1_0.phone=? limit ?
-2025-06-18T01:25:51.541+05:30 ERROR 10056 --- [matrimony] [http-nio-9999-exec-1] c.a.matrimony.controller.AuthController  : Registration failed for email: goswamiavishek22@gmail.com
+2025-06-23T13:38:55.012+05:30  INFO 2288 --- [matrimony] [restartedMain] com.api.matrimony.MatrimonyApplication   : Starting MatrimonyApplication using Java 21.0.2 with PID 2288 (C:\Users\goswa\OneDrive\Documents\sts-project-code\matrimony\matrimony\target\classes started by goswa in C:\Users\goswa\OneDrive\Documents\sts-project-code\matrimony\matrimony)
+2025-06-23T13:38:55.018+05:30  INFO 2288 --- [matrimony] [restartedMain] com.api.matrimony.MatrimonyApplication   : The following 1 profile is active: "dev"
+2025-06-23T13:38:55.081+05:30  INFO 2288 --- [matrimony] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-06-23T13:38:55.081+05:30  INFO 2288 --- [matrimony] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-06-23T13:38:56.221+05:30  INFO 2288 --- [matrimony] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-23T13:38:56.537+05:30  INFO 2288 --- [matrimony] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 302 ms. Found 13 JPA repository interfaces.
+2025-06-23T13:38:57.359+05:30  INFO 2288 --- [matrimony] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 9999 (http)
+2025-06-23T13:38:57.374+05:30  INFO 2288 --- [matrimony] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-06-23T13:38:57.374+05:30  INFO 2288 --- [matrimony] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-06-23T13:38:57.428+05:30  INFO 2288 --- [matrimony] [restartedMain] o.a.c.c.C.[.[localhost].[/api/v1]        : Initializing Spring embedded WebApplicationContext
+2025-06-23T13:38:57.429+05:30  INFO 2288 --- [matrimony] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2347 ms
+2025-06-23T13:38:57.632+05:30  INFO 2288 --- [matrimony] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-23T13:38:57.702+05:30  INFO 2288 --- [matrimony] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.15.Final
+2025-06-23T13:38:57.749+05:30  INFO 2288 --- [matrimony] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-06-23T13:38:58.123+05:30  INFO 2288 --- [matrimony] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-23T13:38:58.169+05:30  INFO 2288 --- [matrimony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-06-23T13:38:59.252+05:30  WARN 2288 --- [matrimony] [restartedMain] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 0, SQLState: 08001
+2025-06-23T13:38:59.252+05:30 ERROR 2288 --- [matrimony] [restartedMain] o.h.engine.jdbc.spi.SqlExceptionHelper   : Cannot load connection class because of underlying exception: com.mysql.cj.exceptions.WrongArgumentException: Failed to parse the host:port pair 'localhost:${DATABASE_PORT:3306)'.
+2025-06-23T13:38:59.255+05:30  WARN 2288 --- [matrimony] [restartedMain] o.h.e.j.e.i.JdbcEnvironmentInitiator     : HHH000342: Could not obtain connection to query metadata
 
-com.api.matrimony.exception.CustomException: Phone number is already registered
-	at com.api.matrimony.serviceImpl.AuthServiceImpl.register(AuthServiceImpl.java:63) ~[classes/:na]
+org.hibernate.exception.JDBCConnectionException: unable to obtain isolated JDBC connection [Cannot load connection class because of underlying exception: com.mysql.cj.exceptions.WrongArgumentException: Failed to parse the host:port pair 'localhost:${DATABASE_PORT:3306)'.] [n/a]
+	at org.hibernate.exception.internal.SQLStateConversionDelegate.convert(SQLStateConversionDelegate.java:100) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:58) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:108) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:94) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.delegateWork(JdbcIsolationDelegate.java:116) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:336) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:129) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:81) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.boot.model.relational.Database.<init>(Database.java:45) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:226) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:194) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:171) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1442) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1513) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:66) ~[spring-orm-6.2.7.jar:6.2.7]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:390) ~[spring-orm-6.2.7.jar:6.2.7]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:419) ~[spring-orm-6.2.7.jar:6.2.7]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:400) ~[spring-orm-6.2.7.jar:6.2.7]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:366) ~[spring-orm-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1873) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1822) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:607) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:365) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:135) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveConstructorArguments(ConstructorResolver.java:691) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:513) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1375) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1205) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:365) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:135) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1725) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1474) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:606) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1682) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1628) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:913) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:791) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:240) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1395) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1232) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1740) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1628) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:913) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:791) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:240) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1395) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1232) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:207) ~[spring-beans-6.2.7.jar:6.2.7]
+	at org.springframework.boot.web.servlet.ServletContextInitializerBeans.getOrderedBeansOfType(ServletContextInitializerBeans.java:230) ~[spring-boot-3.5.0.jar:3.5.0]
+	at org.springframework.boot.web.servlet.ServletContextInitializerBeans.addAsRegistrationBean(ServletContextInitializerBeans.java:184) ~[spring-boot-3.5.0.jar:3.5.0]
+	at org.springframework.boot.web.servlet.ServletContextInitializerBeans.addAsRegistrationBean(ServletContextInitializerBeans.java:179) ~[spring-boot-3.5.0.jar:3.5.0]
+	at org.springframework.boot.web.servlet.ServletContextInitializerBeans.addAdaptableBeans(ServletContextInitializerBeans.java:164) ~[spring-boot-3.5.0.jar:3.5.0]
+	at org.springframework.boot.web.servlet.ServletContextInitializerBeans.<init>(ServletContextInitializerBeans.java:96) ~[spring-boot-3.5.0.jar:3.5.0]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.getServletContextInitializerBeans(ServletWebServerApplicationContext.java:271) ~[spring-boot-3.5.0.jar:3.5.0]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.selfInitialize(ServletWebServerApplicationContext.java:245) ~[spring-boot-3.5.0.jar:3.5.0]
+	at org.springframework.boot.web.embedded.tomcat.TomcatStarter.onStartup(TomcatStarter.java:52) ~[spring-boot-3.5.0.jar:3.5.0]
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:4464) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1203) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1193) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[na:na]
+	at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145) ~[na:na]
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:749) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.core.StandardHost.startInternal(StandardHost.java:772) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1203) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1193) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[na:na]
+	at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145) ~[na:na]
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:749) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.core.StandardEngine.startInternal(StandardEngine.java:203) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.core.StandardService.startInternal(StandardService.java:412) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.core.StandardServer.startInternal(StandardServer.java:870) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.startup.Tomcat.start(Tomcat.java:438) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.initialize(TomcatWebServer.java:128) ~[spring-boot-3.5.0.jar:3.5.0]
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.<init>(TomcatWebServer.java:107) ~[spring-boot-3.5.0.jar:3.5.0]
+	at org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory.getTomcatWebServer(TomcatServletWebServerFactory.java:517) ~[spring-boot-3.5.0.jar:3.5.0]
+	at org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory.getWebServer(TomcatServletWebServerFactory.java:219) ~[spring-boot-3.5.0.jar:3.5.0]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.createWebServer(ServletWebServerApplicationContext.java:193) ~[spring-boot-3.5.0.jar:3.5.0]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:167) ~[spring-boot-3.5.0.jar:3.5.0]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:621) ~[spring-context-6.2.7.jar:6.2.7]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.5.0.jar:3.5.0]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:753) ~[spring-boot-3.5.0.jar:3.5.0]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) ~[spring-boot-3.5.0.jar:3.5.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) ~[spring-boot-3.5.0.jar:3.5.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1362) ~[spring-boot-3.5.0.jar:3.5.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1351) ~[spring-boot-3.5.0.jar:3.5.0]
+	at com.api.matrimony.MatrimonyApplication.main(MatrimonyApplication.java:22) ~[classes/:na]
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
-	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359) ~[spring-aop-6.2.7.jar:6.2.7]
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.2.7.jar:6.2.7]
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.2.7.jar:6.2.7]
-	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:380) ~[spring-tx-6.2.7.jar:6.2.7]
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50) ~[spring-boot-devtools-3.5.0.jar:3.5.0]
+Caused by: java.sql.SQLNonTransientConnectionException: Cannot load connection class because of underlying exception: com.mysql.cj.exceptions.WrongArgumentException: Failed to parse the host:port pair 'localhost:${DATABASE_PORT:3306)'.
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:111) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:98) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:90) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:64) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:74) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:79) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:131) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:211) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:139) ~[HikariCP-6.3.0.jar:na]
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:368) ~[HikariCP-6.3.0.jar:na]
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:205) ~[HikariCP-6.3.0.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:483) ~[HikariCP-6.3.0.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:571) ~[HikariCP-6.3.0.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:101) ~[HikariCP-6.3.0.jar:na]
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:111) ~[HikariCP-6.3.0.jar:na]
+	at org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl.getConnection(DatasourceConnectionProviderImpl.java:126) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:483) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.delegateWork(JdbcIsolationDelegate.java:61) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	... 123 common frames omitted
+Caused by: com.mysql.cj.exceptions.UnableToConnectException: Cannot load connection class because of underlying exception: com.mysql.cj.exceptions.WrongArgumentException: Failed to parse the host:port pair 'localhost:${DATABASE_PORT:3306)'.
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62) ~[na:na]
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502) ~[na:na]
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486) ~[na:na]
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:62) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:105) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	... 134 common frames omitted
+Caused by: com.mysql.cj.exceptions.WrongArgumentException: Failed to parse the host:port pair 'localhost:${DATABASE_PORT:3306)'.
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62) ~[na:na]
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502) ~[na:na]
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486) ~[na:na]
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:62) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:105) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.conf.ConnectionUrlParser.parseHostPortPair(ConnectionUrlParser.java:500) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.conf.ConnectionUrlParser.buildHostInfoResortingToGenericSyntaxParser(ConnectionUrlParser.java:438) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.conf.ConnectionUrlParser.parseAuthoritySegment(ConnectionUrlParser.java:270) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.conf.ConnectionUrlParser.parseAuthoritySection(ConnectionUrlParser.java:184) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.conf.ConnectionUrlParser.getHosts(ConnectionUrlParser.java:651) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.conf.ConnectionUrl$Type.getConnectionUrlInstance(ConnectionUrl.java:194) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.conf.ConnectionUrl.getConnectionUrlInstance(ConnectionUrl.java:280) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:185) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	... 133 common frames omitted
+Caused by: java.lang.NumberFormatException: For input string: "3306)"
+	at java.base/java.lang.NumberFormatException.forInputString(NumberFormatException.java:67) ~[na:na]
+	at java.base/java.lang.Integer.parseInt(Integer.java:662) ~[na:na]
+	at java.base/java.lang.Integer.parseInt(Integer.java:778) ~[na:na]
+	at com.mysql.cj.conf.ConnectionUrlParser.parseHostPortPair(ConnectionUrlParser.java:498) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	... 140 common frames omitted
+
+2025-06-23T13:38:59.344+05:30  WARN 2288 --- [matrimony] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-23T13:38:59.382+05:30  INFO 2288 --- [matrimony] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (null)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-06-23T13:39:00.813+05:30  INFO 2288 --- [matrimony] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-06-23T13:39:00.817+05:30  INFO 2288 --- [matrimony] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-23T13:39:01.233+05:30  INFO 2288 --- [matrimony] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-23T13:39:03.528+05:30  INFO 2288 --- [matrimony] [restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-06-23T13:39:03.528+05:30  WARN 2288 --- [matrimony] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-06-23T13:39:04.136+05:30  WARN 2288 --- [matrimony] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-06-23T13:39:04.185+05:30  INFO 2288 --- [matrimony] [restartedMain] com.api.matrimony.config.CorsConfig      : Configuring CORS with origins: http://localhost:3000, http://localhost:8081
+2025-06-23T13:39:04.512+05:30  INFO 2288 --- [matrimony] [restartedMain] c.api.matrimony.config.SecurityConfig    : Configuring Security Filter Chain...
+2025-06-23T13:39:04.518+05:30  INFO 2288 --- [matrimony] [restartedMain] c.api.matrimony.config.SecurityConfig    : Configuring request authorization...
+2025-06-23T13:39:04.541+05:30  INFO 2288 --- [matrimony] [restartedMain] c.api.matrimony.config.SecurityConfig    : Security Filter Chain configured successfully
+2025-06-23T13:39:04.581+05:30 DEBUG 2288 --- [matrimony] [restartedMain] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-06-23T13:39:05.032+05:30  INFO 2288 --- [matrimony] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-06-23T13:39:05.315+05:30  INFO 2288 --- [matrimony] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 9999 (http) with context path '/api/v1'
+2025-06-23T13:39:05.346+05:30  INFO 2288 --- [matrimony] [restartedMain] com.api.matrimony.MatrimonyApplication   : Started MatrimonyApplication in 10.971 seconds (process running for 12.908)
+2025-06-23T13:39:05.370+05:30  INFO 2288 --- [matrimony] [scheduling-1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-06-23T13:39:06.374+05:30  WARN 2288 --- [matrimony] [scheduling-1] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 0, SQLState: 08001
+2025-06-23T13:39:06.374+05:30 ERROR 2288 --- [matrimony] [scheduling-1] o.h.engine.jdbc.spi.SqlExceptionHelper   : Cannot load connection class because of underlying exception: com.mysql.cj.exceptions.WrongArgumentException: Failed to parse the host:port pair 'localhost:${DATABASE_PORT:3306)'.
+2025-06-23T13:39:06.381+05:30 ERROR 2288 --- [matrimony] [scheduling-1] o.s.s.s.TaskUtils$LoggingErrorHandler    : Unexpected error occurred in scheduled task
+
+org.springframework.transaction.CannotCreateTransactionException: Could not open JPA EntityManager for transaction
+	at org.springframework.orm.jpa.JpaTransactionManager.doBegin(JpaTransactionManager.java:466) ~[spring-orm-6.2.7.jar:6.2.7]
+	at org.springframework.transaction.support.AbstractPlatformTransactionManager.startTransaction(AbstractPlatformTransactionManager.java:532) ~[spring-tx-6.2.7.jar:6.2.7]
+	at org.springframework.transaction.support.AbstractPlatformTransactionManager.getTransaction(AbstractPlatformTransactionManager.java:405) ~[spring-tx-6.2.7.jar:6.2.7]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.createTransactionIfNecessary(TransactionAspectSupport.java:639) ~[spring-tx-6.2.7.jar:6.2.7]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:374) ~[spring-tx-6.2.7.jar:6.2.7]
 	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-6.2.7.jar:6.2.7]
 	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.7.jar:6.2.7]
 	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:728) ~[spring-aop-6.2.7.jar:6.2.7]
-	at com.api.matrimony.serviceImpl.AuthServiceImpl$$SpringCGLIB$$0.register(<generated>) ~[classes/:na]
-	at com.api.matrimony.controller.AuthController.register(AuthController.java:49) ~[classes/:na]
+	at com.api.matrimony.serviceImpl.OtpServiceImpl$$SpringCGLIB$$0.cleanupExpiredOtps(<generated>) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.7.jar:6.2.7]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.7.jar:6.2.7]
+	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.15.0.jar:1.15.0]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.7.jar:6.2.7]
+	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:85) ~[spring-context-6.2.7.jar:6.2.7]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.7.jar:6.2.7]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: org.hibernate.exception.JDBCConnectionException: Unable to acquire JDBC Connection [Cannot load connection class because of underlying exception: com.mysql.cj.exceptions.WrongArgumentException: Failed to parse the host:port pair 'localhost:${DATABASE_PORT:3306)'.] [n/a]
+	at org.hibernate.exception.internal.SQLExceptionTypeDelegate.convert(SQLExceptionTypeDelegate.java:51) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:58) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:108) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:94) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.resource.jdbc.internal.LogicalConnectionManagedImpl.acquireConnectionIfNeeded(LogicalConnectionManagedImpl.java:129) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.resource.jdbc.internal.LogicalConnectionManagedImpl.getPhysicalConnection(LogicalConnectionManagedImpl.java:156) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.resource.jdbc.internal.LogicalConnectionManagedImpl.getConnectionForTransactionManagement(LogicalConnectionManagedImpl.java:286) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.resource.jdbc.internal.LogicalConnectionManagedImpl.begin(LogicalConnectionManagedImpl.java:294) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcResourceLocalTransactionCoordinatorImpl$TransactionDriverControlImpl.begin(JdbcResourceLocalTransactionCoordinatorImpl.java:232) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.transaction.internal.TransactionImpl.begin(TransactionImpl.java:83) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.beginTransaction(HibernateJpaDialect.java:176) ~[spring-orm-6.2.7.jar:6.2.7]
+	at org.springframework.orm.jpa.JpaTransactionManager.doBegin(JpaTransactionManager.java:420) ~[spring-orm-6.2.7.jar:6.2.7]
+	... 22 common frames omitted
+Caused by: java.sql.SQLNonTransientConnectionException: Cannot load connection class because of underlying exception: com.mysql.cj.exceptions.WrongArgumentException: Failed to parse the host:port pair 'localhost:${DATABASE_PORT:3306)'.
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:111) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:98) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:90) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:64) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:74) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:79) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:131) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:211) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:139) ~[HikariCP-6.3.0.jar:na]
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:368) ~[HikariCP-6.3.0.jar:na]
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:205) ~[HikariCP-6.3.0.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:483) ~[HikariCP-6.3.0.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:571) ~[HikariCP-6.3.0.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:101) ~[HikariCP-6.3.0.jar:na]
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:111) ~[HikariCP-6.3.0.jar:na]
+	at org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl.getConnection(DatasourceConnectionProviderImpl.java:126) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.internal.NonContextualJdbcConnectionAccess.obtainConnection(NonContextualJdbcConnectionAccess.java:46) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.resource.jdbc.internal.LogicalConnectionManagedImpl.acquireConnectionIfNeeded(LogicalConnectionManagedImpl.java:126) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	... 29 common frames omitted
+Caused by: com.mysql.cj.exceptions.UnableToConnectException: Cannot load connection class because of underlying exception: com.mysql.cj.exceptions.WrongArgumentException: Failed to parse the host:port pair 'localhost:${DATABASE_PORT:3306)'.
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62) ~[na:na]
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502) ~[na:na]
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486) ~[na:na]
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:62) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:105) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	... 40 common frames omitted
+Caused by: com.mysql.cj.exceptions.WrongArgumentException: Failed to parse the host:port pair 'localhost:${DATABASE_PORT:3306)'.
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62) ~[na:na]
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502) ~[na:na]
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486) ~[na:na]
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:62) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:105) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.conf.ConnectionUrlParser.parseHostPortPair(ConnectionUrlParser.java:500) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.conf.ConnectionUrlParser.buildHostInfoResortingToGenericSyntaxParser(ConnectionUrlParser.java:438) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.conf.ConnectionUrlParser.parseAuthoritySegment(ConnectionUrlParser.java:270) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.conf.ConnectionUrlParser.parseAuthoritySection(ConnectionUrlParser.java:184) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.conf.ConnectionUrlParser.getHosts(ConnectionUrlParser.java:651) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.conf.ConnectionUrl$Type.getConnectionUrlInstance(ConnectionUrl.java:194) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.conf.ConnectionUrl.getConnectionUrlInstance(ConnectionUrl.java:280) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:185) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	... 39 common frames omitted
+Caused by: java.lang.NumberFormatException: For input string: "3306)"
+	at java.base/java.lang.NumberFormatException.forInputString(NumberFormatException.java:67) ~[na:na]
+	at java.base/java.lang.Integer.parseInt(Integer.java:662) ~[na:na]
+	at java.base/java.lang.Integer.parseInt(Integer.java:778) ~[na:na]
+	at com.mysql.cj.conf.ConnectionUrlParser.parseHostPortPair(ConnectionUrlParser.java:498) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	... 46 common frames omitted
+
+2025-06-23T13:42:42.400+05:30  INFO 2288 --- [matrimony] [http-nio-9999-exec-2] o.a.c.c.C.[.[localhost].[/api/v1]        : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-23T13:42:42.400+05:30  INFO 2288 --- [matrimony] [http-nio-9999-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-06-23T13:42:42.401+05:30  INFO 2288 --- [matrimony] [http-nio-9999-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-06-23T13:42:42.423+05:30 DEBUG 2288 --- [matrimony] [http-nio-9999-exec-2] o.s.security.web.FilterChainProxy        : Securing POST /auth/login
+2025-06-23T13:42:42.434+05:30 DEBUG 2288 --- [matrimony] [http-nio-9999-exec-2] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-06-23T13:42:42.439+05:30 DEBUG 2288 --- [matrimony] [http-nio-9999-exec-2] o.s.security.web.FilterChainProxy        : Secured POST /auth/login
+2025-06-23T13:42:42.634+05:30  INFO 2288 --- [matrimony] [http-nio-9999-exec-2] c.a.matrimony.controller.AuthController  : Login attempt for: boxer.avishek@gmail.com
+2025-06-23T13:42:42.635+05:30  INFO 2288 --- [matrimony] [http-nio-9999-exec-2] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-06-23T13:42:43.642+05:30  WARN 2288 --- [matrimony] [http-nio-9999-exec-2] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 0, SQLState: 08001
+2025-06-23T13:42:43.642+05:30 ERROR 2288 --- [matrimony] [http-nio-9999-exec-2] o.h.engine.jdbc.spi.SqlExceptionHelper   : Cannot load connection class because of underlying exception: com.mysql.cj.exceptions.WrongArgumentException: Failed to parse the host:port pair 'localhost:${DATABASE_PORT:3306)'.
+2025-06-23T13:42:43.643+05:30 ERROR 2288 --- [matrimony] [http-nio-9999-exec-2] c.a.matrimony.controller.AuthController  : Login failed for: boxer.avishek@gmail.com
+
+org.springframework.transaction.CannotCreateTransactionException: Could not open JPA EntityManager for transaction
+	at org.springframework.orm.jpa.JpaTransactionManager.doBegin(JpaTransactionManager.java:466) ~[spring-orm-6.2.7.jar:6.2.7]
+	at org.springframework.transaction.support.AbstractPlatformTransactionManager.startTransaction(AbstractPlatformTransactionManager.java:532) ~[spring-tx-6.2.7.jar:6.2.7]
+	at org.springframework.transaction.support.AbstractPlatformTransactionManager.getTransaction(AbstractPlatformTransactionManager.java:405) ~[spring-tx-6.2.7.jar:6.2.7]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.createTransactionIfNecessary(TransactionAspectSupport.java:639) ~[spring-tx-6.2.7.jar:6.2.7]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:374) ~[spring-tx-6.2.7.jar:6.2.7]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:728) ~[spring-aop-6.2.7.jar:6.2.7]
+	at com.api.matrimony.serviceImpl.AuthServiceImpl$$SpringCGLIB$$0.login(<generated>) ~[classes/:na]
+	at com.api.matrimony.controller.AuthController.login(AuthController.java:101) ~[classes/:na]
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
 	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258) ~[spring-web-6.2.7.jar:6.2.7]
@@ -220,20 +430,246 @@ com.api.matrimony.exception.CustomException: Phone number is already registered
 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:658) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
 	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: org.hibernate.exception.JDBCConnectionException: Unable to acquire JDBC Connection [Cannot load connection class because of underlying exception: com.mysql.cj.exceptions.WrongArgumentException: Failed to parse the host:port pair 'localhost:${DATABASE_PORT:3306)'.] [n/a]
+	at org.hibernate.exception.internal.SQLExceptionTypeDelegate.convert(SQLExceptionTypeDelegate.java:51) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:58) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:108) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:94) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.resource.jdbc.internal.LogicalConnectionManagedImpl.acquireConnectionIfNeeded(LogicalConnectionManagedImpl.java:129) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.resource.jdbc.internal.LogicalConnectionManagedImpl.getPhysicalConnection(LogicalConnectionManagedImpl.java:156) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.resource.jdbc.internal.LogicalConnectionManagedImpl.getConnectionForTransactionManagement(LogicalConnectionManagedImpl.java:286) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.resource.jdbc.internal.LogicalConnectionManagedImpl.begin(LogicalConnectionManagedImpl.java:294) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcResourceLocalTransactionCoordinatorImpl$TransactionDriverControlImpl.begin(JdbcResourceLocalTransactionCoordinatorImpl.java:232) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.transaction.internal.TransactionImpl.begin(TransactionImpl.java:83) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.beginTransaction(HibernateJpaDialect.java:176) ~[spring-orm-6.2.7.jar:6.2.7]
+	at org.springframework.orm.jpa.JpaTransactionManager.doBegin(JpaTransactionManager.java:420) ~[spring-orm-6.2.7.jar:6.2.7]
+	... 105 common frames omitted
+Caused by: java.sql.SQLNonTransientConnectionException: Cannot load connection class because of underlying exception: com.mysql.cj.exceptions.WrongArgumentException: Failed to parse the host:port pair 'localhost:${DATABASE_PORT:3306)'.
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:111) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:98) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:90) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:64) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:74) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:79) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:131) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:211) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:139) ~[HikariCP-6.3.0.jar:na]
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:368) ~[HikariCP-6.3.0.jar:na]
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:205) ~[HikariCP-6.3.0.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:483) ~[HikariCP-6.3.0.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:571) ~[HikariCP-6.3.0.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:101) ~[HikariCP-6.3.0.jar:na]
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:111) ~[HikariCP-6.3.0.jar:na]
+	at org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl.getConnection(DatasourceConnectionProviderImpl.java:126) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.internal.NonContextualJdbcConnectionAccess.obtainConnection(NonContextualJdbcConnectionAccess.java:46) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.resource.jdbc.internal.LogicalConnectionManagedImpl.acquireConnectionIfNeeded(LogicalConnectionManagedImpl.java:126) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	... 112 common frames omitted
+Caused by: com.mysql.cj.exceptions.UnableToConnectException: Cannot load connection class because of underlying exception: com.mysql.cj.exceptions.WrongArgumentException: Failed to parse the host:port pair 'localhost:${DATABASE_PORT:3306)'.
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62) ~[na:na]
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502) ~[na:na]
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486) ~[na:na]
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:62) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:105) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	... 123 common frames omitted
+Caused by: com.mysql.cj.exceptions.WrongArgumentException: Failed to parse the host:port pair 'localhost:${DATABASE_PORT:3306)'.
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62) ~[na:na]
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502) ~[na:na]
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486) ~[na:na]
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:62) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:105) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.conf.ConnectionUrlParser.parseHostPortPair(ConnectionUrlParser.java:500) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.conf.ConnectionUrlParser.buildHostInfoResortingToGenericSyntaxParser(ConnectionUrlParser.java:438) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.conf.ConnectionUrlParser.parseAuthoritySegment(ConnectionUrlParser.java:270) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.conf.ConnectionUrlParser.parseAuthoritySection(ConnectionUrlParser.java:184) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.conf.ConnectionUrlParser.getHosts(ConnectionUrlParser.java:651) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.conf.ConnectionUrl$Type.getConnectionUrlInstance(ConnectionUrl.java:194) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.conf.ConnectionUrl.getConnectionUrlInstance(ConnectionUrl.java:280) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:185) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	... 122 common frames omitted
+Caused by: java.lang.NumberFormatException: For input string: "3306)"
+	at java.base/java.lang.NumberFormatException.forInputString(NumberFormatException.java:67) ~[na:na]
+	at java.base/java.lang.Integer.parseInt(Integer.java:662) ~[na:na]
+	at java.base/java.lang.Integer.parseInt(Integer.java:778) ~[na:na]
+	at com.mysql.cj.conf.ConnectionUrlParser.parseHostPortPair(ConnectionUrlParser.java:498) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	... 129 common frames omitted
 
-2025-06-18T01:26:08.337+05:30 DEBUG 10056 --- [matrimony] [http-nio-9999-exec-4] o.s.security.web.FilterChainProxy        : Securing POST /auth/register
-2025-06-18T01:26:08.338+05:30 DEBUG 10056 --- [matrimony] [http-nio-9999-exec-4] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
-2025-06-18T01:26:08.338+05:30 DEBUG 10056 --- [matrimony] [http-nio-9999-exec-4] o.s.security.web.FilterChainProxy        : Secured POST /auth/register
-2025-06-18T01:26:08.340+05:30  INFO 10056 --- [matrimony] [http-nio-9999-exec-4] c.a.matrimony.controller.AuthController  : Registration attempt for email: goswamiavishek22@gmail.com
-2025-06-18T01:26:08.342+05:30  INFO 10056 --- [matrimony] [http-nio-9999-exec-4] c.a.m.serviceImpl.AuthServiceImpl        : Starting registration process for email: goswamiavishek22@gmail.com
-2025-06-18T01:26:08.343+05:30 DEBUG 10056 --- [matrimony] [http-nio-9999-exec-4] org.hibernate.SQL                        : select u1_0.id from users u1_0 where u1_0.email=? limit ?
-2025-06-18T01:26:08.347+05:30 DEBUG 10056 --- [matrimony] [http-nio-9999-exec-4] org.hibernate.SQL                        : select u1_0.id from users u1_0 where u1_0.phone=? limit ?
-2025-06-18T01:26:08.669+05:30 DEBUG 10056 --- [matrimony] [http-nio-9999-exec-4] org.hibernate.SQL                        : insert into users (created_at,email,email_verified,is_active,is_verified,last_login,password,phone,phone_verified,updated_at,user_type) values (?,?,?,?,?,?,?,?,?,?,?)
-2025-06-18T01:26:08.698+05:30 DEBUG 10056 --- [matrimony] [http-nio-9999-exec-4] org.hibernate.SQL                        : insert into user_profiles (about_me,annual_income,caste,city,country,created_at,date_of_birth,education,family_type,family_values,first_name,gender,height,last_name,marital_status,mother_tongue,occupation,pincode,profile_created_by,religion,state,sub_caste,updated_at,user_id,weight) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-2025-06-18T01:26:08.704+05:30  INFO 10056 --- [matrimony] [http-nio-9999-exec-4] c.a.m.serviceImpl.AuthServiceImpl        : User registered successfully with ID: 5
-2025-06-18T01:26:08.705+05:30  INFO 10056 --- [matrimony] [http-nio-9999-exec-4] c.a.m.serviceImpl.OtpServiceImpl         : Sending OTP to contact: 9932764331, purpose: REGISTRATION
-2025-06-18T01:26:08.726+05:30 DEBUG 10056 --- [matrimony] [http-nio-9999-exec-4] org.hibernate.SQL                        : select count(ov1_0.id) from otp_verification ov1_0 where (ov1_0.phone=? or ov1_0.email=?) and ov1_0.created_at>=?
-2025-06-18T01:26:08.732+05:30 DEBUG 10056 --- [matrimony] [http-nio-9999-exec-4] org.hibernate.SQL                        : insert into otp_verification (created_at,email,expires_at,is_verified,otp,phone,purpose) values (?,?,?,?,?,?,?)
-2025-06-18T01:26:08.735+05:30  INFO 10056 --- [matrimony] [http-nio-9999-exec-4] c.a.m.s.NotificationServiceImpl          : Sending email notification to: goswamiavishek22@gmail.com, subject: Your OTP for REGISTRATION
-2025-06-18T01:26:14.203+05:30  INFO 10056 --- [matrimony] [http-nio-9999-exec-4] c.a.m.s.NotificationServiceImpl          : Email sent successfully to: goswamiavishek22@gmail.com
-2025-06-18T01:26:14.204+05:30  INFO 10056 --- [matrimony] [http-nio-9999-exec-4] c.a.m.serviceImpl.OtpServiceImpl         : OTP sent successfully to: goswamiavishek22@gmail.com or 9932764331
+2025-06-23T13:51:58.543+05:30  INFO 2288 --- [matrimony] [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-06-23T13:51:58.546+05:30  INFO 2288 --- [matrimony] [Thread-5] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-06-23T13:51:58.617+05:30  INFO 2288 --- [matrimony] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-06-23T13:51:58.671+05:30  INFO 2288 --- [matrimony] [RMI TCP Connection(21)-127.0.0.1] inMXBeanRegistrar$SpringApplicationAdmin : Application shutdown requested.
+2025-06-23T13:51:58.728+05:30  INFO 2288 --- [matrimony] [Thread-5] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-23T13:51:58.919+05:30  INFO 2288 --- [matrimony] [restartedMain] com.api.matrimony.MatrimonyApplication   : Starting MatrimonyApplication using Java 21.0.2 with PID 2288 (C:\Users\goswa\OneDrive\Documents\sts-project-code\matrimony\matrimony\target\classes started by goswa in C:\Users\goswa\OneDrive\Documents\sts-project-code\matrimony\matrimony)
+2025-06-23T13:51:58.919+05:30  INFO 2288 --- [matrimony] [restartedMain] com.api.matrimony.MatrimonyApplication   : The following 1 profile is active: "dev"
+2025-06-23T13:51:59.253+05:30  INFO 2288 --- [matrimony] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-23T13:51:59.303+05:30  INFO 2288 --- [matrimony] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 49 ms. Found 13 JPA repository interfaces.
+2025-06-23T13:51:59.527+05:30  INFO 2288 --- [matrimony] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 9999 (http)
+2025-06-23T13:51:59.529+05:30  INFO 2288 --- [matrimony] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-06-23T13:51:59.530+05:30  INFO 2288 --- [matrimony] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-06-23T13:51:59.553+05:30  INFO 2288 --- [matrimony] [restartedMain] o.a.c.c.C.[.[localhost].[/api/v1]        : Initializing Spring embedded WebApplicationContext
+2025-06-23T13:51:59.553+05:30  INFO 2288 --- [matrimony] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 631 ms
+2025-06-23T13:51:59.627+05:30  INFO 2288 --- [matrimony] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-23T13:51:59.631+05:30  INFO 2288 --- [matrimony] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-06-23T13:51:59.646+05:30  INFO 2288 --- [matrimony] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-23T13:51:59.647+05:30  INFO 2288 --- [matrimony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2025-06-23T13:52:00.057+05:30  INFO 2288 --- [matrimony] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection com.mysql.cj.jdbc.ConnectionImpl@58f20bb2
+2025-06-23T13:52:00.059+05:30  INFO 2288 --- [matrimony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2025-06-23T13:52:00.094+05:30  WARN 2288 --- [matrimony] [restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.7.35 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-06-23T13:52:00.096+05:30  WARN 2288 --- [matrimony] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-23T13:52:00.120+05:30  INFO 2288 --- [matrimony] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-2)']
+	Database driver: undefined/unknown
+	Database version: 5.7.35
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-06-23T13:52:00.456+05:30  INFO 2288 --- [matrimony] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-06-23T13:52:00.456+05:30  INFO 2288 --- [matrimony] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-23T13:52:00.919+05:30  INFO 2288 --- [matrimony] [restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-06-23T13:52:00.919+05:30  WARN 2288 --- [matrimony] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-06-23T13:52:01.021+05:30  WARN 2288 --- [matrimony] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-06-23T13:52:01.040+05:30  INFO 2288 --- [matrimony] [restartedMain] com.api.matrimony.config.CorsConfig      : Configuring CORS with origins: http://localhost:3000, http://localhost:8081
+2025-06-23T13:52:01.170+05:30  INFO 2288 --- [matrimony] [restartedMain] c.api.matrimony.config.SecurityConfig    : Configuring Security Filter Chain...
+2025-06-23T13:52:01.173+05:30  INFO 2288 --- [matrimony] [restartedMain] c.api.matrimony.config.SecurityConfig    : Configuring request authorization...
+2025-06-23T13:52:01.187+05:30  INFO 2288 --- [matrimony] [restartedMain] c.api.matrimony.config.SecurityConfig    : Security Filter Chain configured successfully
+2025-06-23T13:52:01.213+05:30 DEBUG 2288 --- [matrimony] [restartedMain] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-06-23T13:52:01.476+05:30  INFO 2288 --- [matrimony] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-06-23T13:52:01.508+05:30  INFO 2288 --- [matrimony] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 9999 (http) with context path '/api/v1'
+2025-06-23T13:52:01.514+05:30  INFO 2288 --- [matrimony] [restartedMain] com.api.matrimony.MatrimonyApplication   : Started MatrimonyApplication in 2.631 seconds (process running for 789.075)
+2025-06-23T13:52:01.519+05:30  INFO 2288 --- [matrimony] [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-06-23T13:52:01.521+05:30  INFO 2288 --- [matrimony] [scheduling-1] c.a.m.serviceImpl.OtpServiceImpl         : Cleaning up expired OTPs
+2025-06-23T13:52:01.623+05:30 DEBUG 2288 --- [matrimony] [scheduling-1] org.hibernate.SQL                        : select ov1_0.id,ov1_0.created_at,ov1_0.email,ov1_0.expires_at,ov1_0.is_verified,ov1_0.otp,ov1_0.phone,ov1_0.purpose from otp_verification ov1_0 where ov1_0.expires_at<?
+2025-06-23T13:52:01.714+05:30 DEBUG 2288 --- [matrimony] [scheduling-1] org.hibernate.SQL                        : delete from otp_verification where id=?
+2025-06-23T13:52:04.460+05:30  INFO 2288 --- [matrimony] [RMI TCP Connection(24)-127.0.0.1] inMXBeanRegistrar$SpringApplicationAdmin : Application shutdown requested.
+2025-06-23T13:52:04.462+05:30  INFO 2288 --- [matrimony] [RMI TCP Connection(24)-127.0.0.1] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-06-23T13:52:04.481+05:30  INFO 2288 --- [matrimony] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-06-23T13:52:04.490+05:30  INFO 2288 --- [matrimony] [RMI TCP Connection(24)-127.0.0.1] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-23T13:52:04.492+05:30  INFO 2288 --- [matrimony] [RMI TCP Connection(24)-127.0.0.1] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown initiated...
+2025-06-23T13:52:04.557+05:30  INFO 2288 --- [matrimony] [RMI TCP Connection(24)-127.0.0.1] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown completed.
+2025-06-23T13:52:08.053+05:30  INFO 15720 --- [matrimony] [restartedMain] com.api.matrimony.MatrimonyApplication   : Starting MatrimonyApplication using Java 21.0.2 with PID 15720 (C:\Users\goswa\OneDrive\Documents\sts-project-code\matrimony\matrimony\target\classes started by goswa in C:\Users\goswa\OneDrive\Documents\sts-project-code\matrimony\matrimony)
+2025-06-23T13:52:08.055+05:30  INFO 15720 --- [matrimony] [restartedMain] com.api.matrimony.MatrimonyApplication   : The following 1 profile is active: "dev"
+2025-06-23T13:52:08.125+05:30  INFO 15720 --- [matrimony] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-06-23T13:52:08.125+05:30  INFO 15720 --- [matrimony] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-06-23T13:52:08.147+05:30  INFO 9556 --- [matrimony] [restartedMain] com.api.matrimony.MatrimonyApplication   : Starting MatrimonyApplication using Java 21.0.2 with PID 9556 (C:\Users\goswa\OneDrive\Documents\sts-project-code\matrimony\matrimony\target\classes started by goswa in C:\Users\goswa\OneDrive\Documents\sts-project-code\matrimony\matrimony)
+2025-06-23T13:52:08.150+05:30  INFO 9556 --- [matrimony] [restartedMain] com.api.matrimony.MatrimonyApplication   : The following 1 profile is active: "dev"
+2025-06-23T13:52:08.224+05:30  INFO 9556 --- [matrimony] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-06-23T13:52:08.224+05:30  INFO 9556 --- [matrimony] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-06-23T13:52:09.196+05:30  INFO 15720 --- [matrimony] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-23T13:52:09.275+05:30  INFO 9556 --- [matrimony] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-23T13:52:09.416+05:30  INFO 15720 --- [matrimony] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 209 ms. Found 13 JPA repository interfaces.
+2025-06-23T13:52:09.518+05:30  INFO 9556 --- [matrimony] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 232 ms. Found 13 JPA repository interfaces.
+2025-06-23T13:52:10.175+05:30  INFO 15720 --- [matrimony] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 9999 (http)
+2025-06-23T13:52:10.190+05:30  INFO 15720 --- [matrimony] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-06-23T13:52:10.190+05:30  INFO 15720 --- [matrimony] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-06-23T13:52:10.251+05:30  INFO 15720 --- [matrimony] [restartedMain] o.a.c.c.C.[.[localhost].[/api/v1]        : Initializing Spring embedded WebApplicationContext
+2025-06-23T13:52:10.251+05:30  INFO 15720 --- [matrimony] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2125 ms
+2025-06-23T13:52:10.263+05:30  INFO 9556 --- [matrimony] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 9999 (http)
+2025-06-23T13:52:10.279+05:30  INFO 9556 --- [matrimony] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-06-23T13:52:10.279+05:30  INFO 9556 --- [matrimony] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-06-23T13:52:10.337+05:30  INFO 9556 --- [matrimony] [restartedMain] o.a.c.c.C.[.[localhost].[/api/v1]        : Initializing Spring embedded WebApplicationContext
+2025-06-23T13:52:10.338+05:30  INFO 9556 --- [matrimony] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2112 ms
+2025-06-23T13:52:10.455+05:30  INFO 15720 --- [matrimony] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-23T13:52:10.509+05:30  INFO 15720 --- [matrimony] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.15.Final
+2025-06-23T13:52:10.533+05:30  INFO 9556 --- [matrimony] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-23T13:52:10.539+05:30  INFO 15720 --- [matrimony] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-06-23T13:52:10.585+05:30  INFO 9556 --- [matrimony] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.15.Final
+2025-06-23T13:52:10.626+05:30  INFO 9556 --- [matrimony] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-06-23T13:52:10.849+05:30  INFO 15720 --- [matrimony] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-23T13:52:10.884+05:30  INFO 15720 --- [matrimony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-06-23T13:52:10.961+05:30  INFO 9556 --- [matrimony] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-23T13:52:11.016+05:30  INFO 9556 --- [matrimony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-06-23T13:52:11.081+05:30  INFO 15720 --- [matrimony] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@730c50e5
+2025-06-23T13:52:11.085+05:30  INFO 15720 --- [matrimony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-06-23T13:52:11.122+05:30  WARN 15720 --- [matrimony] [restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.7.35 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-06-23T13:52:11.126+05:30  WARN 15720 --- [matrimony] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-23T13:52:11.143+05:30  INFO 15720 --- [matrimony] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 5.7.35
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-06-23T13:52:11.182+05:30  INFO 9556 --- [matrimony] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@74a14f41
+2025-06-23T13:52:11.184+05:30  INFO 9556 --- [matrimony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-06-23T13:52:11.228+05:30  WARN 9556 --- [matrimony] [restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.7.35 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-06-23T13:52:11.232+05:30  WARN 9556 --- [matrimony] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-23T13:52:11.256+05:30  INFO 9556 --- [matrimony] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 5.7.35
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-06-23T13:52:12.576+05:30  INFO 15720 --- [matrimony] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-06-23T13:52:12.577+05:30  INFO 9556 --- [matrimony] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-06-23T13:52:12.580+05:30  INFO 15720 --- [matrimony] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-23T13:52:12.582+05:30  INFO 9556 --- [matrimony] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-23T13:52:12.943+05:30  INFO 9556 --- [matrimony] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-23T13:52:12.963+05:30  INFO 15720 --- [matrimony] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-23T13:52:15.196+05:30  INFO 15720 --- [matrimony] [restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-06-23T13:52:15.197+05:30  WARN 15720 --- [matrimony] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-06-23T13:52:15.213+05:30  INFO 9556 --- [matrimony] [restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-06-23T13:52:15.214+05:30  WARN 9556 --- [matrimony] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-06-23T13:52:15.890+05:30  WARN 9556 --- [matrimony] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-06-23T13:52:15.894+05:30  WARN 15720 --- [matrimony] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-06-23T13:52:15.940+05:30  INFO 15720 --- [matrimony] [restartedMain] com.api.matrimony.config.CorsConfig      : Configuring CORS with origins: http://localhost:3000, http://localhost:8081
+2025-06-23T13:52:15.940+05:30  INFO 9556 --- [matrimony] [restartedMain] com.api.matrimony.config.CorsConfig      : Configuring CORS with origins: http://localhost:3000, http://localhost:8081
+2025-06-23T13:52:16.322+05:30  INFO 9556 --- [matrimony] [restartedMain] c.api.matrimony.config.SecurityConfig    : Configuring Security Filter Chain...
+2025-06-23T13:52:16.322+05:30  INFO 15720 --- [matrimony] [restartedMain] c.api.matrimony.config.SecurityConfig    : Configuring Security Filter Chain...
+2025-06-23T13:52:16.329+05:30  INFO 15720 --- [matrimony] [restartedMain] c.api.matrimony.config.SecurityConfig    : Configuring request authorization...
+2025-06-23T13:52:16.329+05:30  INFO 9556 --- [matrimony] [restartedMain] c.api.matrimony.config.SecurityConfig    : Configuring request authorization...
+2025-06-23T13:52:16.354+05:30  INFO 9556 --- [matrimony] [restartedMain] c.api.matrimony.config.SecurityConfig    : Security Filter Chain configured successfully
+2025-06-23T13:52:16.355+05:30  INFO 15720 --- [matrimony] [restartedMain] c.api.matrimony.config.SecurityConfig    : Security Filter Chain configured successfully
+2025-06-23T13:52:16.399+05:30 DEBUG 15720 --- [matrimony] [restartedMain] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-06-23T13:52:16.399+05:30 DEBUG 9556 --- [matrimony] [restartedMain] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-06-23T13:52:16.927+05:30  INFO 15720 --- [matrimony] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-06-23T13:52:16.928+05:30  WARN 9556 --- [matrimony] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : Unable to start LiveReload server
+2025-06-23T13:52:17.133+05:30  INFO 15720 --- [matrimony] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 9999 (http) with context path '/api/v1'
+2025-06-23T13:52:17.138+05:30  WARN 9556 --- [matrimony] [restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2025-06-23T13:52:17.142+05:30  INFO 9556 --- [matrimony] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-23T13:52:17.146+05:30  INFO 15720 --- [matrimony] [restartedMain] com.api.matrimony.MatrimonyApplication   : Started MatrimonyApplication in 9.563 seconds (process running for 10.377)
+2025-06-23T13:52:17.148+05:30  INFO 9556 --- [matrimony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-06-23T13:52:17.157+05:30  INFO 9556 --- [matrimony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-06-23T13:52:17.162+05:30  INFO 15720 --- [matrimony] [scheduling-1] c.a.m.serviceImpl.OtpServiceImpl         : Cleaning up expired OTPs
+2025-06-23T13:52:17.170+05:30  INFO 9556 --- [matrimony] [restartedMain] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-06-23T13:52:17.198+05:30 ERROR 9556 --- [matrimony] [restartedMain] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 9999 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 9999 or configure this application to listen on another port.
+
+2025-06-23T13:52:17.250+05:30 DEBUG 15720 --- [matrimony] [scheduling-1] org.hibernate.SQL                        : select ov1_0.id,ov1_0.created_at,ov1_0.email,ov1_0.expires_at,ov1_0.is_verified,ov1_0.otp,ov1_0.phone,ov1_0.purpose from otp_verification ov1_0 where ov1_0.expires_at<?
+2025-06-23T13:52:31.015+05:30  INFO 15720 --- [matrimony] [http-nio-9999-exec-2] o.a.c.c.C.[.[localhost].[/api/v1]        : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-23T13:52:31.015+05:30  INFO 15720 --- [matrimony] [http-nio-9999-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-06-23T13:52:31.016+05:30  INFO 15720 --- [matrimony] [http-nio-9999-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-06-23T13:52:31.067+05:30 DEBUG 15720 --- [matrimony] [http-nio-9999-exec-2] o.s.security.web.FilterChainProxy        : Securing POST /auth/login
+2025-06-23T13:52:31.079+05:30 DEBUG 15720 --- [matrimony] [http-nio-9999-exec-2] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-06-23T13:52:31.082+05:30 DEBUG 15720 --- [matrimony] [http-nio-9999-exec-2] o.s.security.web.FilterChainProxy        : Secured POST /auth/login
+2025-06-23T13:52:31.238+05:30  INFO 15720 --- [matrimony] [http-nio-9999-exec-2] c.a.matrimony.controller.AuthController  : Login attempt for: boxer.avishek@gmail.com
+2025-06-23T13:52:31.239+05:30  INFO 15720 --- [matrimony] [http-nio-9999-exec-2] c.a.m.serviceImpl.AuthServiceImpl        : Login attempt for: boxer.avishek@gmail.com
+2025-06-23T13:52:31.241+05:30 DEBUG 15720 --- [matrimony] [http-nio-9999-exec-2] org.hibernate.SQL                        : select u1_0.id,u1_0.created_at,u1_0.email,u1_0.email_verified,u1_0.is_active,u1_0.is_verified,u1_0.last_login,u1_0.password,u1_0.phone,u1_0.phone_verified,u1_0.updated_at,u1_0.user_type from users u1_0 where u1_0.email=?
+2025-06-23T13:52:31.267+05:30 DEBUG 15720 --- [matrimony] [http-nio-9999-exec-2] org.hibernate.SQL                        : select up1_0.id,up1_0.caste,up1_0.cities,up1_0.countries,up1_0.created_at,up1_0.education,up1_0.marital_status,up1_0.max_age,up1_0.max_height,up1_0.max_income,up1_0.min_age,up1_0.min_height,up1_0.min_income,up1_0.occupation,up1_0.religion,up1_0.states,up1_0.updated_at,up1_0.user_id,u1_0.id,u1_0.created_at,u1_0.email,u1_0.email_verified,u1_0.is_active,u1_0.is_verified,u1_0.last_login,u1_0.password,u1_0.phone,u1_0.phone_verified,u1_0.updated_at,u1_0.user_type from user_preferences up1_0 join users u1_0 on u1_0.id=up1_0.user_id where up1_0.user_id=?
+2025-06-23T13:52:31.274+05:30 DEBUG 15720 --- [matrimony] [http-nio-9999-exec-2] org.hibernate.SQL                        : select up1_0.id,up1_0.about_me,up1_0.annual_income,up1_0.caste,up1_0.city,up1_0.country,up1_0.created_at,up1_0.date_of_birth,up1_0.education,up1_0.family_type,up1_0.family_values,up1_0.first_name,up1_0.gender,up1_0.height,up1_0.last_name,up1_0.marital_status,up1_0.mother_tongue,up1_0.occupation,up1_0.pincode,up1_0.profile_created_by,up1_0.religion,up1_0.state,up1_0.sub_caste,up1_0.updated_at,up1_0.user_id,u1_0.id,u1_0.created_at,u1_0.email,u1_0.email_verified,u1_0.is_active,u1_0.is_verified,u1_0.last_login,u1_0.password,u1_0.phone,u1_0.phone_verified,u1_0.updated_at,u1_0.user_type,up1_0.weight from user_profiles up1_0 join users u1_0 on u1_0.id=up1_0.user_id where up1_0.user_id=?
+2025-06-23T13:52:31.280+05:30 DEBUG 15720 --- [matrimony] [http-nio-9999-exec-2] org.hibernate.SQL                        : select up1_0.id,up1_0.caste,up1_0.cities,up1_0.countries,up1_0.created_at,up1_0.education,up1_0.marital_status,up1_0.max_age,up1_0.max_height,up1_0.max_income,up1_0.min_age,up1_0.min_height,up1_0.min_income,up1_0.occupation,up1_0.religion,up1_0.states,up1_0.updated_at,up1_0.user_id,u1_0.id,u1_0.created_at,u1_0.email,u1_0.email_verified,u1_0.is_active,u1_0.is_verified,u1_0.last_login,u1_0.password,u1_0.phone,u1_0.phone_verified,u1_0.updated_at,u1_0.user_type from user_preferences up1_0 join users u1_0 on u1_0.id=up1_0.user_id where up1_0.user_id=?
+2025-06-23T13:52:31.618+05:30 DEBUG 15720 --- [matrimony] [http-nio-9999-exec-2] org.hibernate.SQL                        : select u1_0.id,u1_0.created_at,u1_0.email,u1_0.email_verified,u1_0.is_active,u1_0.is_verified,u1_0.last_login,u1_0.password,u1_0.phone,u1_0.phone_verified,u1_0.updated_at,u1_0.user_type from users u1_0 where u1_0.email=?
+2025-06-23T13:52:31.916+05:30 DEBUG 15720 --- [matrimony] [http-nio-9999-exec-2] o.s.s.a.dao.DaoAuthenticationProvider    : Authenticated user
+2025-06-23T13:52:32.098+05:30  INFO 15720 --- [matrimony] [http-nio-9999-exec-2] c.a.m.serviceImpl.AuthServiceImpl        : Login successful for user: 2
+2025-06-23T13:52:32.128+05:30 DEBUG 15720 --- [matrimony] [http-nio-9999-exec-2] org.hibernate.SQL                        : update users set created_at=?,email=?,email_verified=?,is_active=?,is_verified=?,last_login=?,password=?,phone=?,phone_verified=?,updated_at=?,user_type=? where id=?
+2025-06-23T13:55:06.148+05:30  INFO 15720 --- [matrimony] [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-06-23T13:55:06.156+05:30  INFO 15720 --- [matrimony] [Thread-5] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-06-23T13:55:06.177+05:30  INFO 15720 --- [matrimony] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-06-23T13:55:06.266+05:30  INFO 15720 --- [matrimony] [Thread-5] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-23T13:55:06.272+05:30  INFO 15720 --- [matrimony] [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-06-23T13:55:06.301+05:30  INFO 15720 --- [matrimony] [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
