@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
  * Authentication Controller handling user registration, login, and token management
  */
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 @Slf4j
 @CrossOrigin(origins = "*")

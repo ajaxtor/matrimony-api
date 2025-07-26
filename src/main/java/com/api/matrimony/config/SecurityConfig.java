@@ -61,12 +61,18 @@ public class SecurityConfig {
 			log.info("Configuring request authorization...");
 			authz
 					// Public endpoints - ORDER MATTERS! Most specific first
-					.requestMatchers("/auth/**").permitAll().requestMatchers("/public/**").permitAll()
-					.requestMatchers("/admin/**").hasRole("ADMIN") // Fallback for both patterns
-					.requestMatchers("/health/**").permitAll().requestMatchers("/actuator/**").permitAll()
-					.requestMatchers("/api/v1/subscriptions/plans").permitAll().requestMatchers("/subscriptions/plans")
-					.permitAll().requestMatchers("/error").permitAll().requestMatchers("/favicon.ico").permitAll()
-					.requestMatchers("/swagger-ui/**").permitAll().requestMatchers("/v3/api-docs/**").permitAll()
+			 .requestMatchers("/api/v1/auth/**").permitAll() // <-- This is the important fix
+		        .requestMatchers("/auth/**").permitAll()
+		        .requestMatchers("/public/**").permitAll()
+		        .requestMatchers("/admin/**").hasRole("ADMIN")
+		        .requestMatchers("/health/**").permitAll()
+		        .requestMatchers("/actuator/**").permitAll()
+		        .requestMatchers("/api/v1/subscriptions/plans").permitAll()
+		        .requestMatchers("/subscriptions/plans").permitAll()
+		        .requestMatchers("/error").permitAll()
+		        .requestMatchers("/favicon.ico").permitAll()
+		        .requestMatchers("/swagger-ui/**").permitAll()
+		        .requestMatchers("/v3/api-docs/**").permitAll()
 					// All other endpoints require authentication
 					.anyRequest().authenticated();
 		}).exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
@@ -77,4 +83,7 @@ public class SecurityConfig {
 		log.info("Security Filter Chain configured successfully");
 		return http.build();
 	}
+	
+
+
 }

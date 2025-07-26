@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 * Profile Controller for profile-specific operations
 */
 @RestController
-@RequestMapping("/profiles")
+@RequestMapping("/api/v1/profiles")
 @RequiredArgsConstructor
 @Slf4j
 @CrossOrigin(origins = "*")

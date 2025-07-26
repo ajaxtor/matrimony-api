@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
  * Subscription Controller for subscription management
  */
 @RestController
-@RequestMapping("/subscriptions")
+@RequestMapping("/api/v1/subscriptions")
 @RequiredArgsConstructor
 @Slf4j
 @CrossOrigin(origins = "*")
