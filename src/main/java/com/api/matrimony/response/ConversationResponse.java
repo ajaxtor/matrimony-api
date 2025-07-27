@@ -2,6 +2,7 @@ package com.api.matrimony.response;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
@@ -23,7 +24,9 @@ public class ConversationResponse {
     private Long user2Id;
     private Long matchId;
     private Boolean isActive;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdAt;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime updatedAt;
     private ProfileResponse otherUserProfile;
     private MessageResponse lastMessage;

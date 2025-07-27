@@ -24,7 +24,7 @@ public class ProfileResponse {
     
     private Long id;
     private String fullName;
-   // @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
     private Integer age;
     private String gender;
@@ -48,8 +48,8 @@ public class ProfileResponse {
     private String profileCreatedBy;
     private List<String> photoUrls;
     private String primaryPhotoUrl;
-   // @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdAt;
-   // @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime updatedAt;
 }

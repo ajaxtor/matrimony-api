@@ -3,6 +3,7 @@ package com.api.matrimony.response;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ public class MatchResponse {
     private Long matchedUserId;
     private String status;
     private BigDecimal matchScore;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime matchedAt;
     private ProfileResponse matchedUserProfile;
     private Boolean canChat;

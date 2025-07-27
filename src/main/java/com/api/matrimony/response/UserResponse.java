@@ -2,6 +2,7 @@ package com.api.matrimony.response;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
@@ -24,9 +25,9 @@ public class UserResponse {
     private String userType;
     private Boolean isVerified;
     private Boolean isActive;
-  //  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdAt;
-  //  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime lastLogin;
     private ProfileResponse profile;
     private PreferenceResponse preference;

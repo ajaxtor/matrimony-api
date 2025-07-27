@@ -2,6 +2,7 @@ package com.api.matrimony.response;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
@@ -25,6 +26,7 @@ public class MessageResponse {
     private String message;
     private String messageType;
     private Boolean isRead;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime sentAt;
     private String senderName;
 }

@@ -1,7 +1,9 @@
 package com.api.matrimony.serviceImpl;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.api.matrimony.config.JwtUtil;
 import com.api.matrimony.entity.User;
+import com.api.matrimony.entity.UserPhoto;
 import com.api.matrimony.entity.UserProfile;
 import com.api.matrimony.enums.Gender;
 import com.api.matrimony.enums.OtpPurpose;
@@ -20,6 +23,7 @@ import com.api.matrimony.enums.UserType;
 import com.api.matrimony.exception.ApplicationException;
 import com.api.matrimony.exception.ErrorEnum;
 import com.api.matrimony.repository.OtpVerificationRepository;
+import com.api.matrimony.repository.UserPhotoRepository;
 import com.api.matrimony.repository.UserRepository;
 import com.api.matrimony.request.ForgotPasswordRequest;
 import com.api.matrimony.request.LoginRequest;
@@ -51,6 +55,7 @@ public class AuthServiceImpl implements AuthService {
 	private final AuthenticationManager authenticationManager;
 	private final JwtUtil jwtUtil;
 	private final OtpService otpService;
+	private final UserPhotoRepository photoRepository;
 
 	@Override
 	public String register(RegisterRequest request) {
@@ -304,6 +309,12 @@ public class AuthServiceImpl implements AuthService {
 				profileResponse.setAge(
 						java.time.Period.between(profile.getDateOfBirth(), java.time.LocalDate.now()).getYears());
 			}
+			List<UserPhoto> photos = photoRepository.findByUserIdOrderByDisplayOrderAsc(profile.getUser().getId());
+			profileResponse.setPhotoUrls(photos.stream().map(UserPhoto::getPhotoUrl).collect(Collectors.toList()));
+
+			// Get primary photo
+			photos.stream().filter(UserPhoto::getIsPrimary).findFirst()
+					.ifPresent(photo -> profileResponse.setPrimaryPhotoUrl(photo.getPhotoUrl()));
 
 			profileResponse.setGender(profile.getGender() != null ? profile.getGender().name() : null);
 			profileResponse.setHeight(profile.getHeight());
