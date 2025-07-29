@@ -27,6 +27,6 @@ public class MatchResponse {
     private BigDecimal matchScore;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime matchedAt;
-    private ProfileResponse matchedUserProfile;
+    private MatchProfileResponse matchedUserProfile;
     private Boolean canChat;
 }

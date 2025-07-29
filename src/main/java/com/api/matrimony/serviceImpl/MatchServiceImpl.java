@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.api.matrimony.response.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -34,10 +35,6 @@ import com.api.matrimony.repository.UserPreferenceRepository;
 import com.api.matrimony.repository.UserProfileRepository;
 import com.api.matrimony.repository.UserRepository;
 import com.api.matrimony.request.SearchCriteria;
-import com.api.matrimony.response.MatchResponse;
-import com.api.matrimony.response.MatchStats;
-import com.api.matrimony.response.PagedResponse;
-import com.api.matrimony.response.ProfileResponse;
 import com.api.matrimony.service.MatchService;
 import com.api.matrimony.service.NotificationService;
 
@@ -501,9 +498,56 @@ public class MatchServiceImpl implements MatchService {
 
         // Add matched user profile
         if (match.getMatchedUser().getProfile() != null) {
-            response.setMatchedUserProfile(mapToProfileResponse(match.getMatchedUser().getProfile()));
+            response.setMatchedUserProfile(mapToMatchProfileResponse(match.getMatchedUser().getProfile()));
         }
 
+        return response;
+    }
+
+    private MatchProfileResponse mapToMatchProfileResponse(UserProfile profile) {
+        MatchProfileResponse response = new MatchProfileResponse();
+
+        response.setId(profile.getId());
+        response.setFullName(profile.getFullName());
+        response.setDateOfBirth(profile.getDateOfBirth());
+        response.setPhone(profile.getUser().getPhone());
+        response.setEmail(profile.getUser().getEmail());
+        if (profile.getDateOfBirth() != null) {
+            response.setAge(Period.between(profile.getDateOfBirth(), LocalDate.now()).getYears());
+        }
+
+        response.setGender(profile.getGender() != null ? profile.getGender().name() : null);
+        response.setHeight(profile.getHeight());
+        response.setWeight(profile.getWeight());
+        response.setMaritalStatus(profile.getMaritalStatus() != null ?
+                profile.getMaritalStatus().name() : null);
+        response.setReligion(profile.getReligion());
+        response.setCaste(profile.getCaste());
+        response.setSubCaste(profile.getSubCaste());
+        response.setMotherTongue(profile.getMotherTongue());
+        response.setEducation(profile.getEducation());
+        response.setOccupation(profile.getOccupation());
+        response.setAnnualIncome(profile.getAnnualIncome());
+        response.setAboutMe(profile.getAboutMe());
+        response.setFamilyType(profile.getFamilyType());
+        response.setFamilyValues(profile.getFamilyValues());
+        response.setCity(profile.getCity());
+        response.setState(profile.getState());
+        response.setCountry(profile.getCountry());
+        response.setPincode(profile.getPincode());
+        response.setProfileCreatedBy(profile.getProfileCreatedBy());
+        response.setCreatedAt(profile.getCreatedAt());
+        response.setUpdatedAt(profile.getUpdatedAt());
+
+        // Get photos
+        List<UserPhoto> photos = photoRepository.findByUserIdOrderByDisplayOrderAsc(profile.getUser().getId());
+        response.setPhotoUrls(photos.stream().map(UserPhoto::getPhotoUrl).collect(Collectors.toList()));
+
+        // Get primary photo
+        photos.stream()
+                .filter(UserPhoto::getIsPrimary)
+                .findFirst()
+                .ifPresent(photo -> response.setPrimaryPhotoUrl(photo.getPhotoUrl()));
         return response;
     }
 
@@ -512,15 +556,15 @@ public class MatchServiceImpl implements MatchService {
         response.setId(profile.getId());
         response.setFullName(profile.getFullName());
         response.setDateOfBirth(profile.getDateOfBirth());
-        
+
         if (profile.getDateOfBirth() != null) {
             response.setAge(Period.between(profile.getDateOfBirth(), LocalDate.now()).getYears());
         }
-        
+
         response.setGender(profile.getGender() != null ? profile.getGender().name() : null);
         response.setHeight(profile.getHeight());
         response.setWeight(profile.getWeight());
-        response.setMaritalStatus(profile.getMaritalStatus() != null ? 
+        response.setMaritalStatus(profile.getMaritalStatus() != null ?
                                  profile.getMaritalStatus().name() : null);
         response.setReligion(profile.getReligion());
         response.setCaste(profile.getCaste());
@@ -543,7 +587,7 @@ public class MatchServiceImpl implements MatchService {
         // Get photos
         List<UserPhoto> photos = photoRepository.findByUserIdOrderByDisplayOrderAsc(profile.getUser().getId());
         response.setPhotoUrls(photos.stream().map(UserPhoto::getPhotoUrl).collect(Collectors.toList()));
-        
+
         // Get primary photo
         photos.stream()
                 .filter(UserPhoto::getIsPrimary)
