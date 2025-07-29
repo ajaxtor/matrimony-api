@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class MatchProfileResponse extends ProfileResponse {
+public class MatchedProfileResponse extends ProfileResponse {
     private String email;
     private String phone;
 }

@@ -498,14 +498,14 @@ public class MatchServiceImpl implements MatchService {
 
         // Add matched user profile
         if (match.getMatchedUser().getProfile() != null) {
-            response.setMatchedUserProfile(mapToMatchProfileResponse(match.getMatchedUser().getProfile()));
+            response.setMatchedUserProfile(mapToMatchedProfileResponse(match.getMatchedUser().getProfile()));
         }
 
         return response;
     }
 
-    private MatchProfileResponse mapToMatchProfileResponse(UserProfile profile) {
-        MatchProfileResponse response = new MatchProfileResponse();
+    private MatchedProfileResponse mapToMatchedProfileResponse(UserProfile profile) {
+        MatchedProfileResponse response = new MatchedProfileResponse();
 
         response.setId(profile.getId());
         response.setFullName(profile.getFullName());
