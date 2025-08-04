@@ -32,7 +32,7 @@ public enum ErrorEnum {
 	NO_MATCH_FUND_BTWN_USER("No mutual match found between users"),ONLY_MUTUAL_MATCH_CAN_MSG("You can only message users with mutual matches"),
 	YOU_BLOCK_USER("You have blocked this user"),YOU_BLOCK_BY_USER("You are blocked by this user"),
 	RECIVER_NOT_FUND("Receiver not found"),SENDER_NOT_FUND("Sender not found"),ONLY_CAN_DELETE_OWN_MSG("You can only delete your own messages"),
-	MESSAGE_NOT_FUND("Message not found"),;
+	MESSAGE_NOT_FUND("Message not found"),INVALID_GENDER("Invalid user Gender Input"), INVALID_DIET ("Invalid Dite Type "),;
 ;
 
 	private String exceptionError;

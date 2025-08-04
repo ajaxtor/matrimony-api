@@ -30,5 +30,10 @@ public class PreferenceResponse {
 	    private String states;        // comma-separated
 	    private String countries ; // default value
 
+	    private String gender;
+	    private String subCaste;
+	    private String motherTongue;
+	    private String familyType;
+	    private String diet;
 	
 }

@@ -73,6 +73,16 @@ public class UserPreference {
 
  @Column(length = 200)
  private String countries = "India";
+ @Column(name = "gender")
+ private String gender;
+ @Column(name = "sub_caste")
+ private String subCaste;
+ @Column(name = "mother_tongue")
+ private String motherTongue;
+ @Column(name = "family_type")
+ private String familyType;
+ @Column(name = "diet")
+ private String diet;
 
  @Column(name = "created_at")
  private LocalDateTime createdAt = LocalDateTime.now();

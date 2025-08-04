@@ -100,8 +100,6 @@ public class MatchServiceImpl implements MatchService {
     public List<MatchResponse> getMutualMatches(Long userId) {
         log.info("Getting mutual matches for user: {}", userId);
         
-        List<Match> mutualMatches = matchRepository.findMutualMatchesByUserId(userId);
-        return mutualMatches.stream()
                 .map(this::mapToMatchResponse)
                 .collect(Collectors.toList());
     }

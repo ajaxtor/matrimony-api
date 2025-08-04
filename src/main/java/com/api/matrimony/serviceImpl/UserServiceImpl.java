@@ -232,6 +232,64 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		if (request.getCountries() != null) {
 			preferences.setCountries(request.getCountries());
 		}
+		
+		String genderStr = request.getGender();
+		if (genderStr != null && !genderStr.trim().isEmpty()) {
+		    genderStr = genderStr.trim().toLowerCase();
+
+		    switch (genderStr) {
+		        case "male":
+		            preferences.setGender("Male");
+		            break;
+		        case "female":
+		            preferences.setGender("Female");
+		            break;
+		        case "other":
+		        case "others":
+		            preferences.setGender("Other");
+		            break;
+		        default:
+		        	throw new ApplicationException(ErrorEnum.INVALID_GENDER.toString(), ErrorEnum.INVALID_GENDER.getExceptionError(),
+							HttpStatus.OK);
+		    }
+		}
+		preferences.setSubCaste(genderStr);
+		preferences.setMotherTongue(genderStr);
+		preferences.setFamilyType(genderStr);
+		
+		String dietStr = request.getDiet();
+		if (dietStr != null && !dietStr.trim().isEmpty()) {
+		    dietStr = dietStr.trim().toLowerCase();
+
+		    switch (dietStr) {
+		        case "vegetarian":
+		            preferences.setDiet("Vegetarian");
+		            break;
+		        case "non-vegetarian":
+		        case "nonvegetarian":
+		            preferences.setDiet("Non-Vegetarian");
+		            break;
+		        case "eggetarian":
+		            preferences.setDiet("Eggetarian");
+		            break;
+		        case "vegan":
+		            preferences.setDiet("Vegan");
+		            break;
+		        case "not req":
+		        case "not required":
+		        case "notreq":
+		            preferences.setDiet("Not Req");
+		            break;
+		        default:
+		            throw new ApplicationException(
+		                ErrorEnum.INVALID_DIET.toString(),
+		                ErrorEnum.INVALID_DIET.getExceptionError(),
+		                HttpStatus.OK
+		            );
+		    }
+		}
+
+		
 
 		// Save preferences
 		preferenceRepository.save(preferences);
@@ -529,8 +587,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	    response.setStates(preference.getStates());
 	    response.setCountries(preference.getCountries());
 
+	    // ✅ Newly added fields
+	    response.setGender(preference.getGender());
+	    response.setSubCaste(preference.getSubCaste());
+	    response.setMotherTongue(preference.getMotherTongue());
+	    response.setFamilyType(preference.getFamilyType());
+	    response.setDiet(preference.getDiet());
+
 	    return response;
 	}
+
 
 	
 }

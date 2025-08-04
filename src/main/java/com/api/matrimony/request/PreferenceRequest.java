@@ -37,6 +37,11 @@ public class PreferenceRequest {
     private String cities; // comma separated
     private String states; // comma separated
     private String countries;
+    private String gender;
+    private String subCaste;
+    private String motherTongue;
+    private String familyType;
+    private String diet;
 }
 
 
