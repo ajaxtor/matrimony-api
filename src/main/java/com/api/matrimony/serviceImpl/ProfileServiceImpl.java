@@ -254,8 +254,8 @@ public class ProfileServiceImpl implements ProfileService {
         if (request.getFamilyType() != null) {
             profile.setFamilyType(request.getFamilyType());
         }
-        if (request.getFamilyValues() != null) {
-            profile.setFamilyValues(request.getFamilyValues());
+        if (request.getFamilyValue() != null) {
+            profile.setFamilyValue(request.getFamilyValue());
         }
         if (request.getCity() != null) {
             profile.setCity(request.getCity());
@@ -297,7 +297,7 @@ public class ProfileServiceImpl implements ProfileService {
         response.setAnnualIncome(profile.getAnnualIncome());
         response.setAboutMe(profile.getAboutMe());
         response.setFamilyType(profile.getFamilyType());
-        response.setFamilyValues(profile.getFamilyValues());
+        response.setFamilyValue(profile.getFamilyValue());
         response.setCity(profile.getCity());
         response.setState(profile.getState());
         response.setCountry(profile.getCountry());

@@ -190,7 +190,7 @@ public class MatchingAlgorithm {
             return 50.0; // Neutral if caste not specified
         }
 
-        if (profile1.getCaste().equalsIgnoreCase(profile2.getCaste())) {
+        if (profile1.getSubCaste().equalsIgnoreCase(profile2.getSubCaste())) {
             return 100.0;
         }
 

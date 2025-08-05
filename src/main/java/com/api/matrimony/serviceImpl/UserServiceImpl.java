@@ -146,8 +146,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		if (request.getFamilyType() != null) {
 			profile.setFamilyType(request.getFamilyType());
 		}
-		if (request.getFamilyValues() != null) {
-			profile.setFamilyValues(request.getFamilyValues());
+		if (request.getFamilyValue() != null) {
+			profile.setFamilyValue(request.getFamilyValue());
 		}
 		if (request.getCity() != null) {
 			profile.setCity(request.getCity());
@@ -164,6 +164,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		if (request.getProfileCreatedBy() != null) {
 			profile.setProfileCreatedBy(request.getProfileCreatedBy());
 		}
+		
+		String dietStr = request.getDiet();
+		String normalizedDiet = normalizeDiet(dietStr);
+		if (normalizedDiet != null) {
+			profile.setDiet(normalizedDiet);
+		}
+
 
 		// Save profile
 		profileRepository.save(profile);
@@ -202,20 +209,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		if (request.getMaxHeight() != null) {
 			preferences.setMaxHeight(request.getMaxHeight());
 		}
-		if (request.getMaritalStatus() != null) {
-			preferences.setMaritalStatus(request.getMaritalStatus());
+		if (request.getMaritalStatuses() != null) {
+			preferences.setMaritalStatuses(request.getMaritalStatuses());
 		}
-		if (request.getReligion() != null) {
-			preferences.setReligion(request.getReligion());
+		if (request.getReligions() != null) {
+			preferences.setReligions(request.getReligions());
 		}
-		if (request.getCaste() != null) {
-			preferences.setCaste(request.getCaste());
+		if (request.getCastes() != null) {
+			preferences.setCastes(request.getCastes());
 		}
-		if (request.getEducation() != null) {
-			preferences.setEducation(request.getEducation());
+		if (request.getEducations() != null) {
+			preferences.setEducation(request.getEducations());
 		}
-		if (request.getOccupation() != null) {
-			preferences.setOccupation(request.getOccupation());
+		if (request.getOccupations() != null) {
+			preferences.setOccupation(request.getOccupations());
 		}
 		if (request.getMinIncome() != null) {
 			preferences.setMinIncome(request.getMinIncome());
@@ -253,40 +260,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 							HttpStatus.OK);
 		    }
 		}
-		preferences.setSubCaste(genderStr);
+		preferences.setSubCastes(genderStr);
 		preferences.setMotherTongue(genderStr);
-		preferences.setFamilyType(genderStr);
+		preferences.setFamilyTypes(genderStr);
 		
-		String dietStr = request.getDiet();
-		if (dietStr != null && !dietStr.trim().isEmpty()) {
-		    dietStr = dietStr.trim().toLowerCase();
-
-		    switch (dietStr) {
-		        case "vegetarian":
-		            preferences.setDiet("Vegetarian");
-		            break;
-		        case "non-vegetarian":
-		        case "nonvegetarian":
-		            preferences.setDiet("Non-Vegetarian");
-		            break;
-		        case "eggetarian":
-		            preferences.setDiet("Eggetarian");
-		            break;
-		        case "vegan":
-		            preferences.setDiet("Vegan");
-		            break;
-		        case "not req":
-		        case "not required":
-		        case "notreq":
-		            preferences.setDiet("Not Req");
-		            break;
-		        default:
-		            throw new ApplicationException(
-		                ErrorEnum.INVALID_DIET.toString(),
-		                ErrorEnum.INVALID_DIET.getExceptionError(),
-		                HttpStatus.OK
-		            );
-		    }
+		String dietStr = request.getDiets();
+		String normalizedDiet = normalizeDiet(dietStr);
+		if (normalizedDiet != null) {
+		    preferences.setDiet(normalizedDiet);
 		}
 
 		
@@ -536,7 +517,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		response.setAnnualIncome(profile.getAnnualIncome());
 		response.setAboutMe(profile.getAboutMe());
 		response.setFamilyType(profile.getFamilyType());
-		response.setFamilyValues(profile.getFamilyValues());
+		response.setFamilyValue(profile.getFamilyValue());
 		response.setCity(profile.getCity());
 		response.setState(profile.getState());
 		response.setCountry(profile.getCountry());
@@ -544,6 +525,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		response.setProfileCreatedBy(profile.getProfileCreatedBy());
 		response.setCreatedAt(profile.getCreatedAt());
 		response.setUpdatedAt(profile.getUpdatedAt());
+		response.setDiet(profile.getDiet());
 
 		// Get photos
 		List<UserPhoto> photos = photoRepository.findByUserIdOrderByDisplayOrderAsc(profile.getUser().getId());
@@ -574,11 +556,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	    response.setMinHeight(preference.getMinHeight());
 	    response.setMaxHeight(preference.getMaxHeight());
 
-	    response.setMaritalStatus(preference.getMaritalStatus());
-	    response.setReligion(preference.getReligion());
-	    response.setCaste(preference.getCaste());
-	    response.setEducation(preference.getEducation());
-	    response.setOccupation(preference.getOccupation());
+	    response.setMaritalStatuses(preference.getMaritalStatuses());
+	    response.setReligions(preference.getReligions());
+	    response.setCastes(preference.getCastes());
+	    response.setEducations(preference.getEducation());
+	    response.setOccupations(preference.getOccupation());
 
 	    response.setMinIncome(preference.getMinIncome());
 	    response.setMaxIncome(preference.getMaxIncome());
@@ -589,14 +571,42 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	    // ✅ Newly added fields
 	    response.setGender(preference.getGender());
-	    response.setSubCaste(preference.getSubCaste());
+	    response.setSubCastes(preference.getSubCastes());
 	    response.setMotherTongue(preference.getMotherTongue());
-	    response.setFamilyType(preference.getFamilyType());
-	    response.setDiet(preference.getDiet());
+	    response.setFamilyTypes(preference.getFamilyTypes());
+	    response.setDiets(preference.getDiet());
 
 	    return response;
 	}
 
 
+    public static String normalizeDiet(String dietStr) {
+        if (dietStr == null || dietStr.trim().isEmpty()) {
+            return null;
+        }
+
+        switch (dietStr.trim().toLowerCase()) {
+            case "vegetarian":
+                return "Vegetarian";
+            case "non-vegetarian":
+            case "nonvegetarian":
+                return "Non-Vegetarian";
+            case "eggetarian":
+                return "Eggetarian";
+            case "vegan":
+                return "Vegan";
+            case "not req":
+            case "not required":
+            case "notreq":
+                return "Not Req";
+            default:
+                throw new ApplicationException(
+                    ErrorEnum.INVALID_DIET.toString(),
+                    ErrorEnum.INVALID_DIET.getExceptionError(),
+                    HttpStatus.OK
+                );
+        }
+    }
+	
 	
 }

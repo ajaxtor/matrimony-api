@@ -17,11 +17,11 @@ public class PreferenceResponse {
 	    private Integer minHeight;
 	    private Integer maxHeight;
 
-	    private String maritalStatus; // comma-separated
-	    private String religion;      // comma-separated
-	    private String caste;         // comma-separated
-	    private String education;     // comma-separated
-	    private String occupation;    // comma-separated
+	    private String maritalStatuses; // comma-separated
+	    private String religions;      // comma-separated
+	    private String castes;         // comma-separated
+	    private String educations;     // comma-separated
+	    private String occupations;    // comma-separated
 
 	    private BigDecimal minIncome;
 	    private BigDecimal maxIncome;
@@ -31,9 +31,9 @@ public class PreferenceResponse {
 	    private String countries ; // default value
 
 	    private String gender;
-	    private String subCaste;
+	    private String subCastes;
 	    private String motherTongue;
-	    private String familyType;
-	    private String diet;
+	    private String familyTypes;
+	    private String diets;
 	
 }

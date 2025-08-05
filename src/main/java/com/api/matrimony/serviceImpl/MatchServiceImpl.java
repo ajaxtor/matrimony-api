@@ -99,7 +99,8 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public List<MatchResponse> getMutualMatches(Long userId) {
         log.info("Getting mutual matches for user: {}", userId);
-        
+        List<Match> mutualMatches = matchRepository.findMutualMatchesByUserId(userId);
+        return mutualMatches.stream()
                 .map(this::mapToMatchResponse)
                 .collect(Collectors.toList());
     }
@@ -422,7 +423,7 @@ public class MatchServiceImpl implements MatchService {
         return profileRepository.findProfilesWithFilters(
                 extractPreferredCities(preferences.getCities()),
                 extractPreferredStates(preferences.getStates()),
-                extractPreferredReligions(preferences.getReligion()),
+                extractPreferredReligions(preferences.getReligions()),
                 preferences.getMinAge(),
                 preferences.getMaxAge(),
                 pageable).getContent();
@@ -528,7 +529,7 @@ public class MatchServiceImpl implements MatchService {
         response.setAnnualIncome(profile.getAnnualIncome());
         response.setAboutMe(profile.getAboutMe());
         response.setFamilyType(profile.getFamilyType());
-        response.setFamilyValues(profile.getFamilyValues());
+        response.setFamilyValue(profile.getFamilyValue());
         response.setCity(profile.getCity());
         response.setState(profile.getState());
         response.setCountry(profile.getCountry());
@@ -573,7 +574,7 @@ public class MatchServiceImpl implements MatchService {
         response.setAnnualIncome(profile.getAnnualIncome());
         response.setAboutMe(profile.getAboutMe());
         response.setFamilyType(profile.getFamilyType());
-        response.setFamilyValues(profile.getFamilyValues());
+        response.setFamilyValue(profile.getFamilyValue());
         response.setCity(profile.getCity());
         response.setState(profile.getState());
         response.setCountry(profile.getCountry());

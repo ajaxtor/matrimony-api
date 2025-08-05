@@ -45,13 +45,13 @@ public class UserPreference {
  private Integer maxHeight;
 
  @Column(name = "marital_status", length = 100)
- private String maritalStatus; // comma separated
+ private String maritalStatuses; // comma separated
 
- @Column(length = 100)
- private String religion; // comma separated
+ @Column(name = "religion",length = 100)
+ private String religions; // comma separated
 
- @Column(length = 100)
- private String caste; // comma separated
+ @Column(name = "caste",length = 100)
+ private String castes; // comma separated
 
  @Column(length = 200)
  private String education; // comma separated
@@ -76,11 +76,11 @@ public class UserPreference {
  @Column(name = "gender")
  private String gender;
  @Column(name = "sub_caste")
- private String subCaste;
+ private String subCastes;
  @Column(name = "mother_tongue")
  private String motherTongue;
  @Column(name = "family_type")
- private String familyType;
+ private String familyTypes;
  @Column(name = "diet")
  private String diet;
 

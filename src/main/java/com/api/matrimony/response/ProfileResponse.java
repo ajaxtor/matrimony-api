@@ -40,11 +40,12 @@ public class ProfileResponse {
     private BigDecimal annualIncome;
     private String aboutMe;
     private String familyType;
-    private String familyValues;
+    private String familyValue;
     private String city;
     private String state;
     private String country;
     private String pincode;
+    private String diet;
     private String profileCreatedBy;
     private List<String> photoUrls;
     private String primaryPhotoUrl;

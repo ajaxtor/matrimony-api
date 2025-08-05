@@ -54,9 +54,9 @@ public class UserProfile {
  @Enumerated(EnumType.STRING)
  @Column(name = "marital_status")
  private MaritalStatus maritalStatus;
-
+ @Column(name = "religion")
  private String religion;
-
+ @Column(name = "caste")
  private String caste;
 
  @Column(name = "sub_caste")
@@ -79,15 +79,17 @@ public class UserProfile {
  private String familyType;
 
  @Column(name = "family_values")
- private String familyValues;
-
+ private String familyValue;
+ @Column(name = "city")
  private String city;
-
+ @Column(name = "state")
  private String state;
 
  private String country = "India";
 
  private String pincode;
+ 
+ private String diet;
 
  @Column(name = "profile_created_by")
  private String profileCreatedBy;
