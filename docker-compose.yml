@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: matrimony-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: matrimony_app
+      MYSQL_ROOT_PASSWORD: boxer@1998
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - matrimony-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: matrimony-app
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/matrimony_app?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: boxer@1998
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none
+      SPRING_JACKSON_TIME_ZONE: Asia/Kolkata
+    ports:
+      - "9999:9999"
+    volumes:
+      - ./uploads:/app/uploads
+    networks:
+      - matrimony-network
+
+volumes:
+  mysql_data:
+
+networks:
+  matrimony-network:
+    driver: bridge
