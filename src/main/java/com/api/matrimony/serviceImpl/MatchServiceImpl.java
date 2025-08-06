@@ -586,7 +586,6 @@ public class MatchServiceImpl implements MatchService {
         // Get photos
         List<UserPhoto> photos = photoRepository.findByUserIdOrderByDisplayOrderAsc(profile.getUser().getId());
         response.setPhotoUrls(photos.stream().map(UserPhoto::getPhotoUrl).collect(Collectors.toList()));
-
         // Get primary photo
         photos.stream()
                 .filter(UserPhoto::getIsPrimary)
