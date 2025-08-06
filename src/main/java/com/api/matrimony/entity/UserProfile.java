@@ -29,79 +29,90 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserProfile {
 
- @Id
- @GeneratedValue(strategy = GenerationType.IDENTITY)
- private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
- @OneToOne
- @JoinColumn(name = "user_id", nullable = false)
- private User user;
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
- @Column(name = "full_name", nullable = false, length = 50)
- private String fullName;
+    @Column(name = "full_name", nullable = false, length = 50)
+    private String fullName;
 
- @Column(name = "date_of_birth", nullable = false)
- private LocalDate dateOfBirth;
+    @Column(name = "date_of_birth", nullable = false)
+    private LocalDate dateOfBirth;
 
- @Enumerated(EnumType.STRING)
- @Column(nullable = false)
- private Gender gender;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Gender gender;
 
- private Integer height; // in cm
+    @Column(name = "height")
+    private Integer height; // in cm
 
- private Integer weight; // in kg
+    @Column(name = "weight")
+    private Integer weight; // in kg
 
- @Enumerated(EnumType.STRING)
- @Column(name = "marital_status")
- private MaritalStatus maritalStatus;
- @Column(name = "religion")
- private String religion;
- @Column(name = "caste")
- private String caste;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "marital_status")
+    private MaritalStatus maritalStatus;
 
- @Column(name = "sub_caste")
- private String subCaste;
+    @Column(name = "religion")
+    private String religion;
+    
+    @Column(name = "caste")
+    private String caste;
 
- @Column(name = "mother_tongue")
- private String motherTongue;
+    @Column(name = "sub_caste")
+    private String subCaste;
 
- private String education;
+    @Column(name = "mother_tongue")
+    private String motherTongue;
 
- private String occupation;
+    @Column(name = "education")
+    private String education;
 
- @Column(name = "annual_income", precision = 15, scale = 2)
- private java.math.BigDecimal annualIncome;
+    @Column(name = "occupation")
+    private String occupation;
 
- @Column(name = "about_me", columnDefinition = "TEXT")
- private String aboutMe;
+    @Column(name = "annual_income", precision = 15, scale = 2)
+    private java.math.BigDecimal annualIncome;
 
- @Column(name = "family_type")
- private String familyType;
+    @Column(name = "about_me", columnDefinition = "TEXT")
+    private String aboutMe;
 
- @Column(name = "family_values")
- private String familyValue;
- @Column(name = "city")
- private String city;
- @Column(name = "state")
- private String state;
+    @Column(name = "family_type")
+    private String familyType;
 
- private String country = "India";
+    @Column(name = "family_value")
+    private String familyValue;
 
- private String pincode;
- 
- private String diet;
+    @Column(name = "city")
+    private String city;
 
- @Column(name = "profile_created_by")
- private String profileCreatedBy;
+    @Column(name = "state")
+    private String state;
 
- @Column(name = "created_at")
- private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(name = "country")
+    private String country = "INDIA";
 
- @Column(name = "updated_at")
- private LocalDateTime updatedAt = LocalDateTime.now();
+    @Column(name = "pincode")
+    private String pincode;
 
- @PreUpdate
- public void preUpdate() {
-     this.updatedAt = LocalDateTime.now();
- }
+    @Column(name = "diet")
+    private String diet;
+
+    @Column(name = "profile_created_by")
+    private String profileCreatedBy;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }

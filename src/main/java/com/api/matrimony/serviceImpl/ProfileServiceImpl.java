@@ -272,6 +272,9 @@ public class ProfileServiceImpl implements ProfileService {
         if (request.getProfileCreatedBy() != null) {
             profile.setProfileCreatedBy(request.getProfileCreatedBy());
         }
+        if (request.getDiet() != null) {
+            profile.setDiet(request.getDiet());
+        }
     }
 
     private ProfileResponse mapToProfileResponse(UserProfile profile) {
@@ -305,6 +308,7 @@ public class ProfileServiceImpl implements ProfileService {
         response.setProfileCreatedBy(profile.getProfileCreatedBy());
         response.setCreatedAt(profile.getCreatedAt());
         response.setUpdatedAt(profile.getUpdatedAt());
+        response.setDiet(profile.getDiet());
 
         // Get photos
         List<UserPhoto> photos = photoRepository.findByUserIdOrderByDisplayOrderAsc(profile.getUser().getId());

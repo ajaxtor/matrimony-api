@@ -24,74 +24,79 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserPreference {
 
- @Id
- @GeneratedValue(strategy = GenerationType.IDENTITY)
- private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
- @OneToOne
- @JoinColumn(name = "user_id", nullable = false)
- private User user;
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
- @Column(name = "min_age")
- private Integer minAge = 18;
+    @Column(name = "min_age")
+    private Integer minAge = 18;
 
- @Column(name = "max_age")
- private Integer maxAge = 60;
+    @Column(name = "max_age")
+    private Integer maxAge = 60;
 
- @Column(name = "min_height")
- private Integer minHeight;
+    @Column(name = "min_height")
+    private Integer minHeight;
 
- @Column(name = "max_height")
- private Integer maxHeight;
+    @Column(name = "max_height")
+    private Integer maxHeight;
 
- @Column(name = "marital_status", length = 100)
- private String maritalStatuses; // comma separated
+    @Column(name = "marital_statuses", length = 100)
+    private String maritalStatuses; // comma separated
 
- @Column(name = "religion",length = 100)
- private String religions; // comma separated
+    @Column(name = "religions", length = 100)
+    private String religions; // comma separated
 
- @Column(name = "caste",length = 100)
- private String castes; // comma separated
+    @Column(name = "castes", length = 100)
+    private String castes; // comma separated
 
- @Column(length = 200)
- private String education; // comma separated
+    @Column(name = "educations", length = 200)
+    private String education; // comma separated
 
- @Column(length = 200)
- private String occupation; // comma separated
+    @Column(name = "occupations", length = 200)
+    private String occupation; // comma separated
 
- @Column(name = "min_income", precision = 15, scale = 2)
- private java.math.BigDecimal minIncome;
+    @Column(name = "min_income", precision = 15, scale = 2)
+    private java.math.BigDecimal minIncome;
 
- @Column(name = "max_income", precision = 15, scale = 2)
- private java.math.BigDecimal maxIncome;
+    @Column(name = "max_income", precision = 15, scale = 2)
+    private java.math.BigDecimal maxIncome;
 
- @Column(length = 500)
- private String cities; // comma separated
+    @Column(name = "cities", length = 500)
+    private String cities; // comma separated
 
- @Column(length = 500)
- private String states; // comma separated
+    @Column(name = "states", length = 500)
+    private String states; // comma separated
 
- @Column(length = 200)
- private String countries = "India";
- @Column(name = "gender")
- private String gender;
- @Column(name = "sub_caste")
- private String subCastes;
- @Column(name = "mother_tongue")
- private String motherTongue;
- @Column(name = "family_type")
- private String familyTypes;
- @Column(name = "diet")
- private String diet;
+    @Column(name = "countries", length = 200)
+    private String countries = "INDIA"; // comma separated
 
- @Column(name = "created_at")
- private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(name = "gender")
+    private String gender;
+    
+    @Column(name = "sub_castes")
+    private String subCastes;
+    
+    @Column(name = "mother_tongue")
+    private String motherTongue;
+    
+    @Column(name = "family_types")
+    private String familyTypes;
+    
+    @Column(name = "diet")
+    private String diet;
 
- @Column(name = "updated_at")
- private LocalDateTime updatedAt = LocalDateTime.now();
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
 
- @PreUpdate
- public void preUpdate() {
-     this.updatedAt = LocalDateTime.now();
- }
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }

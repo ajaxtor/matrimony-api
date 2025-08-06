@@ -246,14 +246,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 		    switch (genderStr) {
 		        case "male":
-		            preferences.setGender("Male");
+		            preferences.setGender("MALE");
 		            break;
 		        case "female":
-		            preferences.setGender("Female");
+		            preferences.setGender("FEMALE");
 		            break;
 		        case "other":
 		        case "others":
-		            preferences.setGender("Other");
+		            preferences.setGender("OTHER");
 		            break;
 		        default:
 		        	throw new ApplicationException(ErrorEnum.INVALID_GENDER.toString(), ErrorEnum.INVALID_GENDER.getExceptionError(),
@@ -574,7 +574,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	    response.setSubCastes(preference.getSubCastes());
 	    response.setMotherTongue(preference.getMotherTongue());
 	    response.setFamilyTypes(preference.getFamilyTypes());
-	    response.setDiets(preference.getDiet());
+	    response.setDiet(preference.getDiet());
 
 	    return response;
 	}
@@ -587,14 +587,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         switch (dietStr.trim().toLowerCase()) {
             case "vegetarian":
-                return "Vegetarian";
+                return "VEGETARIAN";
             case "non-vegetarian":
             case "nonvegetarian":
-                return "Non-Vegetarian";
+            case "non_vegetarian":
+                return "NON_VEGETARIAN";
             case "eggetarian":
-                return "Eggetarian";
+                return "EGGETARIAN";
             case "vegan":
-                return "Vegan";
+                return "VEGAN";
             case "not req":
             case "not required":
             case "notreq":

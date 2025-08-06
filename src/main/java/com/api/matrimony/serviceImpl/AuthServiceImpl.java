@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.api.matrimony.entity.UserPreference;
+import com.api.matrimony.response.PreferenceResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -342,6 +344,45 @@ public class AuthServiceImpl implements AuthService {
 			response.setProfile(profileResponse);
 		}
 
-		return response;
+        if(user.getPreferences() != null) {
+            response.setPreference(mapToPreferenceResponse(user.getPreferences()));
+        }
+        return response;
 	}
+
+    private PreferenceResponse mapToPreferenceResponse(UserPreference preference) {
+        if (preference == null) {
+            return null;
+        }
+
+        PreferenceResponse response = new PreferenceResponse();
+
+        response.setMinAge(preference.getMinAge());
+        response.setMaxAge(preference.getMaxAge());
+
+        response.setMinHeight(preference.getMinHeight());
+        response.setMaxHeight(preference.getMaxHeight());
+
+        response.setMaritalStatuses(preference.getMaritalStatuses());
+        response.setReligions(preference.getReligions());
+        response.setCastes(preference.getCastes());
+        response.setEducations(preference.getEducation());
+        response.setOccupations(preference.getOccupation());
+
+        response.setMinIncome(preference.getMinIncome());
+        response.setMaxIncome(preference.getMaxIncome());
+
+        response.setCities(preference.getCities());
+        response.setStates(preference.getStates());
+        response.setCountries(preference.getCountries());
+
+        // ✅ Newly added fields
+        response.setGender(preference.getGender());
+        response.setSubCastes(preference.getSubCastes());
+        response.setMotherTongue(preference.getMotherTongue());
+        response.setFamilyTypes(preference.getFamilyTypes());
+        response.setDiet(preference.getDiet());
+
+        return response;
+    }
 }
