@@ -574,7 +574,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	    response.setSubCastes(preference.getSubCastes());
 	    response.setMotherTongue(preference.getMotherTongue());
 	    response.setFamilyTypes(preference.getFamilyTypes());
-	    response.setDiets(preference.getDiet());
+	    response.setDiet(preference.getDiet());
 
 	    return response;
 	}

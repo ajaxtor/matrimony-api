@@ -34,6 +34,6 @@ public class PreferenceResponse {
 	    private String subCastes;
 	    private String motherTongue;
 	    private String familyTypes;
-	    private String diets;
+	    private String diet;
 	
 }
