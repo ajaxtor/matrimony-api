@@ -118,7 +118,7 @@ public class MatchServiceImpl implements MatchService {
 					ErrorEnum.ONLY_ACT_OWN_MATCH.getExceptionError(), HttpStatus.OK);
         }
 
-        MatchStatus newStatus = MatchStatus.valueOf(action.toUpperCase());
+        MatchStatus newStatus = action.equalsIgnoreCase("ACCEPT") ? MatchStatus.ACCEPTED : MatchStatus.REJECTED;
         match.setStatus(newStatus);
         matchRepository.save(match);
 
