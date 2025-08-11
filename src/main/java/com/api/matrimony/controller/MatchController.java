@@ -48,156 +48,152 @@ public class MatchController {
     /**
      * Get matches for the current user
      */
-    @GetMapping
-    public ResponseEntity<APIResonse<PagedResponse<MatchResponse>>> getMatches(
-            @AuthenticationPrincipal User currentUser,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String status) {
+    @GetMapping("/findBestMatches")
+    public ResponseEntity<APIResonse<List<MatchResponse>>> findBestMatches(
+            @AuthenticationPrincipal User currentUser) {
         
         log.info("Getting matches for user: {}, page: {}, size: {}, status: {}", 
-                currentUser.getId(), page, size, status);
-        APIResonse<PagedResponse<MatchResponse>> response = new APIResonse<>();
-            Pageable pageable = PageRequest.of(page, size);
-            PagedResponse<MatchResponse> matches = matchService.getMatchesForUser(
-                    currentUser.getId(), status, pageable);
+                currentUser.getId());
+        APIResonse<List<MatchResponse>> response = new APIResonse<>();
+        List<MatchResponse> matches = matchService.findBestMatches(
+                    currentUser.getId());
             response.setData(matches);
             return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-    /**
-     * Get mutual matches for the current user
-     */
-    @GetMapping("/mutual")
-    public ResponseEntity<APIResonse<List<MatchResponse>>> getMutualMatches(
-            @AuthenticationPrincipal User currentUser) {
-        
-        log.info("Getting mutual matches for user: {}", currentUser.getId());
-        APIResonse<List<MatchResponse>> response = new APIResonse<>();
-            List<MatchResponse> mutualMatches = matchService.getMutualMatches(currentUser.getId());
-            response.setData(mutualMatches);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    /**
-     * Accept or reject a match
-     */
-    @PostMapping("/action")
-    public ResponseEntity<APIResonse<String>> handleMatchAction(
-            @AuthenticationPrincipal User currentUser,
-            @Valid @RequestBody MatchActionRequest request) {
-        
-        log.info("Match action by user: {}, matchId: {}, action: {}", 
-                currentUser.getId(), request.getMatchId(), request.getAction());
-        APIResonse<String> response = new APIResonse<>();
-            String result = matchService.handleMatchAction(currentUser.getId(), 
-                    request.getMatchId(), request.getAction());
-            response.setData(result);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    /**
-     * Search profiles based on criteria
-     */
-    @GetMapping("/search")
-    public ResponseEntity<APIResonse<PagedResponse<ProfileResponse>>> searchProfiles(
-            @AuthenticationPrincipal User currentUser,
-            @RequestParam(required = false) String city,
-            @RequestParam(required = false) String state,
-            @RequestParam(required = false) String religion,
-            @RequestParam(required = false) String caste,
-            @RequestParam(required = false) String education,
-            @RequestParam(required = false) String occupation,
-            @RequestParam(required = false) Integer minAge,
-            @RequestParam(required = false) Integer maxAge,
-            @RequestParam(required = false) Integer minHeight,
-            @RequestParam(required = false) Integer maxHeight,
-            @RequestParam(required = false) String maritalStatus,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        
-        log.info("Profile search by user: {}, filters - city: {}, religion: {}, minAge: {}, maxAge: {}", 
-                currentUser.getId(), city, religion, minAge, maxAge);
-        APIResonse<PagedResponse<ProfileResponse>> response = new APIResonse<>();
-            Pageable pageable = PageRequest.of(page, size);
-            
-            // Create search criteria object
-            SearchCriteria criteria = SearchCriteria.builder()
-                    .city(city)
-                    .state(state)
-                    .religion(religion)
-                    .caste(caste)
-                    .education(education)
-                    .occupation(occupation)
-                    .minAge(minAge)
-                    .maxAge(maxAge)
-                    .minHeight(minHeight)
-                    .maxHeight(maxHeight)
-                    .maritalStatus(maritalStatus)
-                    .build();
-            
-            PagedResponse<ProfileResponse> profiles = matchService.searchProfiles(
-                    currentUser.getId(), criteria, pageable);
-            response.setData(profiles);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    /**
-     * Get recommended matches for user
-     */
-    @GetMapping("/recommendations")
-    public ResponseEntity<APIResonse<List<MatchResponse>>> getRecommendations(
-            @AuthenticationPrincipal User currentUser,
-            @RequestParam(defaultValue = "6") int limit) {
-        
-        log.info("Getting recommendations for user: {}, limit: {}", currentUser.getId(), limit);
-        APIResonse<List<MatchResponse>> response = new APIResonse<>();
-            List<MatchResponse> recommendations = matchService.getRecommendations(
-                    currentUser.getId(), limit);
-            response.setData(recommendations);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    /**
-     * Get match details by ID
-     */
-    @GetMapping("matchDetailsByID/{matchId}")
-    public ResponseEntity<APIResonse<MatchResponse>> getMatchDetails(
-            @AuthenticationPrincipal User currentUser,
-            @PathVariable Long matchId) {
-        
-        log.info("Getting match details for user: {}, matchId: {}", currentUser.getId(), matchId);
-        APIResonse<MatchResponse> response = new APIResonse<>();
-            MatchResponse matchDetails = matchService.getMatchDetails(currentUser.getId(), matchId);
-            response.setData(matchDetails);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    /**
-     * Generate new matches for user (admin or scheduled operation)
-     */
-    @PostMapping("/generateMatch")
-    public ResponseEntity<APIResonse<String>> generateMatches(
-            @AuthenticationPrincipal User currentUser) {
-        
-        log.info("Generating new matches for user: {}", currentUser.getId());
-        APIResonse<String> response = new APIResonse<>();
-            String result = matchService.generateMatchesForUser(currentUser.getId());
-            response.setData(result);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    /**
-     * Get match statistics for user
-     */
-    @GetMapping("/matchStats")
-    public ResponseEntity<APIResonse<MatchStats>> getMatchStats(
-            @AuthenticationPrincipal User currentUser) {
-        
-        log.info("Getting match statistics for user: {}", currentUser.getId());
-        APIResonse<MatchStats> response = new APIResonse<>();
-            MatchStats stats = matchService.getMatchStats(currentUser.getId());
-            response.setData(stats);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+//
+//    /**
+//     * Get mutual matches for the current user
+//     */
+//    @GetMapping("/mutual")
+//    public ResponseEntity<APIResonse<List<MatchResponse>>> getMutualMatches(
+//            @AuthenticationPrincipal User currentUser) {
+//        
+//        log.info("Getting mutual matches for user: {}", currentUser.getId());
+//        APIResonse<List<MatchResponse>> response = new APIResonse<>();
+//            List<MatchResponse> mutualMatches = matchService.getMutualMatches(currentUser.getId());
+//            response.setData(mutualMatches);
+//            return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
+//
+//    /**
+//     * Accept or reject a match
+//     */
+//    @PostMapping("/action")
+//    public ResponseEntity<APIResonse<String>> handleMatchAction(
+//            @AuthenticationPrincipal User currentUser,
+//            @Valid @RequestBody MatchActionRequest request) {
+//        
+//        log.info("Match action by user: {}, matchId: {}, action: {}", 
+//                currentUser.getId(), request.getMatchId(), request.getAction());
+//        APIResonse<String> response = new APIResonse<>();
+//            String result = matchService.handleMatchAction(currentUser.getId(), 
+//                    request.getMatchId(), request.getAction());
+//            response.setData(result);
+//            return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
+//
+//    /**
+//     * Search profiles based on criteria
+//     */
+//    @GetMapping("/search")
+//    public ResponseEntity<APIResonse<PagedResponse<ProfileResponse>>> searchProfiles(
+//            @AuthenticationPrincipal User currentUser,
+//            @RequestParam(required = false) String city,
+//            @RequestParam(required = false) String state,
+//            @RequestParam(required = false) String religion,
+//            @RequestParam(required = false) String caste,
+//            @RequestParam(required = false) String education,
+//            @RequestParam(required = false) String occupation,
+//            @RequestParam(required = false) Integer minAge,
+//            @RequestParam(required = false) Integer maxAge,
+//            @RequestParam(required = false) Integer minHeight,
+//            @RequestParam(required = false) Integer maxHeight,
+//            @RequestParam(required = false) String maritalStatus,
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size) {
+//        
+//        log.info("Profile search by user: {}, filters - city: {}, religion: {}, minAge: {}, maxAge: {}", 
+//                currentUser.getId(), city, religion, minAge, maxAge);
+//        APIResonse<PagedResponse<ProfileResponse>> response = new APIResonse<>();
+//            Pageable pageable = PageRequest.of(page, size);
+//            
+//            // Create search criteria object
+//            SearchCriteria criteria = SearchCriteria.builder()
+//                    .city(city)
+//                    .state(state)
+//                    .religion(religion)
+//                    .caste(caste)
+//                    .education(education)
+//                    .occupation(occupation)
+//                    .minAge(minAge)
+//                    .maxAge(maxAge)
+//                    .minHeight(minHeight)
+//                    .maxHeight(maxHeight)
+//                    .maritalStatus(maritalStatus)
+//                    .build();
+//            
+//            PagedResponse<ProfileResponse> profiles = matchService.searchProfiles(
+//                    currentUser.getId(), criteria, pageable);
+//            response.setData(profiles);
+//            return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
+//
+//    /**
+//     * Get recommended matches for user
+//     */
+//    @GetMapping("/recommendations")
+//    public ResponseEntity<APIResonse<List<MatchResponse>>> getRecommendations(
+//            @AuthenticationPrincipal User currentUser,
+//            @RequestParam(defaultValue = "6") int limit) {
+//        
+//        log.info("Getting recommendations for user: {}, limit: {}", currentUser.getId(), limit);
+//        APIResonse<List<MatchResponse>> response = new APIResonse<>();
+//            List<MatchResponse> recommendations = matchService.getRecommendations(
+//                    currentUser.getId(), limit);
+//            response.setData(recommendations);
+//            return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
+//
+//    /**
+//     * Get match details by ID
+//     */
+//    @GetMapping("matchDetailsByID/{matchId}")
+//    public ResponseEntity<APIResonse<MatchResponse>> getMatchDetails(
+//            @AuthenticationPrincipal User currentUser,
+//            @PathVariable Long matchId) {
+//        
+//        log.info("Getting match details for user: {}, matchId: {}", currentUser.getId(), matchId);
+//        APIResonse<MatchResponse> response = new APIResonse<>();
+//            MatchResponse matchDetails = matchService.getMatchDetails(currentUser.getId(), matchId);
+//            response.setData(matchDetails);
+//            return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
+//
+//    /**
+//     * Generate new matches for user (admin or scheduled operation)
+//     */
+//    @PostMapping("/generateMatch")
+//    public ResponseEntity<APIResonse<String>> generateMatches(
+//            @AuthenticationPrincipal User currentUser) {
+//        
+//        log.info("Generating new matches for user: {}", currentUser.getId());
+//        APIResonse<String> response = new APIResonse<>();
+//            String result = matchService.generateMatchesForUser(currentUser.getId());
+//            response.setData(result);
+//            return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
+//
+//    /**
+//     * Get match statistics for user
+//     */
+//    @GetMapping("/matchStats")
+//    public ResponseEntity<APIResonse<MatchStats>> getMatchStats(
+//            @AuthenticationPrincipal User currentUser) {
+//        
+//        log.info("Getting match statistics for user: {}", currentUser.getId());
+//        APIResonse<MatchStats> response = new APIResonse<>();
+//            MatchStats stats = matchService.getMatchStats(currentUser.getId());
+//            response.setData(stats);
+//            return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
 }

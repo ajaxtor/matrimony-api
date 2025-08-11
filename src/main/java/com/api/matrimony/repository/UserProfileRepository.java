@@ -1,5 +1,6 @@
 package com.api.matrimony.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -36,4 +37,7 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long> 
             @Param("minAge") Integer minAge,
             @Param("maxAge") Integer maxAge,
             Pageable pageable);
+
+	List<UserProfile> findAllByUserIdNot(Long loginUserId);
+	
 }

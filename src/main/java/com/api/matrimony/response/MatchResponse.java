@@ -1,12 +1,7 @@
 package com.api.matrimony.response;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,16 +12,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MatchResponse {
-    
-    private Long id;
     private Long userId;
-    private Long matchedUserId;
-    private String status;
-    private BigDecimal matchScore;
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDateTime matchedAt;
-    private MatchedProfileResponse matchedUserProfile;
-    private Boolean canChat;
+    private String name;
+    private Integer age;
+    private String gender;
+    private LocationResponce location;
+    private String education;
+    private String occupation;
+    private Boolean hasPhotos;
+    private Double matchScore;
 }
