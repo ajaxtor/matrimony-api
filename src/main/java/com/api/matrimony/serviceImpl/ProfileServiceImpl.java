@@ -277,7 +277,7 @@ public class ProfileServiceImpl implements ProfileService {
         }
     }
 
-    private ProfileResponse mapToProfileResponse(UserProfile profile) {
+    public ProfileResponse mapToProfileResponse(UserProfile profile) {
         ProfileResponse response = new ProfileResponse();
         response.setId(profile.getId());
         response.setFullName(profile.getFullName() );

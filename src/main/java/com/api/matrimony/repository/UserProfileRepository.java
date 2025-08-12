@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,7 +17,7 @@ import com.api.matrimony.entity.UserProfile;
  * User Profile Repository
  */
 @Repository
-public interface UserProfileRepository extends JpaRepository<UserProfile, Long> {
+public interface UserProfileRepository extends JpaRepository<UserProfile, Long>  {
     
     Optional<UserProfile> findByUserId(Long userId);
     
@@ -39,5 +40,8 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long> 
             Pageable pageable);
 
 	List<UserProfile> findAllByUserIdNot(Long loginUserId);
+
+	Page<UserProfile> findAll(Specification<UserProfile> spec, Pageable pageable);
+
 	
 }

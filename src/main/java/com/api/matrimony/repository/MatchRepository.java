@@ -37,4 +37,8 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
     Long countMatchesByUserIdAndStatus(@Param("userId") Long userId, @Param("status") MatchStatus status);
     
     Page<Match> findByUserIdAndStatusOrderByMatchedAtDesc(Long userId, MatchStatus status, Pageable pageable);
+    
+    List<Match> findByUserId(Long userId);
+    
+    List<Match> findByMatchedUserId(Long matchedUserId);
 }
