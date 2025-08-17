@@ -8,13 +8,16 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.api.matrimony.entity.UserPreference;
 import com.api.matrimony.entity.UserProfile;
 import com.api.matrimony.enums.Gender;
-import com.api.matrimony.response.LocationResponce;
+import com.api.matrimony.response.GetMatchResponce;
 import com.api.matrimony.response.MatchResponse;
+import com.api.matrimony.response.ProfileResponse;
+import com.api.matrimony.serviceImpl.ProfileServiceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,7 +29,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MatchingAlgorithm {
 	
-	 public MatchResponse calculateMatchScore(UserProfile candidate, UserPreference preferences) {
+	@Autowired
+	ProfileServiceImpl profileServiceImpl;
+	
+	 public GetMatchResponce calculateMatchScore(UserProfile candidate, UserPreference preferences) {
 	        double totalScore = 0.0;
 	        double totalWeight = 0.0;
 	        
@@ -194,23 +200,12 @@ public class MatchingAlgorithm {
 	        return locations.contains(candidateLocation.toUpperCase());
 	    }
 	    
-	    public MatchResponse buildMatchResponse(UserProfile profile, double matchScore) {
-	        LocationResponce location = new LocationResponce();
-	        location.setCountry(profile.getCountry());
-	        location.setState(profile.getState());
-	        location.setCity(profile.getCity());
-	        
-	        MatchResponse response = new MatchResponse();
-	        response.setUserId(profile.getUser().getId());
-	        response.setName(profile.getFullName());
-	        response.setAge(calculateAge(profile.getDateOfBirth()));
-	        response.setGender(profile.getGender() != null ? profile.getGender().toString().toLowerCase() : null);
-	        response.setLocation(location);
-	        response.setEducation(profile.getEducation());
-	        response.setOccupation(profile.getOccupation());
-	        response.setHasPhotos(checkIfUserHasPhotos(profile.getUser().getId()));
+	    public GetMatchResponce buildMatchResponse(UserProfile profile, double matchScore) {
+	    	GetMatchResponce response = new GetMatchResponce();
+	    	ProfileResponse profileResponse = profileServiceImpl.mapToProfileResponse(profile);
+	    	response.setProfileResponse(profileResponse);
 	        response.setMatchScore(Math.round(matchScore * 10.0) / 10.0); // Round to 1 decimal place
-	        
+	        log.error(" Match profile responce is -> "+response);
 	        return response;
 	    }
 	    

@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.matrimony.entity.User;
 import com.api.matrimony.request.MatchActionRequest;
 import com.api.matrimony.request.SearchRequest;
 import com.api.matrimony.response.APIResonse;
+import com.api.matrimony.response.GetMatchResponce;
 import com.api.matrimony.response.MatchResponse;
 import com.api.matrimony.response.PagedResponse;
 import com.api.matrimony.response.ProfileResponse;
@@ -47,13 +47,13 @@ public class MatchController {
      * Get matches for the current user
      */
     @GetMapping("/findBestMatches")
-    public ResponseEntity<APIResonse<List<MatchResponse>>> findBestMatches(
+    public ResponseEntity<APIResonse<List<GetMatchResponce>>> findBestMatches(
             @AuthenticationPrincipal User currentUser) {
         
         log.info("Getting matches for user: {}, page: {}, size: {}, status: {}", 
                 currentUser.getId());
-        APIResonse<List<MatchResponse>> response = new APIResonse<>();
-        List<MatchResponse> matches = matchService.findBestMatches(
+        APIResonse<List<GetMatchResponce>> response = new APIResonse<>();
+        List<GetMatchResponce> matches = matchService.findBestMatches(
                     currentUser.getId());
             response.setData(matches);
             return new ResponseEntity<>(response, HttpStatus.OK);

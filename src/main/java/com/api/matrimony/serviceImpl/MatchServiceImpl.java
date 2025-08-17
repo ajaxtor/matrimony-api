@@ -28,13 +28,13 @@ import com.api.matrimony.exception.ApplicationException;
 import com.api.matrimony.exception.ErrorEnum;
 import com.api.matrimony.mapper.MatchMapper;
 import com.api.matrimony.repository.MatchRepository;
-import com.api.matrimony.repository.SearchRepository;
 import com.api.matrimony.repository.UserPhotoRepository;
 import com.api.matrimony.repository.UserPreferenceRepository;
 import com.api.matrimony.repository.UserProfileRepository;
 import com.api.matrimony.repository.UserRepository;
 import com.api.matrimony.request.RecommendationScore;
 import com.api.matrimony.request.SearchRequest;
+import com.api.matrimony.response.GetMatchResponce;
 import com.api.matrimony.response.MatchResponse;
 import com.api.matrimony.response.PagedResponse;
 import com.api.matrimony.response.ProfileResponse;
@@ -70,7 +70,7 @@ public class MatchServiceImpl implements MatchService {
     
     @Override
     @Transactional
-    public List<MatchResponse> findBestMatches(Long loginUserId) {
+    public List<GetMatchResponce> findBestMatches(Long loginUserId) {
         log.info("Finding best matches for user: {}", loginUserId);
         
         // Get user preferences
@@ -85,7 +85,7 @@ public class MatchServiceImpl implements MatchService {
         List<UserProfile> candidateProfiles = userProfileRepository.findAllByUserIdNot(loginUserId);
         
         // Calculate match scores and filter
-        List<MatchResponse> matches = candidateProfiles.stream()
+        List<GetMatchResponce> matches = candidateProfiles.stream()
                 .map(candidate -> matchingAlgorithm.calculateMatchScore(candidate, preferences))
                 .filter(match -> match.getMatchScore() > 0) // Filter out 0% matches
                 .sorted((m1, m2) -> Double.compare(m2.getMatchScore(), m1.getMatchScore())) // Sort desc
