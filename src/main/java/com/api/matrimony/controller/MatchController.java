@@ -84,9 +84,9 @@ public class MatchController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@PostMapping("/findSearch/{name}")
+	@PostMapping({"/findSearch", "/findSearch/{name}"})
 	public ResponseEntity<APIResonse<List<ProfileResponse>>> searchProfiles(@AuthenticationPrincipal User currentUser,
-			@PathVariable String name) {
+			 @PathVariable(required = false) String name) {
 		APIResonse<List<ProfileResponse>> response = new APIResonse<>();
 		List<ProfileResponse> result = matchService.searchFilterProfiles(currentUser.getId(), name);
 		response.setData(result);
