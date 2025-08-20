@@ -73,6 +73,9 @@ public class User implements UserDetails {
 
     @Column(name = "last_login")
     private LocalDateTime lastLogin;
+    
+    @Column(name = "is_hide")
+    private Boolean isHide = false;
 
     // One-to-One relationship with UserProfile
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

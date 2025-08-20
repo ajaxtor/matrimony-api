@@ -4,10 +4,9 @@ import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 
-import com.api.matrimony.request.SearchRequest;
 import com.api.matrimony.response.GetMatchResponce;
+import com.api.matrimony.response.MatchActionResponse;
 import com.api.matrimony.response.MatchResponse;
-import com.api.matrimony.response.PagedResponse;
 import com.api.matrimony.response.ProfileResponse;
 
 /**
@@ -18,7 +17,7 @@ public interface MatchService {
 	 List<GetMatchResponce> findBestMatches(Long loginUserId);
 	 
     List<MatchResponse> getMutualMatches(Long userId);
-    String handleMatchAction(Long userId, Long matchId, String action);
+    MatchActionResponse handleMatchAction(Long userId, Long matchId, String action);
     List<MatchResponse> getRecommendations(Long userId);
    MatchResponse getMatchDetails(Long userId, Long matchId);
 //    String generateMatchesForUser(Long userId);
@@ -26,7 +25,7 @@ public interface MatchService {
 //    void processMatchingAlgorithm();
 //    Double calculateMatchScore(Long userId1, Long userId2);
 
-PagedResponse<ProfileResponse> searchFilterProfiles(Long userId, SearchRequest criteria, Pageable pageable);
+List<ProfileResponse> searchFilterProfiles(Long userId, String name);
 }
 
 

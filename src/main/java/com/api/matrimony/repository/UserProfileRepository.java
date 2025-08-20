@@ -40,8 +40,13 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long> 
             Pageable pageable);
 
 	List<UserProfile> findAllByUserIdNot(Long loginUserId);
+	
+	@Query(value = "SELECT * FROM user_profiles WHERE LOWER(full_name) LIKE LOWER(CONCAT('%', :keyword, '%'))", 
+		       nativeQuery = true)
+		List<UserProfile> searchByFullNameIgnoreCase(@Param("keyword") String keyword);
 
-	Page<UserProfile> findAll(Specification<UserProfile> spec, Pageable pageable);
+
+//	Page<UserProfile> findAll(Specification<UserProfile> spec, Pageable pageable);
 
 	
 }

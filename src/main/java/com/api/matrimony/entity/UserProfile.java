@@ -101,6 +101,9 @@ public class UserProfile {
 
     @Column(name = "diet")
     private String diet;
+    
+    @Column(name = "is_hide")
+    private Boolean isHide = false;
 
     @Column(name = "profile_created_by")
     private String profileCreatedBy;

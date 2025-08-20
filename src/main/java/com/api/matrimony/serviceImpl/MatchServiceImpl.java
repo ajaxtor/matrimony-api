@@ -9,21 +9,17 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.api.matrimony.entity.BlockedUser;
 import com.api.matrimony.entity.Match;
 import com.api.matrimony.entity.User;
 import com.api.matrimony.entity.UserPhoto;
 import com.api.matrimony.entity.UserPreference;
 import com.api.matrimony.entity.UserProfile;
 import com.api.matrimony.enums.MatchStatus;
-import com.api.matrimony.enums.UserType;
 import com.api.matrimony.exception.ApplicationException;
 import com.api.matrimony.exception.ErrorEnum;
 import com.api.matrimony.mapper.MatchMapper;
@@ -33,10 +29,9 @@ import com.api.matrimony.repository.UserPreferenceRepository;
 import com.api.matrimony.repository.UserProfileRepository;
 import com.api.matrimony.repository.UserRepository;
 import com.api.matrimony.request.RecommendationScore;
-import com.api.matrimony.request.SearchRequest;
 import com.api.matrimony.response.GetMatchResponce;
+import com.api.matrimony.response.MatchActionResponse;
 import com.api.matrimony.response.MatchResponse;
-import com.api.matrimony.response.PagedResponse;
 import com.api.matrimony.response.ProfileResponse;
 import com.api.matrimony.service.MatchService;
 import com.api.matrimony.service.NotificationService;
@@ -44,8 +39,6 @@ import com.api.matrimony.utils.MatchingAlgorithm;
 import com.api.matrimony.utils.ProfileSpecification;
 import com.api.matrimony.utils.RecommendationCal;
 
-import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.Subquery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -66,7 +59,7 @@ public class MatchServiceImpl implements MatchService {
     private final RecommendationCal recommendationCal;
     private final UserPhotoRepository photoRepository;
     private final ProfileSpecification profileSpecification;
-    NotificationService notificationService;
+    private final NotificationService notificationService;
     
     @Override
     @Transactional
@@ -108,20 +101,27 @@ public class MatchServiceImpl implements MatchService {
     }
     
 
-    @Override
-    public String handleMatchAction(Long userId, Long matchId, String action) {
+    @Override 
+    public MatchActionResponse handleMatchAction(Long userId, Long matchId, String action) {
         log.info("Handling match action for user: {}, matchId: {}, action: {}", userId, matchId, action);
-        
+
         Match match = matchRepository.findById(matchId)
-                .orElseThrow(() -> new ApplicationException(ErrorEnum.MATCH_NOT_FOUND.toString(),
-    					ErrorEnum.MATCH_NOT_FOUND.getExceptionError(), HttpStatus.OK));
+                .orElseThrow(() -> new ApplicationException(
+                        ErrorEnum.MATCH_NOT_FOUND.toString(),
+                        ErrorEnum.MATCH_NOT_FOUND.getExceptionError(),
+                        HttpStatus.OK));
 
         if (!match.getUser().getId().equals(userId)) {
-            throw new ApplicationException(ErrorEnum.ONLY_ACT_OWN_MATCH.toString(),
-					ErrorEnum.ONLY_ACT_OWN_MATCH.getExceptionError(), HttpStatus.OK);
+            throw new ApplicationException(
+                    ErrorEnum.ONLY_ACT_OWN_MATCH.toString(),
+                    ErrorEnum.ONLY_ACT_OWN_MATCH.getExceptionError(),
+                    HttpStatus.OK);
         }
 
-        MatchStatus newStatus = action.equalsIgnoreCase("ACCEPT") ? MatchStatus.ACCEPTED : MatchStatus.REJECTED;
+        MatchStatus newStatus = action.equalsIgnoreCase("ACCEPT")
+                ? MatchStatus.ACCEPTED
+                : MatchStatus.REJECTED;
+
         match.setStatus(newStatus);
         matchRepository.save(match);
 
@@ -129,27 +129,26 @@ public class MatchServiceImpl implements MatchService {
         if (newStatus == MatchStatus.ACCEPTED) {
             Optional<Match> reverseMatch = matchRepository.findByUserIdAndMatchedUserId(
                     match.getMatchedUser().getId(), match.getUser().getId());
-            
+
             if (reverseMatch.isPresent() && reverseMatch.get().getStatus() == MatchStatus.ACCEPTED) {
                 // Update both matches to MUTUAL
                 match.setStatus(MatchStatus.MUTUAL);
                 reverseMatch.get().setStatus(MatchStatus.MUTUAL);
                 matchRepository.save(match);
                 matchRepository.save(reverseMatch.get());
-                
-                // Send mutual match notification
-                notificationService.notifyMutualMatch(userId, match.getMatchedUser().getId());
-                
-                return "Congratulations! It's a mutual match!";
+
+          //      notificationService.notifyMutualMatch(userId, match.getMatchedUser().getId());
+
+                return new MatchActionResponse(true, MatchMapper.toResponse(match));
             } else {
-                // Send match acceptance notification
-                notificationService.notifyNewMatch(match.getMatchedUser().getId(), userId);
-                return "Match accepted successfully";
+              //  notificationService.notifyNewMatch(match.getMatchedUser().getId(), userId);
+                return new MatchActionResponse(true, MatchMapper.toResponse(match));
             }
         }
 
-        return "Match " + action.toLowerCase() + "ed successfully";
+        return new MatchActionResponse(false, MatchMapper.toResponse(match));
     }
+
     
     public User getUser(Long loginUserId) {
     User loginUserInfo = userRepository.findById(loginUserId)
@@ -242,59 +241,45 @@ public class MatchServiceImpl implements MatchService {
     }
 
     @Override
-    public PagedResponse<ProfileResponse> searchFilterProfiles(Long userId, SearchRequest criteria, Pageable pageable) {
-        log.info("Searching profiles for user: {}, criteria: {}", userId, criteria);
-
-        User currentUser = userRepository.findById(userId)
+    public List<ProfileResponse> searchFilterProfiles(Long userId, String name) {
+        log.info("Searching profiles for user: {}, criteria: {}", userId, name);
+        
+       if(name!= null && !name.isBlank()) {
+    	   List<UserProfile> fetchUser = userProfileRepository.searchByFullNameIgnoreCase(name);
+    	   if(fetchUser != null && !fetchUser.isEmpty()) {
+    		   return convertProfiles(fetchUser);
+    	   }else {
+    		   throw new ApplicationException(ErrorEnum.USER_NOT_FOUND.toString(),
+						ErrorEnum.USER_NOT_FOUND.getExceptionError(), HttpStatus.OK);
+    	   }
+       }else {
+		
+        
+     // Get user preferences
+        UserPreference preferences = userPreferenceRepository.findByUserId(userId)
                 .orElseThrow(() -> new ApplicationException(
-                        ErrorEnum.INVALID_USER.toString(),
-                        ErrorEnum.INVALID_USER.getExceptionError(),
-                        HttpStatus.OK
-                ));
+                        ErrorEnum.NO_MATCH_FUND_BTWN_USER.toString(),
+                        ErrorEnum.NO_MATCH_FUND_BTWN_USER.getExceptionError(),
+                        HttpStatus.OK));
 
-        UserType oppositeType = currentUser.getUserType() == UserType.BRIDE ? UserType.GROOM : UserType.BRIDE;
+        User loginUserInfo = getUser(userId);
 
-        // Build base specification
-       // Specification<UserProfile> spec = searchRepository.searchProfiles(userId, oppositeType, criteria);
-        Specification<UserProfile> spec = profileSpecification.searchProfiles(userId, oppositeType, criteria);
+        // Get all candidate user profiles (excluding the login user)
+        List<UserProfile> candidateProfiles = userProfileRepository.findAllByUserIdNot(userId);
 
-        // Exclude blocked users at DB level
-        spec = spec.and((root, query, cb) -> {
-            Subquery<Long> blockedSubQuery = query.subquery(Long.class);
-            Root<BlockedUser> blockedRoot = blockedSubQuery.from(BlockedUser.class);
-            blockedSubQuery.select(blockedRoot.get("blockedUser").get("id"))
-                    .where(cb.equal(blockedRoot.get("blocker").get("id"), userId));
-
-            Subquery<Long> blockedByOthersSubQuery = query.subquery(Long.class);
-            Root<BlockedUser> blockedByOthersRoot = blockedByOthersSubQuery.from(BlockedUser.class);
-            blockedByOthersSubQuery.select(blockedByOthersRoot.get("blocker").get("id"))
-                    .where(cb.equal(blockedByOthersRoot.get("blockedUser").get("id"), userId));
-
-            return cb.and(
-                    cb.not(root.get("user").get("id").in(blockedSubQuery)),
-                    cb.not(root.get("user").get("id").in(blockedByOthersSubQuery))
-            );
-        });
-
-        // Query DB with pagination
-        Page<UserProfile> profilePage = userProfileRepository.findAll(spec, pageable);
-
-        // Map results
-        List<ProfileResponse> responses = profilePage.getContent().stream()
-                .map(this::mapToProfileResponse)
+        // Calculate match scores and filter
+        List<ProfileResponse> profileResponses = candidateProfiles.stream()
+                .map(candidate -> matchingAlgorithm.calculateMatchScore(candidate, preferences))
+                .filter(match -> match.getMatchScore() > 0) // Filter out 0% matches
+                .sorted((m1, m2) -> Double.compare(m2.getMatchScore(), m1.getMatchScore())) // Sort desc
+                .limit(10)
+                .map(GetMatchResponce::getProfileResponse) // ✅ extract only ProfileResponse
                 .collect(Collectors.toList());
 
-        return PagedResponse.<ProfileResponse>builder()
-                .content(responses)
-                .page(profilePage.getNumber())
-                .size(profilePage.getSize())
-                .totalElements(profilePage.getTotalElements())
-                .totalPages(profilePage.getTotalPages())
-                .first(profilePage.isFirst())
-                .last(profilePage.isLast())
-                .empty(profilePage.isEmpty())
-                .build();
-    }
+        
+        return profileResponses ;
+       }
+            }
 
     public ProfileResponse mapToProfileResponse(UserProfile profile) {
         ProfileResponse response = new ProfileResponse();
@@ -340,5 +325,13 @@ public class MatchServiceImpl implements MatchService {
                 .ifPresent(photo -> response.setPrimaryPhotoUrl(photo.getPhotoUrl()));
 
         return response;
+        
     }
+    
+    public List<ProfileResponse> convertProfiles(List<UserProfile> userProfiles) {
+        return userProfiles.stream()
+                .map(this::mapToProfileResponse)
+                .collect(Collectors.toList());
+    }
+
 }

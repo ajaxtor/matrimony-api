@@ -1,10 +1,8 @@
 package com.api.matrimony.controller;
 
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,15 +12,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.matrimony.entity.User;
 import com.api.matrimony.request.MatchActionRequest;
-import com.api.matrimony.request.SearchRequest;
 import com.api.matrimony.response.APIResonse;
 import com.api.matrimony.response.GetMatchResponce;
+import com.api.matrimony.response.MatchActionResponse;
 import com.api.matrimony.response.MatchResponse;
-import com.api.matrimony.response.PagedResponse;
 import com.api.matrimony.response.ProfileResponse;
 import com.api.matrimony.service.MatchService;
 
@@ -41,97 +39,88 @@ import lombok.extern.slf4j.Slf4j;
 public class MatchController {
 
 	@Autowired
-    private MatchService matchService;
+	private MatchService matchService;
 
-    /**
-     * Get matches for the current user
-     */
-    @GetMapping("/findBestMatches")
-    public ResponseEntity<APIResonse<List<GetMatchResponce>>> findBestMatches(
-            @AuthenticationPrincipal User currentUser) {
-        
-        log.info("Getting matches for user: {}, page: {}, size: {}, status: {}", 
-                currentUser.getId());
-        APIResonse<List<GetMatchResponce>> response = new APIResonse<>();
-        List<GetMatchResponce> matches = matchService.findBestMatches(
-                    currentUser.getId());
-            response.setData(matches);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+	/**
+	 * Get matches for the current user
+	 */
+	@GetMapping("/findBestMatches")
+	public ResponseEntity<APIResonse<List<GetMatchResponce>>> findBestMatches(
+			@AuthenticationPrincipal User currentUser) {
 
-    /**
-     * Get mutual matches for the current user
-     */
-    @GetMapping("/mutual")
-    public ResponseEntity<APIResonse<List<MatchResponse>>> getMutualMatches(
-            @AuthenticationPrincipal User currentUser) {
-        
-        log.info("Getting mutual matches for user: {}", currentUser.getId());
-        APIResonse<List<MatchResponse>> response = new APIResonse<>();
-            List<MatchResponse> mutualMatches = matchService.getMutualMatches(currentUser.getId());
-            response.setData(mutualMatches);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+		log.info("Getting matches for user: {}, page: {}, size: {}, status: {}", currentUser.getId());
+		APIResonse<List<GetMatchResponce>> response = new APIResonse<>();
+		List<GetMatchResponce> matches = matchService.findBestMatches(currentUser.getId());
+		response.setData(matches);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
 
-    /**
-     * Accept or reject a match
-     */
-    @PostMapping("/action")
-    public ResponseEntity<APIResonse<String>> handleMatchAction(
-            @AuthenticationPrincipal User currentUser,
-            @Valid @RequestBody MatchActionRequest request) {
-        
-        log.info("Match action by user: {}, matchId: {}, action: {}", 
-                currentUser.getId(), request.getMatchId(), request.getAction());
-        APIResonse<String> response = new APIResonse<>();
-            String result = matchService.handleMatchAction(currentUser.getId(), 
-                    request.getMatchId(), request.getAction());
-            response.setData(result);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+	/**
+	 * Get mutual matches for the current user
+	 */
+	@GetMapping("/mutual")
+	public ResponseEntity<APIResonse<List<MatchResponse>>> getMutualMatches(@AuthenticationPrincipal User currentUser) {
 
-    
-    @PostMapping("/findSearch")
-    public ResponseEntity<APIResonse<PagedResponse<ProfileResponse>>> searchProfiles(
-    		 @AuthenticationPrincipal User currentUser,
-            @RequestBody SearchRequest criteria,
-            Pageable pageable) {
-    	
-    	APIResonse<PagedResponse<ProfileResponse>> response = new APIResonse<>();
-    	 PagedResponse<ProfileResponse> result =  matchService.searchFilterProfiles(currentUser.getId(), criteria, pageable);
-    	 response.setData(result);
-         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+		log.info("Getting mutual matches for user: {}", currentUser.getId());
+		APIResonse<List<MatchResponse>> response = new APIResonse<>();
+		List<MatchResponse> mutualMatches = matchService.getMutualMatches(currentUser.getId());
+		response.setData(mutualMatches);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
 
-    /**
-     * Get recommended matches for user
-     */
-    @GetMapping("/recommendations")
-    public ResponseEntity<APIResonse<List<MatchResponse>>> getRecommendations(
-            @AuthenticationPrincipal User currentUser) {
-        
-        log.info("Getting recommendations for user: {}, limit: {}", currentUser.getId());
-        APIResonse<List<MatchResponse>> response = new APIResonse<>();
-            List<MatchResponse> recommendations = matchService.getRecommendations(
-                    currentUser.getId());
-            response.setData(recommendations);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+	/**
+	 * Accept or reject a match
+	 */
+	@PostMapping("/action")
+	public ResponseEntity<APIResonse<MatchActionResponse>> handleMatchAction(@AuthenticationPrincipal User currentUser,
+			@Valid @RequestBody MatchActionRequest request) {
+
+		log.info("Match action by user: {}, matchId: {}, action: {}", currentUser.getId(), request.getMatchId(),
+				request.getAction());
+		APIResonse<MatchActionResponse> response = new APIResonse<>();
+		MatchActionResponse result = matchService.handleMatchAction(currentUser.getId(), request.getMatchId(),
+				request.getAction());
+		response.setData(result);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@PostMapping("/findSearch/{name}")
+	public ResponseEntity<APIResonse<List<ProfileResponse>>> searchProfiles(@AuthenticationPrincipal User currentUser,
+			@PathVariable String name) {
+		APIResonse<List<ProfileResponse>> response = new APIResonse<>();
+		List<ProfileResponse> result = matchService.searchFilterProfiles(currentUser.getId(), name);
+		response.setData(result);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	/**
+	 * Get recommended matches for user
+	 */
+	@GetMapping("/recommendations")
+	public ResponseEntity<APIResonse<List<MatchResponse>>> getRecommendations(
+			@AuthenticationPrincipal User currentUser) {
+
+		log.info("Getting recommendations for user: {}, limit: {}", currentUser.getId());
+		APIResonse<List<MatchResponse>> response = new APIResonse<>();
+		List<MatchResponse> recommendations = matchService.getRecommendations(currentUser.getId());
+		response.setData(recommendations);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
 //
-    /**
-     * Get match details by ID
-     */
-    @GetMapping("matchDetailsByID/{matchId}")
-    public ResponseEntity<APIResonse<MatchResponse>> getMatchDetails(
-            @AuthenticationPrincipal User currentUser,
-            @PathVariable Long matchId) {
-        
-        log.info("Getting match details for user: {}, matchId: {}", currentUser.getId(), matchId);
-        APIResonse<MatchResponse> response = new APIResonse<>();
-            MatchResponse matchDetails = matchService.getMatchDetails(currentUser.getId(), matchId);
-            response.setData(matchDetails);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+	/**
+	 * Get match details by ID
+	 */
+	@GetMapping("matchDetailsByID/{matchId}")
+	public ResponseEntity<APIResonse<MatchResponse>> getMatchDetails(@AuthenticationPrincipal User currentUser,
+			@PathVariable Long matchId) {
+
+		log.info("Getting match details for user: {}, matchId: {}", currentUser.getId(), matchId);
+		APIResonse<MatchResponse> response = new APIResonse<>();
+		MatchResponse matchDetails = matchService.getMatchDetails(currentUser.getId(), matchId);
+		response.setData(matchDetails);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
 //
 //    /**
 //     * Generate new matches for user (admin or scheduled operation)
