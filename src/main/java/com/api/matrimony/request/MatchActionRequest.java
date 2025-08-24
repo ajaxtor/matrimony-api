@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class MatchActionRequest {
     
     @NotNull(message = "Match ID is required")
-    private Long matchId;
+    private String matchId;
     
     @NotBlank(message = "Action is required")
     @Pattern(regexp = "ACCEPT|REJECT", message = "Action must be either ACCEPT or REJECT")

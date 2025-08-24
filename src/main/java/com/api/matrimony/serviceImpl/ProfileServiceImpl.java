@@ -48,7 +48,7 @@ public class ProfileServiceImpl implements ProfileService {
     public ProfileResponse getProfileByUserId(Long userId) {
         log.info("Getting profile for user: {}", userId);
         
-        UserProfile profile = profileRepository.findByUserId(userId)
+        UserProfile profile = profileRepository.findByUserIdAndIsHideFalse(userId)
                 .orElseThrow(() -> new ApplicationException(ErrorEnum.PROFILE_NOT_FOUND_FOR_USER.toString(),
 						ErrorEnum.PROFILE_NOT_FOUND_FOR_USER.getExceptionError(), HttpStatus.OK));
         
@@ -94,7 +94,7 @@ public class ProfileServiceImpl implements ProfileService {
  					ErrorEnum.PROFILE_NOT_ACCESSABLE.getExceptionError(), HttpStatus.OK);
         }
 
-        UserProfile profile = profileRepository.findByUserId(userId)
+        UserProfile profile = profileRepository.findByUserIdAndIsHideFalse(userId)
                 .orElseThrow(() -> new ApplicationException(ErrorEnum.PROFILE_NOT_FOUND_FOR_USER.toString(),
     					ErrorEnum.PROFILE_NOT_FOUND_FOR_USER.getExceptionError(), HttpStatus.OK));
 
@@ -158,7 +158,7 @@ public class ProfileServiceImpl implements ProfileService {
     public boolean isProfileComplete(Long userId) {
         log.info("Checking if profile is complete for user: {}", userId);
         
-        UserProfile profile = profileRepository.findByUserId(userId).orElse(null);
+        UserProfile profile = profileRepository.findByUserIdAndIsHideFalse(userId).orElse(null);
         
         if (profile == null) {
             return false;
@@ -186,7 +186,7 @@ public class ProfileServiceImpl implements ProfileService {
     public List<ProfileResponse> getSimilarProfiles(Long userId, int limit) {
         log.info("Getting similar profiles for user: {}, limit: {}", userId, limit);
         
-        UserProfile userProfile = profileRepository.findByUserId(userId)
+        UserProfile userProfile = profileRepository.findByUserIdAndIsHideFalse(userId)
                 .orElseThrow(() -> new ApplicationException(ErrorEnum.PROFILE_NOT_FOUND_FOR_USER.toString(),
     					ErrorEnum.PROFILE_NOT_FOUND_FOR_USER.getExceptionError(), HttpStatus.OK));
 
@@ -322,4 +322,21 @@ public class ProfileServiceImpl implements ProfileService {
 
         return response;
     }
+
+	@Override
+	public Boolean hideProfile(Long id) {
+		UserProfile profile = profileRepository.findByUserId(id)
+		        .orElseThrow(() -> new RuntimeException("User profile not found or hidden"));
+		log.error("User : "+profile.getFullName()+" , current hide status is :"+profile.getIsHide());
+		if(Boolean.TRUE.equals(profile.getIsHide())) {
+			profile.setIsHide(Boolean.FALSE);
+		}else {
+			profile.setIsHide(Boolean.TRUE);
+		}
+		log.error("The profile info is : id={}, fullName={}, hide={}",
+		          profile.getId(), profile.getFullName(), profile.getIsHide());
+
+		UserProfile profileInfo = profileRepository.saveAndFlush(profile);
+		return profileInfo.getIsHide();
+	}
 }

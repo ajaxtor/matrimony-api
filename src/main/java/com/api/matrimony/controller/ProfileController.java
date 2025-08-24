@@ -1,7 +1,9 @@
 package com.api.matrimony.controller;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,9 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.api.matrimony.entity.User;
 import com.api.matrimony.request.ProfileUpdateRequest;
 import com.api.matrimony.response.APIResonse;
-import com.api.matrimony.response.APIResonse;
 import com.api.matrimony.response.ProfileResponse;
-import com.api.matrimony.response.UserResponse;
 import com.api.matrimony.service.ProfileService;
 
 import jakarta.validation.Valid;
@@ -139,6 +140,19 @@ public class ProfileController {
      APIResonse<Long> response = new APIResonse<>();
          Long viewCount = profileService.getProfileViewCount(currentUser.getId());
          response.setData(viewCount);
+         return new ResponseEntity<>(response, HttpStatus.OK);
+ }
+ 
+ @PostMapping("/hideProfile")
+ public ResponseEntity<APIResonse<Map<String,Boolean>>> hideProfile(
+         @AuthenticationPrincipal User currentUser) {
+     
+     log.info("Getting profile view count for user: {}", currentUser.getId());
+     APIResonse<Map<String,Boolean>> response = new APIResonse<>();
+         Boolean hideStatus = profileService.hideProfile(currentUser.getId());
+         Map<String,Boolean> resMap = new HashMap<>();
+         resMap.put("profileHide", hideStatus);
+         response.setData(resMap);
          return new ResponseEntity<>(response, HttpStatus.OK);
  }
 }

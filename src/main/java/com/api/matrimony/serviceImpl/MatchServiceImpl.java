@@ -3,13 +3,14 @@
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +30,6 @@ import com.api.matrimony.repository.UserPreferenceRepository;
 import com.api.matrimony.repository.UserProfileRepository;
 import com.api.matrimony.repository.UserRepository;
 import com.api.matrimony.request.RecommendationScore;
-import com.api.matrimony.response.GetMatchResponce;
 import com.api.matrimony.response.MatchActionResponse;
 import com.api.matrimony.response.MatchResponse;
 import com.api.matrimony.response.ProfileResponse;
@@ -60,52 +60,83 @@ public class MatchServiceImpl implements MatchService {
     private final UserPhotoRepository photoRepository;
     private final ProfileSpecification profileSpecification;
     private final NotificationService notificationService;
+    private final MatchMapper matchMapper;
     
     @Override
     @Transactional
-    public List<GetMatchResponce> findBestMatches(Long loginUserId) {
+    public List<MatchResponse> findBestMatches(Long loginUserId) {
         log.info("Finding best matches for user: {}", loginUserId);
-        
-        // Get user preferences
+
+        // Get preferences
         UserPreference preferences = userPreferenceRepository.findByUserId(loginUserId)
-                .orElseThrow(() ->  new ApplicationException(ErrorEnum.NO_MATCH_FUND_BTWN_USER.toString(),
-    					ErrorEnum.NO_MATCH_FUND_BTWN_USER.getExceptionError(), HttpStatus.OK));
-        
+                .orElseThrow(() -> new ApplicationException(
+                        ErrorEnum.NO_MATCH_FUND_BTWN_USER.toString(),
+                        ErrorEnum.NO_MATCH_FUND_BTWN_USER.getExceptionError(),
+                        HttpStatus.OK));
+
         User loginUserInfo = getUser(loginUserId);
-        
-        // Get all candidate user profiles (excluding the login user)
-        
-        List<UserProfile> candidateProfiles = userProfileRepository.findAllByUserIdNot(loginUserId);
-        
-        // Calculate match scores and filter
-        List<GetMatchResponce> matches = candidateProfiles.stream()
+
+        // Candidate profiles
+        List<UserProfile> candidateProfiles = userProfileRepository.findAllByUserIdNotAndIsHideFalse(loginUserId);
+
+        // Calculate matches
+        List<MatchResponse> rawMatches = candidateProfiles.stream()
                 .map(candidate -> matchingAlgorithm.calculateMatchScore(candidate, preferences))
-                .filter(match -> match.getMatchScore() > 0) // Filter out 0% matches
-                .sorted((m1, m2) -> Double.compare(m2.getMatchScore(), m1.getMatchScore())) // Sort desc
+                .filter(match -> match.getMatchScore() > 0)
+                .sorted((m1, m2) -> Double.compare(m2.getMatchScore(), m1.getMatchScore()))
                 .limit(10)
-                .collect(Collectors.toList());
-        
-        log.info("Found {} matches for user: {}", matches.size(), loginUserId);
-//        List<Match> setMatches = MatchMapper.toEntityList(matches, loginUserInfo, userRepository);
-//        matchRepository.saveAllAndFlush(setMatches);
-//        log.info("Save matches to DB for user: {}", setMatches.size(), setMatches);
-        return matches;
+                .toList();
+
+        // Convert to entities
+        List<Match> setMatches = matchMapper.toEntityList(rawMatches, loginUserInfo, userRepository);
+        List<Long> matchedUserIds = setMatches.stream().map(m -> m.getMatchedUser().getId()).toList();
+
+        // Fetch existing matches in one go
+        List<Match> existingMatches = matchRepository.findExistingMatches(loginUserInfo.getId(), matchedUserIds);
+        Map<Long, Match> existingMap = existingMatches.stream()
+                .collect(Collectors.toMap(m -> m.getMatchedUser().getId(), m -> m));
+
+        // Final responses
+        List<MatchResponse> finalResponses = new ArrayList<>();
+
+        for (MatchResponse response : rawMatches) {
+            Match existing = existingMap.get(response.getUserId());
+            if (existing != null) {
+                // Use existing matchId and status
+                response.setMatchId(existing.getMatchId());
+                response.setMatchStatus(existing.getStatus()); // <-- set status from DB
+            } else {
+                // This is new → save it
+                Match newMatch = matchMapper.toEntity(response, loginUserInfo,
+                        userRepository.findById(response.getUserId())
+                                .orElseThrow(() -> new RuntimeException("User not found")));
+                matchRepository.save(newMatch);
+                response.setMatchId(newMatch.getMatchId());
+                response.setMatchStatus(newMatch.getStatus()); // <-- set status for new match
+            }
+            finalResponses.add(response);
+        }
+
+        log.info("Final {} matches returned for user {}", finalResponses.size(), loginUserId);
+        return finalResponses;
     }
+
+
 
     public List<MatchResponse> getMutualMatches(Long userId) {
         log.error("Getting mutual matches for user: {}", userId);
         List<Match> mutualMatches = matchRepository.findMutualMatchesByUserId(userId);
-        List<MatchResponse> matches = MatchMapper.toResponseList(mutualMatches);
+        List<MatchResponse> matches = matchMapper.toResponseList(mutualMatches);
         log.error("List of mutual matches -> "+matches);
         return matches;
     }
     
 
     @Override 
-    public MatchActionResponse handleMatchAction(Long userId, Long matchId, String action) {
+    public MatchActionResponse handleMatchAction(Long userId, String matchId, String action) {
         log.info("Handling match action for user: {}, matchId: {}, action: {}", userId, matchId, action);
 
-        Match match = matchRepository.findById(matchId)
+        Match match = matchRepository.findByMatchId(matchId)
                 .orElseThrow(() -> new ApplicationException(
                         ErrorEnum.MATCH_NOT_FOUND.toString(),
                         ErrorEnum.MATCH_NOT_FOUND.getExceptionError(),
@@ -139,14 +170,14 @@ public class MatchServiceImpl implements MatchService {
 
           //      notificationService.notifyMutualMatch(userId, match.getMatchedUser().getId());
 
-                return new MatchActionResponse(true, MatchMapper.toResponse(match));
+                return new MatchActionResponse(true, matchMapper.toResponse(match));
             } else {
               //  notificationService.notifyNewMatch(match.getMatchedUser().getId(), userId);
-                return new MatchActionResponse(true, MatchMapper.toResponse(match));
+                return new MatchActionResponse(true, matchMapper.toResponse(match));
             }
         }
 
-        return new MatchActionResponse(false, MatchMapper.toResponse(match));
+        return new MatchActionResponse(false, matchMapper.toResponse(match));
     }
 
     
@@ -175,11 +206,11 @@ public class MatchServiceImpl implements MatchService {
         log.info("Getting recommendations for user: {}", userId);
         
         // Get user's profile
-        UserProfile userProfile = userProfileRepository.findByUserId(userId)
+        UserProfile userProfile = userProfileRepository.findByUserIdAndIsHideFalse(userId)
                 .orElseThrow(() -> new RuntimeException("User profile not found"));
         
         // Get all candidate profiles
-        List<UserProfile> candidateProfiles = userProfileRepository.findAllByUserIdNot(userId);
+        List<UserProfile> candidateProfiles = userProfileRepository.findAllByUserIdNotAndIsHideFalse(userId);
         
         // Filter out already matched/connected users
         Set<Long> excludedUserIds = getExcludedUserIds(userId);
@@ -235,7 +266,7 @@ public class MatchServiceImpl implements MatchService {
 					ErrorEnum.ONLY_VIEW_OWN_MATCH.getExceptionError(), HttpStatus.OK);
         }
 
-        MatchResponse setMatches = MatchMapper.toResponse(match);
+        MatchResponse setMatches = matchMapper.toResponse(match);
         log.error("Getting match details for user: "+setMatches);
         return setMatches;
     }
@@ -244,8 +275,10 @@ public class MatchServiceImpl implements MatchService {
     public List<ProfileResponse> searchFilterProfiles(Long userId, String name) {
         log.info("Searching profiles for user: {}, criteria: {}", userId, name);
         
+        UserPreference fetchUserInfo = getUserProfileByUserId( userId);
+        
        if(name!= null && !name.isBlank()) {
-    	   List<UserProfile> fetchUser = userProfileRepository.searchByFullNameIgnoreCase(name);
+    	   List<UserProfile> fetchUser = userProfileRepository.searchByFullNameAndGender(name,fetchUserInfo.getGender());
     	   if(fetchUser != null && !fetchUser.isEmpty()) {
     		   return convertProfiles(fetchUser);
     	   }else {
@@ -265,7 +298,7 @@ public class MatchServiceImpl implements MatchService {
         User loginUserInfo = getUser(userId);
 
         // Get all candidate user profiles (excluding the login user)
-        List<UserProfile> candidateProfiles = userProfileRepository.findAllByUserIdNot(userId);
+        List<UserProfile> candidateProfiles = userProfileRepository.findAllByUserIdNotAndIsHideFalse(userId);
 
         // Calculate match scores and filter
         List<ProfileResponse> profileResponses = candidateProfiles.stream()
@@ -273,7 +306,7 @@ public class MatchServiceImpl implements MatchService {
                 .filter(match -> match.getMatchScore() > 0) // Filter out 0% matches
                 .sorted((m1, m2) -> Double.compare(m2.getMatchScore(), m1.getMatchScore())) // Sort desc
                 .limit(10)
-                .map(GetMatchResponce::getProfileResponse) // ✅ extract only ProfileResponse
+                .map(MatchResponse::getProfileResponse) // ✅ extract only ProfileResponse
                 .collect(Collectors.toList());
 
         
@@ -332,6 +365,15 @@ public class MatchServiceImpl implements MatchService {
         return userProfiles.stream()
                 .map(this::mapToProfileResponse)
                 .collect(Collectors.toList());
+    }
+    
+    
+    public UserPreference getUserProfileByUserId(Long userId) {
+        return  userPreferenceRepository.findByUserId( userId)
+                .orElseThrow(() -> new ApplicationException(
+                        ErrorEnum.USER_NOT_FOUND.toString(),
+                        ErrorEnum.USER_NOT_FOUND.getExceptionError(),
+                        HttpStatus.OK));
     }
 
 }

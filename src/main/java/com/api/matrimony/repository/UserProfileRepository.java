@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,9 +18,14 @@ import com.api.matrimony.entity.UserProfile;
 @Repository
 public interface UserProfileRepository extends JpaRepository<UserProfile, Long>  {
     
-    Optional<UserProfile> findByUserId(Long userId);
+    //Optional<UserProfile> findByUserId(Long userId);
     
-    @Query("SELECT p FROM UserProfile p WHERE p.user.isActive = true AND p.user.isVerified = true")
+    @Query(value = "SELECT * FROM user_profiles WHERE user_id = :userId AND is_hide = false LIMIT 1", 
+    	       nativeQuery = true)
+    	Optional<UserProfile> findByUserIdAndIsHideFalse(@Param("userId") Long userId);
+
+    
+    @Query("SELECT p FROM UserProfile p WHERE p.user.isActive = true AND p.user.isVerified = true AND p.isHide = false")
     Page<UserProfile> findActiveProfiles(Pageable pageable);
     
     @Query("SELECT p FROM UserProfile p WHERE " +
@@ -30,7 +34,7 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long> 
            "(:religion IS NULL OR p.religion = :religion) AND " +
            "(:minAge IS NULL OR YEAR(CURRENT_DATE) - YEAR(p.dateOfBirth) >= :minAge) AND " +
            "(:maxAge IS NULL OR YEAR(CURRENT_DATE) - YEAR(p.dateOfBirth) <= :maxAge) AND " +
-           "p.user.isActive = true AND p.user.isVerified = true")
+           "p.user.isActive = true AND p.user.isVerified = true AND p.isHide = false")
     Page<UserProfile> findProfilesWithFilters(
             @Param("city") String city,
             @Param("state") String state,
@@ -39,13 +43,24 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long> 
             @Param("maxAge") Integer maxAge,
             Pageable pageable);
 
-	List<UserProfile> findAllByUserIdNot(Long loginUserId);
+    @Query(value = "SELECT * FROM user_profiles WHERE user_id <> :loginUserId AND is_hide = false", 
+    	       nativeQuery = true)
+    	List<UserProfile> findAllByUserIdNotAndIsHideFalse(@Param("loginUserId") Long loginUserId);
+
 	
-	@Query(value = "SELECT * FROM user_profiles WHERE LOWER(full_name) LIKE LOWER(CONCAT('%', :keyword, '%'))", 
-		       nativeQuery = true)
-		List<UserProfile> searchByFullNameIgnoreCase(@Param("keyword") String keyword);
+	@Query(value = "SELECT * FROM user_profiles " +
+            "WHERE LOWER(full_name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "AND gender = :gender AND is_hide = false",
+    nativeQuery = true)
+List<UserProfile> searchByFullNameAndGender(@Param("keyword") String keyword,
+                                         @Param("gender") String gender);
 
 
+	Optional<UserProfile> findByUserId(Long id);
+
+
+
+	
 //	Page<UserProfile> findAll(Specification<UserProfile> spec, Pageable pageable);
 
 	

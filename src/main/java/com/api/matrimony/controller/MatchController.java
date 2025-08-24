@@ -45,12 +45,12 @@ public class MatchController {
 	 * Get matches for the current user
 	 */
 	@GetMapping("/findBestMatches")
-	public ResponseEntity<APIResonse<List<GetMatchResponce>>> findBestMatches(
+	public ResponseEntity<APIResonse<List<MatchResponse>>> findBestMatches(
 			@AuthenticationPrincipal User currentUser) {
 
 		log.info("Getting matches for user: {}, page: {}, size: {}, status: {}", currentUser.getId());
-		APIResonse<List<GetMatchResponce>> response = new APIResonse<>();
-		List<GetMatchResponce> matches = matchService.findBestMatches(currentUser.getId());
+		APIResonse<List<MatchResponse>> response = new APIResonse<>();
+		List<MatchResponse> matches = matchService.findBestMatches(currentUser.getId());
 		response.setData(matches);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}

@@ -6,15 +6,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.api.matrimony.entity.UserProfile;
 import com.api.matrimony.request.RecommendationScore;
 import com.api.matrimony.response.LocationResponce;
 import com.api.matrimony.response.MatchResponse;
+import com.api.matrimony.response.ProfileResponse;
 
 @Component
 public class RecommendationCal {
+	
+	@Autowired
+	GeneralMethods generalMethods;
     
     public RecommendationScore calculateRecommendationScore(UserProfile userProfile, UserProfile candidateProfile) {
         RecommendationScore score = new RecommendationScore(candidateProfile);
@@ -262,14 +267,8 @@ public class RecommendationCal {
         location.setCity(profile.getCity());
         
         MatchResponse response = new MatchResponse();
-        response.setUserId(profile.getUser().getId());
-        response.setName(profile.getFullName());
-        response.setAge(calculateAge(profile.getDateOfBirth()));
-        response.setGender(profile.getGender() != null ? profile.getGender().toString().toLowerCase() : null);
-        response.setLocation(location);
-        response.setEducation(profile.getEducation());
-        response.setOccupation(profile.getOccupation());
-        response.setHasPhotos(checkIfUserHasPhotos(profile.getUser().getId()));
+        ProfileResponse data = generalMethods.mapToProfileResponse(profile.getUser().getProfile());
+        response.setProfileResponse(data);
         response.setMatchScore(Math.round(score * 10.0) / 10.0); // Round to 1 decimal place
         
         return response;

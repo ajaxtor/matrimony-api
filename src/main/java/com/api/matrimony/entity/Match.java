@@ -30,6 +30,9 @@ public class Match {
  @Id
  @GeneratedValue(strategy = GenerationType.IDENTITY)
  private Long id;
+ 
+ @Column(name = "match_id", unique = true, nullable = false)
+ private String matchId;
 
  @ManyToOne
  @JoinColumn(name = "user_id", nullable = false)

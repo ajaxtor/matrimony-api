@@ -16,5 +16,6 @@ public interface ProfileService {
 	    Long getProfileViewCount(Long profileId);
 	    boolean isProfileComplete(Long userId);
 	    List<ProfileResponse> getSimilarProfiles(Long userId, int limit);
+		Boolean hideProfile(Long id);
 	
 }

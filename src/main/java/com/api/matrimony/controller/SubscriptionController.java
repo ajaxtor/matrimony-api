@@ -1,7 +1,9 @@
 package com.api.matrimony.controller;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.api.matrimony.entity.User;
 import com.api.matrimony.request.SubscribeRequest;
 import com.api.matrimony.response.APIResonse;
-import com.api.matrimony.response.ProfileResponse;
 import com.api.matrimony.response.SubscriptionPlanResponse;
 import com.api.matrimony.response.UserSubscriptionResponse;
 import com.api.matrimony.service.SubscriptionService;
@@ -43,7 +44,7 @@ public class SubscriptionController {
     /**
      * Get all active subscription plans
      */
-    @GetMapping("/plans")
+    @GetMapping("/getPlans")
     public ResponseEntity<APIResonse<List<SubscriptionPlanResponse>>> getSubscriptionPlans() {
         log.info("Getting all subscription plans");
         APIResonse< List<SubscriptionPlanResponse>> response = new APIResonse<>();
@@ -55,7 +56,7 @@ public class SubscriptionController {
     /**
      * Get subscription plan by ID
      */
-    @GetMapping("/plans/{planId}")
+    @GetMapping("/getPlanById/{planId}")
     public ResponseEntity<APIResonse<SubscriptionPlanResponse>> getSubscriptionPlan(
             @PathVariable Long planId) {
         
@@ -69,7 +70,7 @@ public class SubscriptionController {
     /**
      * Get current user subscription
      */
-    @GetMapping("/my-subscription")
+    @GetMapping("/mySubscription")
     public ResponseEntity<APIResonse<UserSubscriptionResponse>> getCurrentSubscription(
             @AuthenticationPrincipal User currentUser) {
         
@@ -127,14 +128,16 @@ public class SubscriptionController {
     /**
      * Check if user has active subscription
      */
-    @GetMapping("/status")
-    public ResponseEntity<APIResonse<Boolean>> hasActiveSubscription(
+    @GetMapping("/mySubscriptionStatus")
+    public ResponseEntity<APIResonse<Map<String,Boolean>>> hasActiveSubscription(
             @AuthenticationPrincipal User currentUser) {
         
         log.info("Checking subscription status for user: {}", currentUser.getId());
-        APIResonse<Boolean> response = new APIResonse<>();
+        APIResonse<Map<String,Boolean>> response = new APIResonse<>();
             boolean hasActive = subscriptionService.hasActiveSubscription(currentUser.getId());
-            response.setData(hasActive);
+            Map<String,Boolean> resMap = new HashMap<>();
+            resMap.put("hasActive", hasActive);
+            response.setData(resMap);
             return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

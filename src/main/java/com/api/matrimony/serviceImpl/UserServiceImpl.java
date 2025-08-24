@@ -196,6 +196,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			preferences.setUser(user);
 		}
 
+		log.error("edit prefrernce info -> "+request);
 		// Update preference fields
 		if (request.getMinAge() != null) {
 			preferences.setMinAge(request.getMinAge());
@@ -260,9 +261,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 							HttpStatus.OK);
 		    }
 		}
-		preferences.setSubCastes(genderStr);
-		preferences.setMotherTongue(genderStr);
-		preferences.setFamilyTypes(genderStr);
+		preferences.setSubCastes(request.getSubCastes());
+		preferences.setMotherTongue(request.getMotherTongue());
+		preferences.setFamilyTypes(request.getFamilyTypes());
 		
 		String dietStr = request.getDiets();
 		String normalizedDiet = normalizeDiet(dietStr);
@@ -580,34 +581,42 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	}
 
 
-    public static String normalizeDiet(String dietStr) {
-        if (dietStr == null || dietStr.trim().isEmpty()) {
-            return null;
-        }
+	public static String normalizeDiet(String dietStr) {
+	    if (dietStr == null || dietStr.trim().isEmpty()) {
+	        return null;
+	    }
 
-        switch (dietStr.trim().toLowerCase()) {
-            case "vegetarian":
-                return "VEGETARIAN";
-            case "non-vegetarian":
-            case "nonvegetarian":
-            case "non_vegetarian":
-                return "NON_VEGETARIAN";
-            case "eggetarian":
-                return "EGGETARIAN";
-            case "vegan":
-                return "VEGAN";
-            case "not req":
-            case "not required":
-            case "notreq":
-                return "Not Req";
-            default:
-                throw new ApplicationException(
-                    ErrorEnum.INVALID_DIET.toString(),
-                    ErrorEnum.INVALID_DIET.getExceptionError(),
-                    HttpStatus.OK
-                );
-        }
-    }
-	
+	    switch (dietStr.trim().toLowerCase()) {
+	        case "vegetarian":
+	        case "veg":
+	            return "VEGETARIAN";
+
+	        case "non-vegetarian":
+	        case "nonvegetarian":
+	        case "non_vegetarian":
+	        case "non-veg":
+	        case "nonveg":
+	            return "NON_VEGETARIAN";
+
+	        case "eggetarian":
+	            return "EGGETARIAN";
+
+	        case "vegan":
+	            return "VEGAN";
+
+	        case "not req":
+	        case "not required":
+	        case "notreq":
+	            return "NOT_REQ"; // better to keep consistent naming (all caps + underscore)
+	            
+	        default:
+	            throw new ApplicationException(
+	                ErrorEnum.INVALID_DIET.toString(),
+	                ErrorEnum.INVALID_DIET.getExceptionError(),
+	                HttpStatus.OK
+	            );
+	    }
+	}
+
 	
 }

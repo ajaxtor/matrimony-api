@@ -1,7 +1,8 @@
 package com.api.matrimony.response;
 
+import com.api.matrimony.enums.MatchStatus;
+
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,13 +14,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MatchResponse {
-    private Long userId;
-    private String name;
-    private Integer age;
-    private String gender;
-    private LocationResponce location;
-    private String education;
-    private String occupation;
-    private Boolean hasPhotos;
-    private Double matchScore;
+	private String matchId;
+	private Long userId;
+	private Double matchScore;
+	private MatchStatus matchStatus;
+    private ProfileResponse profileResponse;
 }

@@ -14,10 +14,10 @@ import com.api.matrimony.response.ProfileResponse;
  */
 
 public interface MatchService {
-	 List<GetMatchResponce> findBestMatches(Long loginUserId);
+	 List<MatchResponse> findBestMatches(Long loginUserId);
 	 
     List<MatchResponse> getMutualMatches(Long userId);
-    MatchActionResponse handleMatchAction(Long userId, Long matchId, String action);
+    MatchActionResponse handleMatchAction(Long userId, String matchId, String action);
     List<MatchResponse> getRecommendations(Long userId);
    MatchResponse getMatchDetails(Long userId, Long matchId);
 //    String generateMatchesForUser(Long userId);

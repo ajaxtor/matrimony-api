@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.api.matrimony.entity.Match;
+import com.api.matrimony.entity.UserPreference;
 import com.api.matrimony.enums.MatchStatus;
 
 /**
@@ -41,4 +42,12 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
     List<Match> findByUserId(Long userId);
     
     List<Match> findByMatchedUserId(Long matchedUserId);
+
+	Optional<Match> findByMatchId(String matchId);
+
+	@Query("SELECT m FROM Match m WHERE m.user.id = :userId AND m.matchedUser.id IN :matchedUserIds")
+	List<Match> findExistingMatches(@Param("userId") Long userId,
+	                                @Param("matchedUserIds") List<Long> matchedUserIds);
+
+
 }
