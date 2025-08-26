@@ -8,6 +8,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class MatchActionResponse {
     private boolean isAccepted;
+    private String msg;
     private MatchResponse match;
 }
 

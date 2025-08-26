@@ -1,5 +1,5 @@
 package com.api.matrimony.enums;
 
 public enum MatchStatus {
-    PENDING, ACCEPTED, REJECTED, MUTUAL
+    PENDING, ACCEPTED, REJECTED, MUTUAL, SEND, MATCH,
 }

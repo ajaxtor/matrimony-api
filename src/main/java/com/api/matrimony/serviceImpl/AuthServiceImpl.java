@@ -62,7 +62,6 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	public String register(RegisterRequest request) {
 		log.info("Starting registration process for email: {}", request.getEmail());
-
 		// Check if user already exists
 		if (userRepository.existsByEmail(request.getEmail())) {
 			throw new ApplicationException(ErrorEnum.EMAIL_ALREADY_EXIST.toString(),
@@ -79,7 +78,7 @@ public class AuthServiceImpl implements AuthService {
 		user.setEmail(request.getEmail());
 		user.setPhone(request.getPhone());
 		user.setPassword(passwordEncoder.encode(request.getPassword()));
-		user.setUserType(request.getGender().name().equalsIgnoreCase("MALE")? UserType.GROOM : UserType.GROOM);
+		user.setUserType(request.getGender().name().equalsIgnoreCase("MALE")? UserType.GROOM : UserType.BRIDE);
 		user.setIsVerified(false);
 		user.setIsActive(false);
 		user.setEmailVerified(false);

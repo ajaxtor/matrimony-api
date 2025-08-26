@@ -43,7 +43,7 @@ public class Match {
  private User matchedUser;
 
  @Enumerated(EnumType.STRING)
- @Column(nullable = false)
+ @Column(name = "status")
  private MatchStatus status = MatchStatus.PENDING;
 
  @Column(name = "match_score", precision = 5, scale = 2)

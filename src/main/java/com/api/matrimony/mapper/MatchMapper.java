@@ -42,7 +42,7 @@ public class MatchMapper {
         match.setMatchScore(response.getMatchScore() != null
                 ? BigDecimal.valueOf(response.getMatchScore())
                 : BigDecimal.ZERO);
-        match.setStatus(MatchStatus.PENDING);
+        match.setStatus(MatchStatus.MATCH);
         match.setMatchedAt(LocalDateTime.now());
         match.setUpdatedAt(LocalDateTime.now());
 

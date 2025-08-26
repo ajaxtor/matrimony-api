@@ -58,7 +58,8 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public ProfileResponse updateProfile(Long userId, ProfileUpdateRequest request) {
         log.info("Updating profile for user: {}", userId);
-        
+        request.setGender(request.getGender().toLowerCase());
+        request.setDiet(request.getDiet().toLowerCase());
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->new ApplicationException(ErrorEnum.USER_NOT_FOUND.toString(),
 						ErrorEnum.USER_NOT_FOUND.getExceptionError(), HttpStatus.OK));
