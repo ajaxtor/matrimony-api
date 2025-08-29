@@ -44,7 +44,7 @@ public class Match {
 
  @Enumerated(EnumType.STRING)
  @Column(name = "status")
- private MatchStatus status = MatchStatus.PENDING;
+ private MatchStatus status = MatchStatus.MATCH;
 
  @Column(name = "match_score", precision = 5, scale = 2)
  private java.math.BigDecimal matchScore = java.math.BigDecimal.ZERO;

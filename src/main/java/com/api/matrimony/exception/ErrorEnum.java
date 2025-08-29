@@ -14,7 +14,7 @@ public enum ErrorEnum {
 
 	// Media Type error start from - 5001
 
-	PERMISSION_DENIED("Permisson Denied"), USER_ALREADY_EXIST("User already exist "),
+	PERMISSION_DENIED("Permisson Denied"), USER_ALREADY_EXIST("User already exist "), USER_ALREADY_EXIST_IN_MATCH_OR_INACTIVE("User already exist in matches list or inactive."),
 	EMAIL_ALREADY_EXIST("Email is already registered"),NUMBER_ALREADY_EXIST("Phone number is already registered"),
 	USER_OR_PASSWORD_NOT_MATCH(" User Name or password is not matched"), BAD_RESQUEST(""), UNAUTHORIZED_ERROE(""),
 	INVALID_USER("Invalid user"),INACTIVE_ACCOUNT("Account is not active. Please contact support."),
@@ -27,10 +27,10 @@ public enum ErrorEnum {
 	ONLY_VIEW_OWN_MATCH("You can only view your own matches"),ONLY_ACT_OWN_MATCH("You can only act on your own matches"),
 	PROFILE_NOT_FOUND_FOR_USER("Profile not found for user"),USER_NOT_FOUND("User not found"),PROFILE_NOT_ACCESSABLE("Profile not accessible"),
 	CNOV_NOT_FOUND("Conversation not found"),YOU_ARE_PART_OF_CONV("You are not part of this conversation"),SUB_NOT_FOUND("Subscription plan not found"),
-	SUB_NOT_ACTIVE("Subscription plan is not active"),USER_IN_ACTIVE_SUB("User already has an active subscription"),
+	SUB_NOT_ACTIVE("Subscription plan is not active"),USER_IN_ACTIVE_SUB("User already has an active subscription"), BAD_SEND_RESQUEST(" Bad Request : UserId is null and match id is null or matchId Is blank. "),
 	NO_ACTIVE_SUB("No active subscription found"),USER_1_NOT_FOUND("User1 not found"),USER_2_NOT_FOUND("User2 not found"),
 	NO_MATCH_FUND_BTWN_USER("No mutual match found between users"),ONLY_MUTUAL_MATCH_CAN_MSG("You can only message users with mutual matches"),
-	YOU_BLOCK_USER("You have blocked this user"),YOU_BLOCK_BY_USER("You are blocked by this user"),
+	YOU_BLOCK_USER("You have blocked this user"),YOU_BLOCK_BY_USER("You are blocked by this user"),ALREADY_SEND_REQUEST("User Already Send Request to this user "),
 	RECIVER_NOT_FUND("Receiver not found"),SENDER_NOT_FUND("Sender not found"),ONLY_CAN_DELETE_OWN_MSG("You can only delete your own messages"),
 	MESSAGE_NOT_FUND("Message not found"),INVALID_GENDER("Invalid user Gender Input"), INVALID_DIET ("Invalid Dite Type "),;
 ;

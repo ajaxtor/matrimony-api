@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProfileResponse {
     
-    private Long id;
+    private Long userId;
     private String fullName;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;

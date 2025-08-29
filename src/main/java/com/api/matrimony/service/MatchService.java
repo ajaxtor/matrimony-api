@@ -1,7 +1,9 @@
 package com.api.matrimony.service;
 
 import java.util.List;
+import java.util.Map;
 
+import com.api.matrimony.request.SendRequest;
 import com.api.matrimony.response.MatchActionResponse;
 import com.api.matrimony.response.MatchResponse;
 import com.api.matrimony.response.ProfileResponse;
@@ -27,9 +29,11 @@ public interface MatchService {
 
 	List<ProfileResponse> searchFilterProfiles(Long userId, String name);
 
-	MatchResponse sendRequest(Long id, String matchId);
+	MatchResponse sendRequest(Long id, Long request);
 
-	List<ProfileResponse> getSendRequestList(Long id);
+	List<Map<String, Object>> getSendRequestList(Long id);
 
-	List<ProfileResponse> getReceiveRequests(Long id);
+	List<Map<String, Object>> getReceiveRequests(Long id);
+
+	List<ProfileResponse> getRejectedList(Long id);
 }

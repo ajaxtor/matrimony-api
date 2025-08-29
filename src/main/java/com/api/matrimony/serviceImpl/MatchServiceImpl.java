@@ -3,9 +3,11 @@ package com.api.matrimony.serviceImpl;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,6 +37,7 @@ import com.api.matrimony.response.MatchResponse;
 import com.api.matrimony.response.ProfileResponse;
 import com.api.matrimony.service.MatchService;
 import com.api.matrimony.service.NotificationService;
+import com.api.matrimony.utils.GeneralMethods;
 import com.api.matrimony.utils.MatchingAlgorithm;
 import com.api.matrimony.utils.ProfileSpecification;
 import com.api.matrimony.utils.RecommendationCal;
@@ -62,6 +65,7 @@ public class MatchServiceImpl implements MatchService {
 	private final NotificationService notificationService;
 	private final MatchMapper matchMapper;
 	private final MatchesActionRepo matchesActionRepo;
+	private final GeneralMethods generalMethods;
 
 	@Override
 	@Transactional
@@ -76,9 +80,15 @@ public class MatchServiceImpl implements MatchService {
 		User loginUserInfo = getUser(loginUserId);
 
 		// Candidate profiles
+		
 		List<UserProfile> candidateProfiles = userProfileRepository.findAllByUserIdNotAndIsHideFalse(loginUserId);
-
-		// Calculate matches
+		
+		// removing the in-active user 
+		
+		 candidateProfiles =candidateProfiles.stream()
+		        .filter(profile -> profile.getUser() != null && Boolean.TRUE.equals(profile.getUser().getIsActive()))
+		        .toList(); 
+		// Calculate matches
 		List<MatchResponse> rawMatches = candidateProfiles.stream()
 				.map(candidate -> matchingAlgorithm.calculateMatchScore(candidate, preferences))
 				.filter(match -> match.getMatchScore() > 0)
@@ -110,7 +120,11 @@ public class MatchServiceImpl implements MatchService {
 				response.setMatchId(newMatch.getMatchId());
 				response.setMatchStatus(newMatch.getStatus()); // <-- set status for new match
 			}
-			finalResponses.add(response);
+			//filter only status == match in matches DB
+			if (MatchStatus.MATCH == response.getMatchStatus()) {
+			    finalResponses.add(response);
+			}
+
 		}
 
 		log.info("Final {} matches returned for user {}", finalResponses.size(), loginUserId);
@@ -119,7 +133,7 @@ public class MatchServiceImpl implements MatchService {
 
 	public List<ProfileResponse> getMutualMatches(Long userId) {
 		log.error("Getting mutual matches for user: {}", userId);
-		List<MatchesAction> mutualMatches = matchesActionRepo.findByFromUserId(userId);
+		List<MatchesAction> mutualMatches = matchesActionRepo.findMutualMatchesByFromUserId(userId);
 		List<ProfileResponse> mutualProfileRes = mutualMatches.stream()
 		        .map(x -> mapToProfileResponse(x.getToUser().getProfile()))
 		        .collect(Collectors.toList());
@@ -138,7 +152,7 @@ public class MatchServiceImpl implements MatchService {
 
 		MatchStatus newStatus = action.equalsIgnoreCase("ACCEPT") ? MatchStatus.ACCEPTED : MatchStatus.REJECTED;
 
-		// If accepted, check if it's mutual
+		// If accepted, it's mutual
 		if (newStatus == MatchStatus.ACCEPTED) {
 			match.setStatus(MatchStatus.MUTUAL);
 			matchRepository.save(match);
@@ -261,10 +275,18 @@ public class MatchServiceImpl implements MatchService {
 		log.info("Searching profiles for user: {}, criteria: {}", userId, name);
 
 		UserPreference fetchUserInfo = getUserProfileByUserId(userId);
+		
+		
+		
 
 		if (name != null && !name.isBlank()) {
 			List<UserProfile> fetchUser = userProfileRepository.searchByFullNameAndGender(name,
 					fetchUserInfo.getGender());
+			// remove inactive profiles
+			fetchUser = fetchUser.stream()
+			        .filter(profile -> profile.getUser() != null && Boolean.TRUE.equals(profile.getUser().getIsActive()))
+			        .toList(); 
+ 
 			if (fetchUser != null && !fetchUser.isEmpty()) {
 				return convertProfiles(fetchUser);
 			} else {
@@ -282,6 +304,10 @@ public class MatchServiceImpl implements MatchService {
 
 			// Get all candidate user profiles (excluding the login user)
 			List<UserProfile> candidateProfiles = userProfileRepository.findAllByUserIdNotAndIsHideFalse(userId);
+			// remove inactive profile
+			candidateProfiles = candidateProfiles.stream()
+	        .filter(profile -> profile.getUser() != null && Boolean.TRUE.equals(profile.getUser().getIsActive()))
+	        .toList(); 
 
 			// Calculate match scores and filter
 			List<ProfileResponse> profileResponses = candidateProfiles.stream()
@@ -297,7 +323,7 @@ public class MatchServiceImpl implements MatchService {
 
 	public ProfileResponse mapToProfileResponse(UserProfile profile) {
 		ProfileResponse response = new ProfileResponse();
-		response.setId(profile.getId());
+		response.setUserId(profile.getUser().getId());
 		response.setFullName(profile.getFullName());
 		response.setDateOfBirth(profile.getDateOfBirth());
 		if (profile.getDateOfBirth() != null) {
@@ -350,55 +376,124 @@ public class MatchServiceImpl implements MatchService {
 	}
 
 	@Override
-	public MatchResponse sendRequest(Long id, String matchId) {
-		log.info("Request send by user: {}, matchId: {}", id, matchId);
+	public MatchResponse sendRequest(Long id, Long request) {
+		
+		MatchResponse response = new MatchResponse();
+		 List<MatchesAction> chaeckMatches = new ArrayList<>();
+		 
+		 if (request == null ){
+				throw new ApplicationException(ErrorEnum.BAD_SEND_RESQUEST.toString(),
+						ErrorEnum.BAD_SEND_RESQUEST.getExceptionError(), HttpStatus.OK);
+		    }else {
+		    	
+		    	 User toUser=  userRepository.findById(request).get();
+		    	 log.error(" Is Searched UserProfile is Active : "+toUser.getIsActive());
+			     Optional<Match> fetchMatches = matchRepository.fetchByMatchedUserId(id,request);
+			     log.error(" Is Searched User Already Exist in Match Table "+!fetchMatches.isEmpty());
+			     
+			     if(!fetchMatches.isPresent() && Boolean.TRUE.equals(toUser.getIsActive())) {
+			    	    log.error(" This request send after useing the search features ------> ");
+			    	    
+			    		Match saveMatchInfo = new Match();
+			    		saveMatchInfo.setMatchId(generalMethods.generate10CharId());
+			    		saveMatchInfo.setUser(userRepository.findById(id).get());
+			    		saveMatchInfo.setMatchedUser(toUser);
+			    		saveMatchInfo.setStatus(MatchStatus.SEND);
+			    		Match savedData = matchRepository.saveAndFlush(saveMatchInfo);
+			    		
+			    		MatchesAction action = new MatchesAction();
+						action.setMatchId(savedData.getMatchId());
+						action.setFromUser(savedData.getUser());
+						action.setToUser(savedData.getMatchedUser());
+						action.setStatus(MatchStatus.PENDING);
+						matchesActionRepo.saveAndFlush(action);
+						// notificationService.notifyNewMatch(match.getMatchedUser().getId(), userId);
+						// Return response DTO
+						response = matchMapper.toResponse(savedData);
+			    	
+			     }else {
+			    	 
+			    	log.error(" This request send after useing the Find Match features ------> ");
+			    	log.info("Request send by user: {}, matchId: {}", id, request);
+			    	
+					Match match = fetchMatches.get();
 
-		// Find match
-		Match match = matchRepository.findByMatchId(matchId)
-				.orElseThrow(() -> new ApplicationException(ErrorEnum.MATCH_NOT_FOUND.toString(),
-						ErrorEnum.MATCH_NOT_FOUND.getExceptionError(), HttpStatus.OK));
+					chaeckMatches = matchesActionRepo.findByMatchIdAndStatus(match.getMatchId());
+					 if (!chaeckMatches.isEmpty()) {
+						throw new ApplicationException(ErrorEnum.ALREADY_SEND_REQUEST.toString(),
+									ErrorEnum.ALREADY_SEND_REQUEST.getExceptionError(), HttpStatus.OK);
+					 }
+					log.error("User can send request to this match id :- "+request);
+					
+					// Update match status
+					match.setStatus(MatchStatus.SEND);
+					Match savedMatch = matchRepository.saveAndFlush(match);
 
-		// Update match status
-		match.setStatus(MatchStatus.SEND);
-		Match savedMatch = matchRepository.saveAndFlush(match);
+					log.info("Request updated -> userId: {}, matchId: {}, status: {}", savedMatch.getUser().getId(),
+							savedMatch.getMatchId(), savedMatch.getStatus());
+					
+					MatchesAction action = new MatchesAction();
+					action.setMatchId(match.getMatchId());
+					action.setFromUser(savedMatch.getUser());
+					action.setToUser(savedMatch.getMatchedUser());
+					action.setStatus(MatchStatus.PENDING);
+					matchesActionRepo.saveAndFlush(action);
+					// notificationService.notifyNewMatch(match.getMatchedUser().getId(), userId);
+					// Return response DTO
+					response = matchMapper.toResponse(savedMatch);
+			     }
+		    }
 
-		log.info("Request updated -> userId: {}, matchId: {}, status: {}", savedMatch.getUser().getId(),
-				savedMatch.getMatchId(), savedMatch.getStatus());
-
-		// Save action
-		MatchesAction action = new MatchesAction();
-		action.setMatchId(matchId);
-		action.setFromUser(savedMatch.getUser());
-		action.setToUser(savedMatch.getMatchedUser());
-		action.setStatus(MatchStatus.PENDING);
-		matchesActionRepo.saveAndFlush(action);
-		// notificationService.notifyNewMatch(match.getMatchedUser().getId(), userId);
-		// Return response DTO
-		return matchMapper.toResponse(savedMatch);
+		return response;
 	}
 
 	@Override
-	public List<ProfileResponse> getSendRequestList(Long id) {
+	public List<Map<String, Object>> getSendRequestList(Long id) {
 				log.error("Get Send Request List for user: {}", id);
-		List<MatchesAction> mutualMatches = matchesActionRepo.findPendingRequestsByFromUser(id);
-		List<ProfileResponse> mutualProfileRes = mutualMatches.stream()
+		List<MatchesAction> mutualMatches = matchesActionRepo.findSendingRequestsByFromUser(id);
+
+		List<Map<String, Object>> responseList = mutualMatches.stream()
+	            .map(x -> {
+	                Map<String, Object> map = new HashMap<>();
+	                map.put("matchId", x.getMatchId());
+	                map.put("profile", mapToProfileResponse(x.getToUser().getProfile()));
+	                return map;
+	            })
+	            .collect(Collectors.toList());
+		log.error("Send Receive Requests -> " + responseList);
+		return responseList;
+	}
+
+	@Override
+	public List<Map<String, Object>> getReceiveRequests(Long id) {
+		log.error("get Receive Requests for user: {}", id);
+		List<MatchesAction> mutualMatches = matchesActionRepo.findPendingRequestsByToUser(id);
+		
+		List<Map<String, Object>> responseList = mutualMatches.stream()
+	            .map(x -> {
+	                Map<String, Object> map = new HashMap<>();
+	                map.put("matchId", x.getMatchId());
+	                map.put("profile", mapToProfileResponse(x.getFromUser().getProfile()));
+	                return map;
+	            })
+	            .collect(Collectors.toList());
+
+		log.error("get Receive Requests -> " + responseList);
+		return responseList;
+	}
+	
+
+	@Override
+	public List<ProfileResponse> getRejectedList(Long id) {
+		log.error("Getting Rejected list for user: {}", id);
+		List<MatchesAction> rejectedList = matchesActionRepo.findRejectedListByFromUserId(id);
+		List<ProfileResponse> rejectedInfo = rejectedList.stream()
 		        .map(x -> mapToProfileResponse(x.getToUser().getProfile()))
 		        .collect(Collectors.toList());
 
-		log.error("get Send Request List -> " + mutualProfileRes);
-		return mutualProfileRes;
+		log.error("List of mutual matches -> " + rejectedInfo);
+		return rejectedInfo;
 	}
 
-	@Override
-	public List<ProfileResponse> getReceiveRequests(Long id) {
-		log.error("get Receive Requests for user: {}", id);
-		List<MatchesAction> mutualMatches = matchesActionRepo.findPendingRequestsByToUser(id);
-		List<ProfileResponse> mutualProfileRes = mutualMatches.stream()
-		        .map(x -> mapToProfileResponse(x.getFromUser().getProfile()))
-		        .collect(Collectors.toList());
-
-		log.error("get Receive Requests -> " + mutualProfileRes);
-		return mutualProfileRes;
-	}
 
 }

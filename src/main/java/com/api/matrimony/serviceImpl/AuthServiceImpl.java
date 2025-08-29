@@ -302,7 +302,7 @@ public class AuthServiceImpl implements AuthService {
 			ProfileResponse profileResponse = new ProfileResponse();
 			UserProfile profile = user.getProfile();
 
-			profileResponse.setId(profile.getId());
+			profileResponse.setUserId(profile.getUser().getId());
 			profileResponse.setFullName(profile.getFullName());
 			profileResponse.setDateOfBirth(profile.getDateOfBirth());
 

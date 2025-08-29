@@ -354,7 +354,7 @@ public class ChatServiceImpl implements ChatService {
 
     private ProfileResponse mapToProfileResponse(UserProfile profile) {
         ProfileResponse response = new ProfileResponse();
-        response.setId(profile.getId());
+        response.setUserId(profile.getUser().getId());
         response.setFullName(profile.getFullName());
         // Add other fields as needed for chat context
         return response;

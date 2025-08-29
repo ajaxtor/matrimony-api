@@ -1,6 +1,7 @@
 package com.api.matrimony.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.api.matrimony.entity.User;
 import com.api.matrimony.request.MatchActionRequest;
+import com.api.matrimony.request.SendRequest;
 import com.api.matrimony.response.APIResonse;
 import com.api.matrimony.response.MatchActionResponse;
 import com.api.matrimony.response.MatchResponse;
@@ -119,15 +121,15 @@ public class MatchController {
 	}
 
 	/**
-	 * Send request to a match
+	 * Send request to a match or Searched User
 	 */
-	@PostMapping("/sendRequest/{matchId}")
+	@PostMapping("/sendRequest/{userId}")
 	public ResponseEntity<APIResonse<MatchResponse>> sendRequest(@AuthenticationPrincipal User currentUser,
-			@PathVariable String matchId) {
+			@PathVariable Long userId) {
 
-		log.info("Match action by user: {}, matchId: {}", currentUser.getId(), matchId);
+		log.info("Match action by user: {}, matchId: {}", currentUser.getId(), userId);
 		APIResonse<MatchResponse> response = new APIResonse<>();
-		MatchResponse result = matchService.sendRequest(currentUser.getId(), matchId);
+		MatchResponse result = matchService.sendRequest(currentUser.getId(), userId);
 		response.setData(result);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
@@ -136,12 +138,12 @@ public class MatchController {
 	/**
 	 * Send request to matches
 	 */
-	@PostMapping("/getSendRequestList")
-	public ResponseEntity<APIResonse<List<ProfileResponse>>> getSendRequestList(@AuthenticationPrincipal User currentUser) {
+	@GetMapping("/getSendRequestList")
+	public ResponseEntity<APIResonse<List<Map<String, Object>>>> getSendRequestList(@AuthenticationPrincipal User currentUser) {
 
 		log.info("Match action by user: {} ", currentUser.getId());
-		APIResonse<List<ProfileResponse>> response = new APIResonse<>();
-		List<ProfileResponse> result = matchService.getSendRequestList(currentUser.getId());
+		APIResonse<List<Map<String, Object>>> response = new APIResonse<>();
+		List<Map<String, Object>> result = matchService.getSendRequestList(currentUser.getId());
 		response.setData(result);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
@@ -150,13 +152,27 @@ public class MatchController {
 	/**
 	 * receive request from matches
 	 */
-	@PostMapping("/getReceiveRequests")
-	public ResponseEntity<APIResonse<List<ProfileResponse>>> getReceiveRequests(@AuthenticationPrincipal User currentUser) {
+	@GetMapping("/getReceiveRequests")
+	public ResponseEntity<APIResonse<List<Map<String, Object>>>> getReceiveRequests(@AuthenticationPrincipal User currentUser) {
 
 		log.info("Match action by user: {} ", currentUser.getId());
-		APIResonse<List<ProfileResponse>> response = new APIResonse<>();
-		List<ProfileResponse> result = matchService.getReceiveRequests(currentUser.getId());
+		APIResonse<List<Map<String, Object>>> response = new APIResonse<>();
+		List<Map<String, Object>>result = matchService.getReceiveRequests(currentUser.getId());
 		response.setData(result);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+
+	/**
+	 * Get RejectedList for the current user
+	 */
+	@GetMapping("/getRejectedList")
+	public ResponseEntity<APIResonse<List<ProfileResponse>>> getRejectedList(@AuthenticationPrincipal User currentUser) {
+
+		log.info("Getting mutual matches for user: {}", currentUser.getId());
+		APIResonse<List<ProfileResponse>> response = new APIResonse<>();
+		List<ProfileResponse> mutualMatches = matchService.getRejectedList(currentUser.getId());
+		response.setData(mutualMatches);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	

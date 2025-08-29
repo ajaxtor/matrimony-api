@@ -37,7 +37,7 @@ public class GeneralMethods {
 	
 	public  ProfileResponse mapToProfileResponse(UserProfile profile) {
         ProfileResponse response = new ProfileResponse();
-        response.setId(profile.getId());
+        response.setUserId(profile.getUser().getId());
         response.setFullName(profile.getFullName() );
         response.setDateOfBirth(profile.getDateOfBirth());
         if (profile.getDateOfBirth() != null) {

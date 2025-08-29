@@ -497,7 +497,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	private ProfileResponse mapToProfileResponse(UserProfile profile) {
 		ProfileResponse response = new ProfileResponse();
-		response.setId(profile.getId());
+		response.setUserId(profile.getUser().getId());
 		response.setFullName(profile.getFullName());
 		response.setDateOfBirth(profile.getDateOfBirth());
 
