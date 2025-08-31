@@ -22,7 +22,7 @@ public class SubscriptionPlanResponse {
     private String name;
     private String description;
     private BigDecimal price;
-    private Integer durationMonths;
+    private Integer durationWeeks;
     private Object features; // JSON object
     private Boolean isActive;
 }

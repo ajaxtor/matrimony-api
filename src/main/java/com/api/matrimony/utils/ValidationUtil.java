@@ -2,15 +2,28 @@ package com.api.matrimony.utils;
 
 
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.regex.Pattern;
+
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import com.razorpay.Utils;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Validation Utility class for common validation operations
  */
 @Slf4j
+@Component
 public class ValidationUtil {
+
+    @Value("${razorpay.key_id:rzp_test_R8Qu5t36pGhI5U}")
+    private String razorpayKeyId;
+
+    @Value("${razorpay.secret:4KKgoDG2ejRMoWBwiCvmzX7v}")
+    private String razorpaySecret;
 
     // Regular expressions for validation
     private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@([A-Za-z0-9.-]+\\.[A-Za-z]{2,})$";
@@ -262,4 +275,30 @@ public class ValidationUtil {
     public static boolean isValidPageNumber(int page) {
         return page >= 0;
     }
+    
+        /**
+         * Verifies the Razorpay signature using SDK
+         *
+         * @param orderId    Razorpay Order ID
+         * @param paymentId  Razorpay Payment ID
+         * @param signature  Razorpay Signature
+         * @return true if the signature is valid, false otherwise
+         */
+        public boolean verifySignature(String orderId, String paymentId, String signature) {
+            try {
+                JSONObject options = new JSONObject();
+                options.put("razorpay_order_id", orderId);
+                options.put("razorpay_payment_id", paymentId);
+                options.put("razorpay_signature", signature);
+
+                return Utils.verifyPaymentSignature(options, razorpaySecret);
+            } catch (Exception e) {
+                // Log error and return false
+                e.printStackTrace();
+                return false;
+            }
+        }
+    
+
+    
 }

@@ -3,7 +3,6 @@ package com.api.matrimony.serviceImpl;
 
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,11 +20,16 @@ import com.api.matrimony.exception.ErrorEnum;
 import com.api.matrimony.repository.SubscriptionPlanRepository;
 import com.api.matrimony.repository.UserRepository;
 import com.api.matrimony.repository.UserSubscriptionRepository;
+import com.api.matrimony.request.RazorpayOrderRequest;
+import com.api.matrimony.request.SubscribeRequest;
+import com.api.matrimony.response.RazorpayOrderResponse;
 import com.api.matrimony.response.SubscriptionPlanResponse;
 import com.api.matrimony.response.SubscriptionStats;
 import com.api.matrimony.response.UserSubscriptionResponse;
 import com.api.matrimony.service.NotificationService;
 import com.api.matrimony.service.SubscriptionService;
+import com.api.matrimony.utils.GeneralMethods;
+import com.api.matrimony.utils.ValidationUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +48,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
  private final UserSubscriptionRepository subscriptionRepository;
  private final UserRepository userRepository;
  private final NotificationService notificationService;
+ private final RazorpayService razorpayService;
+ private final ValidationUtil validUtils;
+ 
 
  @Override
  public List<SubscriptionPlanResponse> getAllActivePlans() {
@@ -58,11 +65,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
  @Override
  public SubscriptionPlanResponse getPlanById(Long planId) {
      log.info("Getting subscription plan by ID: {}", planId);
-     
-     SubscriptionPlan plan = planRepository.findById(planId)
-             .orElseThrow(() -> new ApplicationException(ErrorEnum.SUB_NOT_FOUND.toString(),
-						ErrorEnum.SUB_NOT_FOUND.getExceptionError(), HttpStatus.OK));
-     
+     SubscriptionPlan plan = fetchPlanById(planId);
      return mapToPlanResponse(plan);
  }
 
@@ -76,42 +79,45 @@ public class SubscriptionServiceImpl implements SubscriptionService {
  }
 
  @Override
- public UserSubscriptionResponse subscribeToPlan(Long userId, Long planId, String paymentId) {
-     log.info("Subscribing user: {} to plan: {}, paymentId: {}", userId, planId, paymentId);
+ public UserSubscriptionResponse subscribeToPlan(Long userId, SubscribeRequest request) {
+     log.info("Subscribing user: {} to plan: {}, paymentId: {}", userId, request.getPlanId(), request.getPaymentId());
      
-     User user = userRepository.findById(userId)
-             .orElseThrow(() ->new ApplicationException(ErrorEnum.USER_NOT_FOUND.toString(),
-						ErrorEnum.USER_NOT_FOUND.getExceptionError(), HttpStatus.OK));
-     
-     SubscriptionPlan plan = planRepository.findById(planId)
-             .orElseThrow(() -> new ApplicationException(ErrorEnum.SUB_NOT_FOUND.toString(),
-						ErrorEnum.SUB_NOT_FOUND.getExceptionError(), HttpStatus.OK));
+     if(validUtils.verifySignature(request.getOrderId(),request.getPaymentId(),request.getSignature())) {
+    	 User user = getUserById(userId);
+         SubscriptionPlan plan = fetchPlanById(request.getPlanId());
 
-     if (!plan.getIsActive()) {
-         throw new ApplicationException(ErrorEnum.SUB_NOT_ACTIVE.toString(),
-					ErrorEnum.SUB_NOT_ACTIVE.getExceptionError(), HttpStatus.OK);
+         if (!plan.getIsActive()) {
+             throw new ApplicationException(ErrorEnum.SUB_NOT_ACTIVE.toString(),
+    					ErrorEnum.SUB_NOT_ACTIVE.getExceptionError(), HttpStatus.OK);
+         }
+
+         // Check if user already has an active subscription
+         if (hasActiveSubscription(userId)) {
+        	 throw new ApplicationException(ErrorEnum.USER_IN_ACTIVE_SUB.toString(),
+    					ErrorEnum.USER_IN_ACTIVE_SUB.getExceptionError(), HttpStatus.OK);
+         }
+
+         UserSubscription subscription = subscriptionRepository
+        		    .fetchByOrderIdAndReciptId(request.getOrderId())
+        		    .orElseThrow(() -> new ApplicationException(
+        		        ErrorEnum.SUBSCRIPTION_NOT_FOUND.toString(),
+        		        ErrorEnum.SUBSCRIPTION_NOT_FOUND.getExceptionError(),
+        		        HttpStatus.NOT_FOUND
+        		    ));
+
+         
+         subscription.setStatus(SubscriptionStatus.ACTIVE);
+         subscription.setPaymentId(request.getPaymentId());
+
+         UserSubscription savedSubscription = subscriptionRepository.save(subscription);
+         log.info("Subscription created successfully for user: {}", userId);
+
+         return mapToSubscriptionResponse(savedSubscription);
+    	 
+     }else {
+    	throw new ApplicationException(ErrorEnum.INVALID_SIGNATURE.toString(),
+					ErrorEnum.INVALID_SIGNATURE.getExceptionError(), HttpStatus.OK);
      }
-
-     // Check if user already has an active subscription
-     if (hasActiveSubscription(userId)) {
-    	 throw new ApplicationException(ErrorEnum.USER_IN_ACTIVE_SUB.toString(),
-					ErrorEnum.USER_IN_ACTIVE_SUB.getExceptionError(), HttpStatus.OK);
-     }
-
-     // Create new subscription
-     UserSubscription subscription = new UserSubscription();
-     subscription.setUser(user);
-     subscription.setPlan(plan);
-     subscription.setStartDate(LocalDate.now());
-     subscription.setEndDate(LocalDate.now().plusMonths(plan.getDurationMonths()));
-     subscription.setStatus(SubscriptionStatus.ACTIVE);
-     subscription.setPaymentId(paymentId);
-     subscription.setAmountPaid(plan.getPrice());
-
-     UserSubscription savedSubscription = subscriptionRepository.save(subscription);
-     log.info("Subscription created successfully for user: {}", userId);
-
-     return mapToSubscriptionResponse(savedSubscription);
  }
 
  @Override
@@ -210,7 +216,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
      response.setName(plan.getName());
      response.setDescription(plan.getDescription());
      response.setPrice(plan.getPrice());
-     response.setDurationMonths(plan.getDurationMonths());
+     response.setDurationWeeks(plan.getDurationMonths());
      response.setFeatures(plan.getFeatures()); // JSON object
      response.setIsActive(plan.getIsActive());
      return response;
@@ -230,5 +236,70 @@ public class SubscriptionServiceImpl implements SubscriptionService {
      response.setCreatedAt(subscription.getCreatedAt());
      return response;
  }
+
+@Override
+@Transactional
+public RazorpayOrderResponse createOrderByPlanId(Long id, Long planId) {
+	RazorpayOrderResponse response = new RazorpayOrderResponse();
+	try {
+		
+		SubscriptionPlan plan = planRepository.findById(planId)
+			    .orElseThrow(() -> new ApplicationException(ErrorEnum.SUB_NOT_FOUND.toString(),
+	 					ErrorEnum.SUB_NOT_FOUND.getExceptionError(), HttpStatus.OK));
+		// ₹- amount  in paise
+		Integer amount = plan.getPrice()
+	            .multiply(BigDecimal.valueOf(100)) // multiply BigDecimal * 100
+	            .intValue(); // convert result to Integer
+		String recipt = GeneralMethods.generateReceiptId();
+		log.error("Payment  amount: {}, and recipt: {}", amount, recipt);
+		
+		RazorpayOrderRequest request = new RazorpayOrderRequest();
+		request.setAmount(amount);  
+		request.setCurrency("INR");
+		request.setReceipt(recipt);
+		RazorpayOrderResponse order = razorpayService.createOrder(request);
+		log.error("Created Razorpay Order ID: " + order.getId());
+		
+		// Create new subscription
+	    UserSubscription subscription = new UserSubscription();
+	    User getUserDetails = getUserById(id);
+	    subscription.setUser(getUserDetails);
+	    subscription.setAmountPaid(plan.getPrice());
+	    subscription.setReceiptId(recipt);
+	    subscription.setOrderId(order.getId());
+	    subscription.setPlan(plan);
+	    subscription.setStartDate(GeneralMethods.getFormattedTodayDate());
+	    subscription.setEndDate(GeneralMethods.calculateEndDateFromToday(plan.getDurationMonths()));
+	    subscription.setStatus(SubscriptionStatus.PENDING);
+	    
+		subscriptionRepository.save(subscription);
+		response = order;
+		
+	}catch (Exception ex) {
+        log.error("Error while creating order for userId={}, planId={}: {}", id, planId, ex.getMessage(), ex);
+        throw new ApplicationException(
+            ErrorEnum.ORDER_CREATION_FAILED.toString(),
+            "Failed to create order. Please try again.",
+            HttpStatus.INTERNAL_SERVER_ERROR
+        );
+	}
+	return response;
+}
+
+private User getUserById(Long userId) {
+	User user = userRepository.findById(userId)
+			.orElseThrow(() ->new ApplicationException(ErrorEnum.USER_NOT_FOUND.toString(),
+						ErrorEnum.USER_NOT_FOUND.getExceptionError(), HttpStatus.OK));
+	return user;
+}
+
+
+private SubscriptionPlan fetchPlanById(Long planId) {
+	  SubscriptionPlan plan = planRepository.findById(planId)
+            .orElseThrow(() -> new ApplicationException(ErrorEnum.SUB_NOT_FOUND.toString(),
+						ErrorEnum.SUB_NOT_FOUND.getExceptionError(), HttpStatus.OK));
+	  return plan;
+}
+
 }
 

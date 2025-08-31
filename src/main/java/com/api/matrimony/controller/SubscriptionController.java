@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.api.matrimony.entity.User;
 import com.api.matrimony.request.SubscribeRequest;
 import com.api.matrimony.response.APIResonse;
+import com.api.matrimony.response.RazorpayOrderResponse;
 import com.api.matrimony.response.SubscriptionPlanResponse;
 import com.api.matrimony.response.UserSubscriptionResponse;
 import com.api.matrimony.service.SubscriptionService;
@@ -40,6 +41,24 @@ public class SubscriptionController {
 
 	@Autowired
     private SubscriptionService subscriptionService;
+	
+	
+    /**
+     * Subscribe to a plan
+     */
+    @PostMapping("/createOrder/{planId}")
+    public ResponseEntity<APIResonse<RazorpayOrderResponse>> createOrder(
+            @AuthenticationPrincipal User currentUser,
+            @PathVariable Long planId) {
+        
+        log.info("Subscribing user: {} to plan: {}", currentUser.getId(), planId);
+        APIResonse<RazorpayOrderResponse> response = new APIResonse<>();
+        RazorpayOrderResponse subscription = subscriptionService.createOrderByPlanId(
+                    currentUser.getId(), planId);
+            response.setData(subscription);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+	
 
     /**
      * Get all active subscription plans
@@ -92,7 +111,7 @@ public class SubscriptionController {
         log.info("Subscribing user: {} to plan: {}", currentUser.getId(), request.getPlanId());
         APIResonse<UserSubscriptionResponse> response = new APIResonse<>();
             UserSubscriptionResponse subscription = subscriptionService.subscribeToPlan(
-                    currentUser.getId(), request.getPlanId(), request.getPaymentId());
+                    currentUser.getId(), request);
             response.setData(subscription);
             return new ResponseEntity<>(response, HttpStatus.OK);
     }

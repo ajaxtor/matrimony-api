@@ -26,5 +26,9 @@ public interface UserSubscriptionRepository extends JpaRepository<UserSubscripti
     List<UserSubscription> findExpiredSubscriptions();
     
     boolean existsByUserIdAndStatus(Long userId, SubscriptionStatus status);
+
+	    @Query(value = "SELECT * FROM matrimony_app.user_subscriptions WHERE order_id = :orderId ", nativeQuery = true)
+	    Optional<UserSubscription> fetchByOrderIdAndReciptId(@Param("orderId") String orderId);
+
 }
 

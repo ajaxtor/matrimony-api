@@ -17,7 +17,10 @@ public class SubscribeRequest {
     
     @NotNull(message = "Plan ID is required")
     private Long planId;
-    
     @NotBlank(message = "Payment ID is required")
     private String paymentId;
+    @NotBlank(message = "Order ID is required")
+    private String orderId;
+    @NotBlank(message = "Signature is required")
+    private String Signature;
 }

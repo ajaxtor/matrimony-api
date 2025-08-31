@@ -381,7 +381,7 @@ public class MatchServiceImpl implements MatchService {
 		MatchResponse response = new MatchResponse();
 		 List<MatchesAction> chaeckMatches = new ArrayList<>();
 		 
-		 if (request == null ){
+		 if (request == null || request.equals(id) ){
 				throw new ApplicationException(ErrorEnum.BAD_SEND_RESQUEST.toString(),
 						ErrorEnum.BAD_SEND_RESQUEST.getExceptionError(), HttpStatus.OK);
 		    }else {
@@ -493,6 +493,23 @@ public class MatchServiceImpl implements MatchService {
 
 		log.error("List of mutual matches -> " + rejectedInfo);
 		return rejectedInfo;
+	}
+
+	@Override
+	public MatchActionResponse matchReject(Long id, String matchId) {
+		Match match = matchRepository.findByMatchId(matchId)
+				.orElseThrow(() -> new ApplicationException(ErrorEnum.MATCH_NOT_FOUND.toString(),
+						ErrorEnum.MATCH_NOT_FOUND.getExceptionError(), HttpStatus.OK));
+
+		MatchStatus newStatus = MatchStatus.MATCH_REJECT;
+		match.setStatus(newStatus);
+		matchRepository.save(match);
+		MatchesAction matchAction = matchesActionRepo.findByMatchId(matchId)
+				.orElseThrow(() -> new ApplicationException(ErrorEnum.MATCH_NOT_FOUND.toString(),
+						ErrorEnum.MATCH_NOT_FOUND.getExceptionError(), HttpStatus.OK));
+		matchAction.setStatus(MatchStatus.REJECTED);
+		matchesActionRepo.save(matchAction);
+		return new MatchActionResponse(false, "REJECTED ", matchMapper.toResponse(match));
 	}
 
 

@@ -1,7 +1,10 @@
 package com.api.matrimony.utils;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -18,7 +21,10 @@ import com.api.matrimony.entity.UserProfile;
 import com.api.matrimony.repository.UserPhotoRepository;
 import com.api.matrimony.response.ProfileResponse;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class GeneralMethods {
 	
 	@Autowired
@@ -90,5 +96,41 @@ public class GeneralMethods {
                    .substring(0, 10)
                    .toUpperCase();
     }
+    
+    public static String generateReceiptId() {
+        String prefix = "rcpt_";
+        String datePart = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        String randomPart = UUID.randomUUID().toString().substring(0, 8);
+        return prefix + datePart + "_" + randomPart;
+    }
+    
+    public static LocalDate getFormattedTodayDate() {
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        String formattedDate = today.format(formatter);             // Format as string
+        LocalDate parsedDate = LocalDate.parse(formattedDate, formatter); // Parse back to LocalDate
+        log.error("Date is :- "+parsedDate);
+        return parsedDate;
+    }
+
+   /**
+    * Calculates the end date from today by adding the given number of weeks.
+    * Ensures the returned LocalDate is in yyyy-MM-dd format.
+    *
+    * @param numberOfWeeks Number of weeks to add
+    * @return LocalDate formatted as yyyy-MM-dd (normalized)
+    */
+   public static LocalDate calculateEndDateFromToday(Integer numberOfWeeks) {
+       LocalDate today = LocalDate.now();
+       LocalDate endDate = today.plusWeeks(numberOfWeeks);
+
+       // Optional: normalize by formatting and parsing to ensure format
+       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+       String formatted = endDate.format(formatter);
+       log.error("calculateEndDateFromToday is :- "+formatted);
+       return LocalDate.parse(formatted, formatter); // parsed back to LocalDate
+   }
+
 	
 }

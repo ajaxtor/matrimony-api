@@ -1,6 +1,7 @@
 package com.api.matrimony.entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.api.matrimony.enums.SubscriptionStatus;
@@ -44,14 +45,21 @@ public class UserSubscription {
     private SubscriptionPlan plan;
 
     @Column(name = "start_date", nullable = false)
-    private java.time.LocalDate startDate;
+    private LocalDate startDate;
 
     @Column(name = "end_date", nullable = false)
-    private java.time.LocalDate endDate;
+    private LocalDate endDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private SubscriptionStatus status = SubscriptionStatus.ACTIVE;
+    private SubscriptionStatus status ;
+    
+    @Column(name = "order_id")
+    private String orderId;
+    
+    @Column(name = "receipt_id")
+    private String receiptId;
+
 
     @Column(name = "payment_id", length = 100)
     private String paymentId;

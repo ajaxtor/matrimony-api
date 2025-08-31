@@ -3,7 +3,7 @@ package com.api.matrimony.service;
 import java.util.List;
 import java.util.Map;
 
-import com.api.matrimony.request.SendRequest;
+import com.api.matrimony.request.MatchActionRequest;
 import com.api.matrimony.response.MatchActionResponse;
 import com.api.matrimony.response.MatchResponse;
 import com.api.matrimony.response.ProfileResponse;
@@ -36,4 +36,6 @@ public interface MatchService {
 	List<Map<String, Object>> getReceiveRequests(Long id);
 
 	List<ProfileResponse> getRejectedList(Long id);
+
+	MatchActionResponse matchReject(Long id,String matchId);
 }
