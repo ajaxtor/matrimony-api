@@ -20,7 +20,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           source: "."
-          target: "/home/springboot-app"
+          target: "/root/matrimony-api"
 
       - name: SSH into VPS and restart app
         uses: appleboy/ssh-action@v1.0.3
@@ -29,6 +29,6 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            cd /home/springboot-app
+            cd /root/matrimony-api
             docker-compose down
             docker-compose up --build -d
