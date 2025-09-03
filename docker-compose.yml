@@ -7,7 +7,7 @@ services:
     restart: always
     environment:
       MYSQL_DATABASE: matrimony_app
-      MYSQL_ROOT_PASSWORD: boxer@1998
+      MYSQL_ROOT_PASSWORD: Str0ngP@ssw0rd
     ports:
       - "3306:3306"
     volumes:
@@ -25,7 +25,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/matrimony_app?useSSL=false&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: boxer@1998
+      SPRING_DATASOURCE_PASSWORD: Str0ngP@ssw0rd
       SPRING_JPA_HIBERNATE_DDL_AUTO: none
       SPRING_JACKSON_TIME_ZONE: Asia/Kolkata
     ports:
