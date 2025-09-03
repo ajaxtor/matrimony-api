@@ -54,4 +54,10 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
 	@Query(value = "SELECT * FROM matrimony_app.matches WHERE matched_user_id = :matchUserId AND user_id = :userId ", nativeQuery = true)
     Optional<Match> fetchByMatchedUserId(@Param("userId") Long userId,@Param("matchUserId") Long matchUserId);
 	
+	 @Query(value = "SELECT * FROM matrimony_app.matches WHERE match_id = :matchId AND user_id = :userId", nativeQuery = true)
+	 Optional<Match> findByMatchIdAndUserId(@Param("matchId") String matchId, @Param("userId") Long userId);
+	
 }
+
+
+

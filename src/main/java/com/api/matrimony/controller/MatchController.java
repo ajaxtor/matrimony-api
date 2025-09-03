@@ -181,11 +181,11 @@ public class MatchController {
 	 *  Reject match by the match id
 	 */
 	@PostMapping("/matchReject/{matchId}")
-	public ResponseEntity<APIResonse<MatchActionResponse>> matchReject(@AuthenticationPrincipal User currentUser,@PathVariable String matchId) {
+	public ResponseEntity<APIResonse<MatchResponse>> matchReject(@AuthenticationPrincipal User currentUser,@PathVariable String matchId) {
 
 		log.info("Getting mutual matches for user: {}", currentUser.getId());
-		APIResonse<MatchActionResponse> response = new APIResonse<>();
-		MatchActionResponse mutualMatches = matchService.matchReject(currentUser.getId(),matchId);
+		APIResonse<MatchResponse> response = new APIResonse<>();
+		MatchResponse mutualMatches = matchService.matchReject(currentUser.getId(),matchId);
 		response.setData(mutualMatches);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}

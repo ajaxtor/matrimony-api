@@ -73,6 +73,7 @@ public class MatchMapper {
         MatchResponse response = new MatchResponse();
         response.setUserId(match.getMatchedUser().getId());
         response.setMatchId(match.getMatchId());
+        response.setMatchStatus(match.getStatus());
         ProfileResponse data = generalMethods.mapToProfileResponse(match.getMatchedUser().getProfile());
         response.setProfileResponse(data);
         response.setMatchScore(match.getMatchScore() != null ? match.getMatchScore().doubleValue() : 0.0);

@@ -37,5 +37,5 @@ public interface MatchService {
 
 	List<ProfileResponse> getRejectedList(Long id);
 
-	MatchActionResponse matchReject(Long id,String matchId);
+	MatchResponse matchReject(Long id,String matchId);
 }

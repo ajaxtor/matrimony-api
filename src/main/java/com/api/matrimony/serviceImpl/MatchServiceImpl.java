@@ -496,20 +496,21 @@ public class MatchServiceImpl implements MatchService {
 	}
 
 	@Override
-	public MatchActionResponse matchReject(Long id, String matchId) {
-		Match match = matchRepository.findByMatchId(matchId)
+	public MatchResponse matchReject(Long id, String matchId) {
+		Match match = matchRepository.findByMatchIdAndUserId(matchId,id)
 				.orElseThrow(() -> new ApplicationException(ErrorEnum.MATCH_NOT_FOUND.toString(),
 						ErrorEnum.MATCH_NOT_FOUND.getExceptionError(), HttpStatus.OK));
-
+		log.error("rejecting match details : "+match.getMatchId()+" and rejecting userId : "+match.getMatchedUser().getId());
 		MatchStatus newStatus = MatchStatus.MATCH_REJECT;
 		match.setStatus(newStatus);
-		matchRepository.save(match);
-		MatchesAction matchAction = matchesActionRepo.findByMatchId(matchId)
-				.orElseThrow(() -> new ApplicationException(ErrorEnum.MATCH_NOT_FOUND.toString(),
-						ErrorEnum.MATCH_NOT_FOUND.getExceptionError(), HttpStatus.OK));
-		matchAction.setStatus(MatchStatus.REJECTED);
-		matchesActionRepo.save(matchAction);
-		return new MatchActionResponse(false, "REJECTED ", matchMapper.toResponse(match));
+		Match saveEntity = matchRepository.save(match);
+//		MatchesAction matchAction = matchesActionRepo.findByMatchId(matchId)
+//				.orElseThrow(() -> new ApplicationException(ErrorEnum.MATCH_NOT_FOUND.toString(),
+//						ErrorEnum.MATCH_NOT_FOUND.getExceptionError(), HttpStatus.OK));
+//		matchAction.setStatus(MatchStatus.REJECTED);
+//		matchesActionRepo.save(matchAction);
+		
+		return matchMapper.toResponse(saveEntity);
 	}
 
 
