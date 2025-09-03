@@ -41,8 +41,8 @@ public class SubscriptionPlan {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
-    @Column(name = "duration_months", nullable = false)
-    private Integer durationMonths;
+    @Column(name = "duration_weeks", nullable = false)
+    private Integer durationWeeks;
 
     @Column(columnDefinition = "JSON")
     private String features;

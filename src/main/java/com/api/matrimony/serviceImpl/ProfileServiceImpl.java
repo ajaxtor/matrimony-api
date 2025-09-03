@@ -310,6 +310,7 @@ public class ProfileServiceImpl implements ProfileService {
         response.setCreatedAt(profile.getCreatedAt());
         response.setUpdatedAt(profile.getUpdatedAt());
         response.setDiet(profile.getDiet());
+        response.setHiseStatus(profile.getIsHide());
 
         // Get photos
         List<UserPhoto> photos = photoRepository.findByUserIdOrderByDisplayOrderAsc(profile.getUser().getId());

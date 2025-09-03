@@ -15,16 +15,25 @@ import com.api.matrimony.entity.Conversation;
  */
 @Repository
 public interface ConversationRepository extends JpaRepository<Conversation, Long> {
-    
-    @Query("SELECT c FROM Conversation c WHERE " +
-           "(c.user1.id = :userId OR c.user2.id = :userId) AND c.isActive = true " +
-           "ORDER BY c.updatedAt DESC")
-    List<Conversation> findByUserIdOrderByUpdatedAtDesc(@Param("userId") Long userId);
-    
-    @Query("SELECT c FROM Conversation c WHERE " +
-           "((c.user1.id = :user1Id AND c.user2.id = :user2Id) OR " +
-           "(c.user1.id = :user2Id AND c.user2.id = :user1Id)) AND c.isActive = true")
-    Optional<Conversation> findByUsers(@Param("user1Id") Long user1Id, @Param("user2Id") Long user2Id);
-    
-    Optional<Conversation> findByMatchId(Long matchId);
+
+//  @Query("""
+//    select c from Conversation c
+//     where c.isActive = true and (c.user1Id = :uid or c.user2Id = :uid)
+//     order by c.updatedAt desc, c.createdAt desc
+//  """)
+//  List<Conversation> findActiveByUser(@Param("uid") Long userId);
+  
+  
+  @Query("SELECT c FROM Conversation c WHERE " +
+          "(c.user1.id = :userId OR c.user2.id = :userId) AND c.isActive = true " +
+          "ORDER BY c.updatedAt DESC")
+   List<Conversation> findByUserIdOrderByUpdatedAtDesc(@Param("userId") Long userId);
+   
+   @Query("SELECT c FROM Conversation c WHERE " +
+          "((c.user1.id = :user1Id AND c.user2.id = :user2Id) OR " +
+          "(c.user1.id = :user2Id AND c.user2.id = :user1Id)) AND c.isActive = true")
+   Optional<Conversation> findByUsers(@Param("user1Id") Long user1Id, @Param("user2Id") Long user2Id);
+   
+   Optional<Conversation> findByMatchId(Long matchId);
+
 }

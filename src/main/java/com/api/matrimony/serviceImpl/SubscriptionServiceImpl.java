@@ -216,7 +216,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
      response.setName(plan.getName());
      response.setDescription(plan.getDescription());
      response.setPrice(plan.getPrice());
-     response.setDurationWeeks(plan.getDurationMonths());
+     response.setDurationWeeks(plan.getDurationWeeks());
      response.setFeatures(plan.getFeatures()); // JSON object
      response.setIsActive(plan.getIsActive());
      return response;
@@ -269,7 +269,7 @@ public RazorpayOrderResponse createOrderByPlanId(Long id, Long planId) {
 	    subscription.setOrderId(order.getId());
 	    subscription.setPlan(plan);
 	    subscription.setStartDate(GeneralMethods.getFormattedTodayDate());
-	    subscription.setEndDate(GeneralMethods.calculateEndDateFromToday(plan.getDurationMonths()));
+	    subscription.setEndDate(GeneralMethods.calculateEndDateFromToday(plan.getDurationWeeks()));
 	    subscription.setStatus(SubscriptionStatus.PENDING);
 	    
 		subscriptionRepository.save(subscription);

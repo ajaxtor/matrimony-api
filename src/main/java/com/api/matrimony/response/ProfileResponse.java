@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -46,6 +47,8 @@ public class ProfileResponse {
     private String country;
     private String pincode;
     private String diet;
+    @JsonProperty("isHide")
+    private boolean hiseStatus;
     private String profileCreatedBy;
     private List<String> photoUrls;
     private String primaryPhotoUrl;

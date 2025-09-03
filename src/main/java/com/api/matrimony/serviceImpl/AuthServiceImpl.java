@@ -339,7 +339,7 @@ public class AuthServiceImpl implements AuthService {
 			profileResponse.setProfileCreatedBy(profile.getProfileCreatedBy());
 			profileResponse.setCreatedAt(profile.getCreatedAt());
 			profileResponse.setUpdatedAt(profile.getUpdatedAt());
-
+			profileResponse.setHiseStatus(profile.getIsHide());
 			response.setProfile(profileResponse);
 		}
 

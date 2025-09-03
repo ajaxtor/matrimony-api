@@ -1,17 +1,21 @@
 package com.api.matrimony.serviceImpl;
 
 
+
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import com.api.matrimony.entity.BlockedUser;
 import com.api.matrimony.entity.Conversation;
 import com.api.matrimony.entity.Match;
 import com.api.matrimony.entity.Message;
@@ -21,7 +25,6 @@ import com.api.matrimony.enums.MatchStatus;
 import com.api.matrimony.enums.MessageType;
 import com.api.matrimony.exception.ApplicationException;
 import com.api.matrimony.exception.ErrorEnum;
-import com.api.matrimony.repository.BlockedUserRepository;
 import com.api.matrimony.repository.ConversationRepository;
 import com.api.matrimony.repository.MatchRepository;
 import com.api.matrimony.repository.MessageRepository;
@@ -29,252 +32,185 @@ import com.api.matrimony.repository.UserRepository;
 import com.api.matrimony.request.MessageRequest;
 import com.api.matrimony.response.ConversationResponse;
 import com.api.matrimony.response.MessageResponse;
-import com.api.matrimony.response.PagedResponse;
 import com.api.matrimony.response.ProfileResponse;
 import com.api.matrimony.service.ChatService;
-import com.api.matrimony.service.NotificationService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Chat Service Implementation
- */
+	@Service
+	@RequiredArgsConstructor
+	@Slf4j
+	public class ChatServiceImpl  implements ChatService {
 
-@Service
-@RequiredArgsConstructor
-@Slf4j
-@Transactional
-public class ChatServiceImpl implements ChatService {
+	  private final ConversationRepository conversationRepository;
+	  private final MessageRepository messageRepository;
+	  private final SimpMessagingTemplate ws;
+	  private final UserRepository userRepository;
+	  private final MatchRepository matchRepository;
 
-    private final UserRepository userRepository;
-    private final ConversationRepository conversationRepository;
-    private final MessageRepository messageRepository;
-    private final MatchRepository matchRepository;
-    private final BlockedUserRepository blockedUserRepository;
-    private final NotificationService notificationService;
+	  // 1) Get all conversations for user
+	  @Override
+	  public List<ConversationResponse> getConversations(Long userId) {
+		 List<Conversation> convList  = conversationRepository.findByUserIdOrderByUpdatedAtDesc(userId);
+		 if(convList != null && !convList.isEmpty()) {
+			 List<ConversationResponse> responce = convList.stream().map(x -> mapToConversationResponse(x,userId)).toList();
+			 return responce;
+		 }else {
+			 throw  new ApplicationException(ErrorEnum.CNOV_NOT_FOUND.toString(),
+						ErrorEnum.CNOV_NOT_FOUND.getExceptionError(), HttpStatus.OK);
+		 }
+	  }
 
-    @Override
-    public List<ConversationResponse> getConversationsForUser(Long userId) {
-        log.info("Getting conversations for user: {}", userId);
-        
-        List<Conversation> conversations = conversationRepository.findByUserIdOrderByUpdatedAtDesc(userId);
-        
-        return conversations.stream()
-                .map(conversation -> mapToConversationResponse(conversation, userId))
-                .collect(Collectors.toList());
-    }
+	  // 2) Get messages for conversation (paged). Client may reverse order for display.
+	  @Override
+	  public Page<MessageResponse> getMessages(Long conversationId, int page, int size) {
+	    PageRequest pr = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "sentAt").and(Sort.by("id").descending()));
+	    return messageRepository.findByConversationId(conversationId, pr).map(this::toResponse);
+	  }
 
-    @Override
-    public PagedResponse<MessageResponse> getMessagesForConversation(Long userId, Long conversationId, Pageable pageable) {
-        log.info("Getting messages for user: {}, conversationId: {}", userId, conversationId);
-        
-        Conversation conversation = conversationRepository.findById(conversationId)
-                .orElseThrow(() -> new ApplicationException(ErrorEnum.CNOV_NOT_FOUND.toString(),
-						ErrorEnum.CNOV_NOT_FOUND.getExceptionError(), HttpStatus.OK));
+	  // 3) Send message: persist, broadcast over WS
+	  
+	  @Override
+	  @Transactional
+	  public MessageResponse saveMessage(Long senderId, MessageRequest request) {
+	        log.info("Sending message from user: {} to user: {}", senderId, request.getReceiverId());
+	        
+	        User sender = userRepository.findById(senderId)
+	                .orElseThrow(() -> new ApplicationException(ErrorEnum.SENDER_NOT_FUND.toString(),
+	    					ErrorEnum.SENDER_NOT_FUND.getExceptionError(), HttpStatus.OK));
+	        User receiver = userRepository.findById(request.getReceiverId())
+	                .orElseThrow(() -> new ApplicationException(ErrorEnum.RECIVER_NOT_FUND.toString(),
+	    					ErrorEnum.RECIVER_NOT_FUND.getExceptionError(), HttpStatus.OK));
 
-        // Check if user is part of the conversation
-        if (!conversation.getUser1().getId().equals(userId) && !conversation.getUser2().getId().equals(userId)) {
-            throw new ApplicationException(ErrorEnum.YOU_ARE_PART_OF_CONV.toString(),
-					ErrorEnum.YOU_ARE_PART_OF_CONV.getExceptionError(), HttpStatus.OK);
-        }
+	        // Check if users are blocked
+//	        if (blockedUserRepository.existsByBlockerIdAndBlockedUserId(request.getReceiverId(), senderId)) {
+//	            throw new ApplicationException(ErrorEnum.YOU_BLOCK_BY_USER.toString(),
+//						ErrorEnum.YOU_BLOCK_BY_USER.getExceptionError(), HttpStatus.OK);
+//	        }
+//
+//	        if (blockedUserRepository.existsByBlockerIdAndBlockedUserId(senderId, request.getReceiverId())) {
+//	            throw new ApplicationException(ErrorEnum.YOU_BLOCK_USER.toString(),
+//						ErrorEnum.YOU_BLOCK_USER.getExceptionError(), HttpStatus.OK);
+//	        }
 
-        Page<Message> messagePage = messageRepository.findByConversationIdOrderBySentAtDesc(conversationId, pageable);
-        
-        List<MessageResponse> messageResponses = messagePage.getContent().stream()
-                .map(this::mapToMessageResponse)
-                .collect(Collectors.toList());
+	        // Check if users have mutual match
+	        Optional<Match> mutualMatch = matchRepository.findMatchBetweenUsers(senderId, request.getReceiverId());
+	        if (mutualMatch.isEmpty() || mutualMatch.get().getStatus() != MatchStatus.MUTUAL) {
+	            throw new ApplicationException(ErrorEnum.ONLY_MUTUAL_MATCH_CAN_MSG.toString(),
+						ErrorEnum.ONLY_MUTUAL_MATCH_CAN_MSG.getExceptionError(), HttpStatus.OK);
+	        }
 
-        return PagedResponse.<MessageResponse>builder()
-                .content(messageResponses)
-                .page(pageable.getPageNumber())
-                .size(pageable.getPageSize())
-                .totalElements(messagePage.getTotalElements())
-                .totalPages(messagePage.getTotalPages())
-                .first(messagePage.isFirst())
-                .last(messagePage.isLast())
-                .empty(messagePage.isEmpty())
-                .build();
-    }
+	        // Get or create conversation
+	        Conversation conversation = getOrCreateConversationEntity(senderId, request.getReceiverId());
 
-    @Override
-    public MessageResponse sendMessage(Long senderId, MessageRequest request) {
-        log.info("Sending message from user: {} to user: {}", senderId, request.getReceiverId());
-        
-        User sender = userRepository.findById(senderId)
-                .orElseThrow(() -> new ApplicationException(ErrorEnum.SENDER_NOT_FUND.toString(),
-    					ErrorEnum.SENDER_NOT_FUND.getExceptionError(), HttpStatus.OK));
-        User receiver = userRepository.findById(request.getReceiverId())
-                .orElseThrow(() -> new ApplicationException(ErrorEnum.RECIVER_NOT_FUND.toString(),
-    					ErrorEnum.RECIVER_NOT_FUND.getExceptionError(), HttpStatus.OK));
+	        // Create message
+	        Message message = new Message();
+	        message.setConversation(conversation);
+	        message.setSender(sender);
+	        message.setReceiver(receiver);
+	        message.setMessage(request.getMessage());
+	        message.setMessageType(MessageType.valueOf(request.getMessageType()));
+	        message.setIsRead(false);
+	        message.setSentAt(LocalDateTime.now());
 
-        // Check if users are blocked
-        if (blockedUserRepository.existsByBlockerIdAndBlockedUserId(request.getReceiverId(), senderId)) {
-            throw new ApplicationException(ErrorEnum.YOU_BLOCK_BY_USER.toString(),
-					ErrorEnum.YOU_BLOCK_BY_USER.getExceptionError(), HttpStatus.OK);
-        }
+	        Message savedMessage = messageRepository.save(message);
 
-        if (blockedUserRepository.existsByBlockerIdAndBlockedUserId(senderId, request.getReceiverId())) {
-            throw new ApplicationException(ErrorEnum.YOU_BLOCK_USER.toString(),
-					ErrorEnum.YOU_BLOCK_USER.getExceptionError(), HttpStatus.OK);
-        }
+	        // Update conversation timestamp
+	        conversation.setUpdatedAt(LocalDateTime.now());
+	        conversationRepository.save(conversation);
 
-        // Check if users have mutual match
-        Optional<Match> mutualMatch = matchRepository.findMatchBetweenUsers(senderId, request.getReceiverId());
-        if (mutualMatch.isEmpty() || mutualMatch.get().getStatus() != MatchStatus.MUTUAL) {
-            throw new ApplicationException(ErrorEnum.ONLY_MUTUAL_MATCH_CAN_MSG.toString(),
-					ErrorEnum.ONLY_MUTUAL_MATCH_CAN_MSG.getExceptionError(), HttpStatus.OK);
-        }
+	        // Send notification
+	       // notificationService.notifyNewMessage(request.getReceiverId(), senderId);
 
-        // Get or create conversation
-        Conversation conversation = getOrCreateConversationEntity(senderId, request.getReceiverId());
+	        MessageResponse msg = mapToMessageResponse(savedMessage);
+	        
+	     // Broadcast to WS topic for conversation
+		    ws.convertAndSend("/topic/conversations/" + conversation.getId(), msg);
+	        
+	        return msg ;
+	    }
 
-        // Create message
-        Message message = new Message();
-        message.setConversation(conversation);
-        message.setSender(sender);
-        message.setReceiver(receiver);
-        message.setMessage(request.getMessage());
-        message.setMessageType(MessageType.valueOf(request.getMessageType()));
-        message.setIsRead(false);
-        message.setSentAt(LocalDateTime.now());
+	  // 5) Get conversation between two users
+	  public ConversationResponse getBetween(Long currentUserId, Long otherUserId) {
+		  Optional<Conversation> convBtw2user = conversationRepository.findByUsers(currentUserId, otherUserId);
+		  if(!convBtw2user.isEmpty()) {
+			  ConversationResponse response =  mapToConversationResponse(convBtw2user.get(),currentUserId);
+			  return response;
+		  }else {
+			  throw  new ApplicationException(ErrorEnum.CNOV_NOT_FOUND.toString(),
+						ErrorEnum.CNOV_NOT_FOUND.getExceptionError(), HttpStatus.OK);
+		  }
+	  }
 
-        Message savedMessage = messageRepository.save(message);
+	  // 6) Unread message count
+	  public long unreadCount(Long userId) {
+	    return messageRepository.countByReceiverIdAndIsReadFalse(userId);
+	  }
 
-        // Update conversation timestamp
-        conversation.setUpdatedAt(LocalDateTime.now());
-        conversationRepository.save(conversation);
+	  // 7) Block conversation
+	  @Transactional
+	  public void blockConversation(Long conversationId) {
+	    Conversation c = conversationRepository.findById(conversationId)
+	        .orElseThrow(() -> new NoSuchElementException("Conversation not found"));
+	    c.setIsActive(false);
+	    conversationRepository.save(c);
+	  }
 
-        // Send notification
-        notificationService.notifyNewMessage(request.getReceiverId(), senderId);
+	  // 8) Typing indicator (WS)
+	  public void typing(Long conversationId, Long userId, boolean typing) {
+	    Map<String, Object> payload = new HashMap<>();
+	    payload.put("conversationId", conversationId);
+	    payload.put("userId", userId);
+	    payload.put("typing", typing);
+	    ws.convertAndSend("/topic/conversations/" + conversationId + "/typing", payload);
+	  }
 
-        return mapToMessageResponse(savedMessage);
-    }
+	  private MessageResponse toResponse(Message m) {
+	    MessageResponse r = new MessageResponse();
+	    r.setId(m.getId());
+	    r.setConversationId(m.getConversation().getId());
+	    r.setSenderId(m.getSender().getId());
+	    r.setReceiverId(m.getReceiver().getId());
+	    r.setMessage(m.getMessage());
+	    r.setMessageType(m.getMessageType().name());
+	    r.setSentAt(m.getSentAt());
+	    return r;
+	  }
+	  
+	  private User getUserById(Long userId) {
+			User user = userRepository.findById(userId)
+					.orElseThrow(() ->new ApplicationException(ErrorEnum.USER_NOT_FOUND.toString(),
+								ErrorEnum.USER_NOT_FOUND.getExceptionError(), HttpStatus.OK));
+			return user;
+		}
 
-    @Override
-    public void markMessagesAsRead(Long userId, Long conversationId) {
-        log.info("Marking messages as read for user: {}, conversationId: {}", userId, conversationId);
-        
-        Conversation conversation = conversationRepository.findById(conversationId)
-                .orElseThrow(() -> new ApplicationException(ErrorEnum.CNOV_NOT_FOUND.toString(),
-    					ErrorEnum.CNOV_NOT_FOUND.getExceptionError(), HttpStatus.OK));
+//	@Override
+//	public MessageResponse saveMessage(SendMessageRequest request) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//
+//	@Override
+//	public List<MessageResponse> getMessages(String conversationId) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//
+//	@Override
+//	public List<MessageResponse> getUnreadMessages(Long userId) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
-        if (!conversation.getUser1().getId().equals(userId) && !conversation.getUser2().getId().equals(userId)) {
-            throw new ApplicationException(ErrorEnum.YOU_ARE_PART_OF_CONV.toString(),
-					ErrorEnum.YOU_ARE_PART_OF_CONV.getExceptionError(), HttpStatus.OK);
-        }
-
-        messageRepository.markMessagesAsRead(conversationId, userId);
-    }
-
-    @Override
-    public ConversationResponse getOrCreateConversation(Long userId1, Long userId2) {
-        log.info("Getting or creating conversation between users: {} and {}", userId1, userId2);
-        
-        Conversation conversation = getOrCreateConversationEntity(userId1, userId2);
-        return mapToConversationResponse(conversation, userId1);
-    }
-
-    @Override
-    public Long getUnreadMessageCount(Long userId) {
-        log.info("Getting unread message count for user: {}", userId);
-        
-        List<Conversation> conversations = conversationRepository.findByUserIdOrderByUpdatedAtDesc(userId);
-        
-        return conversations.stream()
-                .mapToLong(conversation -> messageRepository.countUnreadMessages(conversation.getId(), userId))
-                .sum();
-    }
-
-    @Override
-    public void deleteMessage(Long userId, Long messageId) {
-        log.info("Deleting message: {} by user: {}", messageId, userId);
-        
-        Message message = messageRepository.findById(messageId)
-                .orElseThrow(() -> new ApplicationException(ErrorEnum.MESSAGE_NOT_FUND.toString(),
-    					ErrorEnum.MESSAGE_NOT_FUND.getExceptionError(), HttpStatus.OK));
-
-        if (!message.getSender().getId().equals(userId)) {
-            throw new ApplicationException(ErrorEnum.ONLY_CAN_DELETE_OWN_MSG.toString(),
-					ErrorEnum.ONLY_CAN_DELETE_OWN_MSG.getExceptionError(), HttpStatus.OK);
-        }
-
-        messageRepository.delete(message);
-    }
-
-    @Override
-    public void blockConversation(Long userId, Long conversationId) {
-        log.info("Blocking conversation: {} by user: {}", conversationId, userId);
-        
-        Conversation conversation = conversationRepository.findById(conversationId)
-                .orElseThrow(() -> new ApplicationException(ErrorEnum.CNOV_NOT_FOUND.toString(),
-    					ErrorEnum.CNOV_NOT_FOUND.getExceptionError(), HttpStatus.OK));
-
-        Long otherUserId = conversation.getUser1().getId().equals(userId) ? 
-                          conversation.getUser2().getId() : conversation.getUser1().getId();
-
-        // Block the other user
-        if (!blockedUserRepository.existsByBlockerIdAndBlockedUserId(userId, otherUserId)) {
-            User blocker = userRepository.findById(userId).orElse(null);
-            User blockedUser = userRepository.findById(otherUserId).orElse(null);
-            
-            if (blocker != null && blockedUser != null) {
-                BlockedUser blockedUserEntity = new BlockedUser();
-                blockedUserEntity.setBlocker(blocker);
-                blockedUserEntity.setBlockedUser(blockedUser);
-                blockedUserRepository.save(blockedUserEntity);
-            }
-        }
-
-        // Deactivate conversation
-        conversation.setIsActive(false);
-        conversationRepository.save(conversation);
-    }
-
-    @Override
-    public ConversationResponse getConversationDetails(Long userId, Long conversationId) {
-        log.info("Getting conversation details for user: {}, conversationId: {}", userId, conversationId);
-        
-        Conversation conversation = conversationRepository.findById(conversationId)
-                .orElseThrow(() -> new ApplicationException(ErrorEnum.CNOV_NOT_FOUND.toString(),
-    					ErrorEnum.CNOV_NOT_FOUND.getExceptionError(), HttpStatus.OK));
-
-        if (!conversation.getUser1().getId().equals(userId) && !conversation.getUser2().getId().equals(userId)) {
-            throw new ApplicationException(ErrorEnum.YOU_ARE_PART_OF_CONV.toString(),
-					ErrorEnum.YOU_ARE_PART_OF_CONV.getExceptionError(), HttpStatus.OK);
-        }
-
-        return mapToConversationResponse(conversation, userId);
-    }
-
-    @Override
-    public List<MessageResponse> searchMessages(Long userId, String query, Long conversationId, Pageable pageable) {
-        log.info("Searching messages for user: {}, query: {}, conversationId: {}", userId, query, conversationId);
-        
-        // This is a simplified implementation
-        // In a real application, you would use full-text search or Elasticsearch
-        
-        List<Conversation> conversations;
-        if (conversationId != null) {
-            Conversation conversation = conversationRepository.findById(conversationId)
-                    .orElseThrow(() -> new ApplicationException(ErrorEnum.CNOV_NOT_FOUND.toString(),
-        					ErrorEnum.CNOV_NOT_FOUND.getExceptionError(), HttpStatus.OK));
-            conversations = List.of(conversation);
-        } else {
-            conversations = conversationRepository.findByUserIdOrderByUpdatedAtDesc(userId);
-        }
-
-        // This is a basic search implementation
-        // In production, you would want to use proper search indexing
-        return conversations.stream()
-                .flatMap(conv -> messageRepository.findByConversationIdOrderBySentAtDesc(conv.getId(), pageable).getContent().stream())
-                .filter(message -> message.getMessage().toLowerCase().contains(query.toLowerCase()))
-                .map(this::mapToMessageResponse)
-                .collect(Collectors.toList());
-    }
-
-    // Helper methods
+	@Override
+	public int markMessagesAsRead(Long conversationId, Long userId) {
+		int updatedRow = messageRepository.markAsRead(conversationId, userId);
+		return updatedRow;
+	}
+	
+	 // Helper methods
     private Conversation getOrCreateConversationEntity(Long userId1, Long userId2) {
         Optional<Conversation> existingConversation = conversationRepository.findByUsers(userId1, userId2);
         
@@ -359,4 +295,8 @@ public class ChatServiceImpl implements ChatService {
         // Add other fields as needed for chat context
         return response;
     }
-}
+	
+	  
+	}
+
+

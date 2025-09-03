@@ -22,11 +22,11 @@ public class MessageResponse {
     private Long id;
     private Long conversationId;
     private Long senderId;
+    private String senderName;
     private Long receiverId;
     private String message;
     private String messageType;
     private Boolean isRead;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime sentAt;
-    private String senderName;
 }

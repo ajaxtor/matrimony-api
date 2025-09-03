@@ -245,7 +245,7 @@ public class AdminServiceImpl implements AdminService {
 		plan.setName(request.getName());
 		plan.setDescription(request.getDescription());
 		plan.setPrice(request.getPrice());
-		plan.setDurationMonths(request.getDurationMonths());
+		plan.setDurationWeeks(request.getDurationMonths());
 		plan.setFeatures(request.getFeatures()); // JSON string
 		plan.setIsActive(true);
 
@@ -271,7 +271,7 @@ public class AdminServiceImpl implements AdminService {
 			plan.setPrice(request.getPrice());
 		}
 		if (request.getDurationMonths() != null) {
-			plan.setDurationMonths(request.getDurationMonths());
+			plan.setDurationWeeks(request.getDurationMonths());
 		}
 		if (request.getFeatures() != null) {
 			plan.setFeatures(request.getFeatures());
