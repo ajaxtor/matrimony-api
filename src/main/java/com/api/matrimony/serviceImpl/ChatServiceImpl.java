@@ -33,6 +33,7 @@ import com.api.matrimony.request.MessageRequest;
 import com.api.matrimony.response.ConversationResponse;
 import com.api.matrimony.response.MessageResponse;
 import com.api.matrimony.response.ProfileResponse;
+import com.api.matrimony.response.StartChatResponse;
 import com.api.matrimony.service.ChatService;
 
 import jakarta.transaction.Transactional;
@@ -209,6 +210,22 @@ import lombok.extern.slf4j.Slf4j;
 		int updatedRow = messageRepository.markAsRead(conversationId, userId);
 		return updatedRow;
 	}
+
+	@Override
+	public StartChatResponse startChat(Long id, Long otherUserId) {
+		StartChatResponse response = new StartChatResponse();
+		log.error("Start chat between current user {} and other user {}", id, otherUserId);
+		Conversation startChatInfo = getOrCreateConversationEntity(id,otherUserId);
+		
+		response.setConversationId(startChatInfo.getId());
+		response.setUser1Id(startChatInfo.getUser1().getId());
+		response.setUser2Id(startChatInfo.getUser2().getId());
+		response.setMatchId(startChatInfo.getMatch().getMatchId());
+		response.setActive(startChatInfo.getIsActive());
+		log.error("Start chat response {} and other user {}", response);
+		return response;
+	}
+	
 	
 	 // Helper methods
     private Conversation getOrCreateConversationEntity(Long userId1, Long userId2) {
@@ -295,7 +312,6 @@ import lombok.extern.slf4j.Slf4j;
         // Add other fields as needed for chat context
         return response;
     }
-	
 	  
 	}
 

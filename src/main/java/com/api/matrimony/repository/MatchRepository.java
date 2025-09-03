@@ -30,7 +30,7 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
     
     @Query("SELECT m FROM Match m WHERE " +
            "(m.user.id = :userId AND m.matchedUser.id = :matchedUserId) OR " +
-           "(m.user.id = :matchedUserId AND m.matchedUser.id = :userId)")
+           "(m.user.id = :matchedUserId AND m.matchedUser.id = :userId) AND m.status = 'MUTUAL' ")
     Optional<Match> findMatchBetweenUsers(@Param("userId") Long userId, @Param("matchedUserId") Long matchedUserId);
     
     @Query("SELECT COUNT(m) FROM Match m WHERE m.user.id = :userId AND m.status = :status")

@@ -16,6 +16,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MessageRequest {
     
+    @NotNull(message = "conversation ID is required")
+    private Long conversationId;
     @NotNull(message = "Receiver ID is required")
     private Long receiverId;
     @NotBlank(message = "Message is required")

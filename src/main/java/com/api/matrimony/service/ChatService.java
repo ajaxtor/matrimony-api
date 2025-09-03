@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import com.api.matrimony.request.MessageRequest;
 import com.api.matrimony.response.ConversationResponse;
 import com.api.matrimony.response.MessageResponse;
+import com.api.matrimony.response.StartChatResponse;
 
 /**
  * Chat Service Interface
@@ -26,6 +27,8 @@ public interface ChatService {
 
 	long unreadCount(Long id);
 
-	void typing(Long conversationId, Long id, boolean typing);   
+	void typing(Long conversationId, Long id, boolean typing);
+
+	StartChatResponse startChat(Long id, Long otherUserId);   
 
 }

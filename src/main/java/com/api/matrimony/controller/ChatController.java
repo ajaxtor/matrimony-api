@@ -24,6 +24,7 @@ import com.api.matrimony.request.TypingStatus;
 import com.api.matrimony.response.APIResonse;
 import com.api.matrimony.response.ConversationResponse;
 import com.api.matrimony.response.MessageResponse;
+import com.api.matrimony.response.StartChatResponse;
 import com.api.matrimony.service.ChatService;
 
 import lombok.RequiredArgsConstructor;
@@ -70,7 +71,7 @@ public class ChatController {
 		// 1. Save to DB
 		MessageResponse savedMessage = chatService.saveMessage(currentUser.getId(),request);
 		// 2. Push to WebSocket subscribers
-		String destination = "/topic/chat/" + savedMessage.getConversationId();
+		String destination = "/topic/chat/" + request.getConversationId();
 		messagingTemplate.convertAndSend(destination, savedMessage);
 		response.setData(savedMessage);
 		return new ResponseEntity<>(response, HttpStatus.OK);
@@ -111,6 +112,15 @@ public class ChatController {
 		APIResonse<Map<String, Object>> response = new APIResonse<>();
 		Map<String, Object> dataMap = Map.of("unread", chatService.unreadCount(currentUser.getId()));
 		response.setData(dataMap);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	
+	@PostMapping("/startChat/{otherUserId}")
+	public ResponseEntity<APIResonse<StartChatResponse>> startChat(@AuthenticationPrincipal User currentUser,@PathVariable Long otherUserId) {
+		APIResonse<StartChatResponse> response = new APIResonse<>();
+		StartChatResponse startChatInfo = chatService.startChat(currentUser.getId(),otherUserId);
+		response.setData(startChatInfo);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
