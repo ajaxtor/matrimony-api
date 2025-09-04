@@ -73,6 +73,7 @@ public class SecurityConfig {
 		        .requestMatchers("/favicon.ico").permitAll()
 		        .requestMatchers("/swagger-ui/**").permitAll()
 		        .requestMatchers("/v3/api-docs/**").permitAll()
+		       // .requestMatchers("/ws/**").permitAll()
 					// All other endpoints require authentication
 					.anyRequest().authenticated();
 		}).exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))

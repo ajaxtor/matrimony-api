@@ -35,6 +35,20 @@ services:
     networks:
       - matrimony-network
 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: matrimony-phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: boxer@1998
+    depends_on:
+      - mysql
+    networks:
+      - matrimony-network
+
 volumes:
   mysql_data:
 
