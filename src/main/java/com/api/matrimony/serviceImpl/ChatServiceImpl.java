@@ -128,7 +128,7 @@ import lombok.extern.slf4j.Slf4j;
 	        MessageResponse msg = mapToMessageResponse(savedMessage);
 	        
 	     // Broadcast to WS topic for conversation
-		    ws.convertAndSend("/topic/conversations/" + conversation.getId(), msg);
+		    ws.convertAndSend("/topic/chat/" + conversation.getId(), msg);
 	        
 	        return msg ;
 	    }
@@ -165,7 +165,7 @@ import lombok.extern.slf4j.Slf4j;
 	    payload.put("conversationId", conversationId);
 	    payload.put("userId", userId);
 	    payload.put("typing", typing);
-	    ws.convertAndSend("/topic/conversations/" + conversationId + "/typing", payload);
+	    ws.convertAndSend("/topic/chat/" + conversationId + "/typing", payload);
 	  }
 
 	  private MessageResponse toResponse(Message m) {
