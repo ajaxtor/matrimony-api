@@ -23,6 +23,5 @@ public class MessageRequest {
     @NotBlank(message = "Message is required")
     @Size(max = 1000, message = "Message cannot exceed 1000 characters")
     private String message;
-    
     private String messageType = "TEXT"; // TEXT, CONTACT
 }

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Spring Boot WebSocket Chat with DB</title>
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    #messages { 
+      border: 1px solid #ccc; 
+      height: 300px; 
+      overflow-y: auto; 
+      padding: 5px; 
+      background: #fafafa;
+    }
+    .msg { margin: 5px 0; padding: 4px 6px; border-radius: 6px; max-width: 70%; }
+    .me   { background: #d4f8d4; margin-left: auto; text-align: right; }
+    .them { background: #f1f1f1; margin-right: auto; text-align: left; }
+    .meta { font-size: 0.75em; color: #666; }
+  </style>
+</head>
+<body>
+  <h2>Live Chat</h2>
+
+  <label>JWT Token:</label><br>
+  <input type="text" id="token" size="80" placeholder="Paste your JWT token"><br><br>
+
+  <label>Conversation ID:</label><br>
+  <input type="text" id="conversationId" value="1"><br><br>
+
+  <label>Receiver ID:</label><br>
+  <input type="text" id="receiverId" value="2"><br><br>
+
+  <button onclick="connect()">Connect</button>
+  <button onclick="disconnect()">Disconnect</button>
+
+  <h3>Status: <span id="status">Disconnected</span></h3>
+
+  <h3>Messages</h3>
+  <div id="messages"></div>
+
+  <input type="text" id="messageInput" placeholder="Type message..." style="width:70%;">
+  <button onclick="sendMessage()">Send</button>
+
+  <script>
+    let stompClient = null;
+    let jwtToken = "";
+    let currentUser = null; // extracted from token
+
+    function parseJwt (token) {
+      try {
+        return JSON.parse(atob(token.split('.')[1]));
+      } catch (e) {
+        return {};
+      }
+    }
+
+    async function connect() {
+      jwtToken = document.getElementById("token").value;
+      if (!jwtToken) {
+        alert("Please provide JWT token!");
+        return;
+      }
+
+      // Extract username/id from token (assuming `sub` or `userId` in payload)
+      const payload = parseJwt(jwtToken);
+      currentUser = payload.sub || payload.username || payload.userId || "Me";
+
+      const receiverId = document.getElementById("receiverId").value;
+
+      try {
+        // 1️⃣ Get or create conversation
+        const convRes = await fetch(`http://localhost:9999/api/v1/chat/conversation-with/${receiverId}`, {
+          headers: { "Authorization": "Bearer " + jwtToken }
+        });
+        const convData = await convRes.json();
+        console.log("Conversation response:", convData);
+
+        const conversationId = convData.data?.convId || convData.data?.id;
+        document.getElementById("conversationId").value = conversationId;
+
+        // 2️⃣ Fetch old messages
+        const msgRes = await fetch(`http://localhost:9999/api/v1/chat/messages?conversationId=${conversationId}&page=0&size=30`, {
+          headers: { "Authorization": "Bearer " + jwtToken }
+        });
+        const msgData = await msgRes.json();
+        console.log("Messages response:", msgData);
+
+        if (msgData.data?.content) {
+          msgData.data.content.forEach(showMessage);
+        }
+
+        // 3️⃣ Connect WebSocket
+        const socket = new SockJS("http://localhost:9999/ws?token=" + jwtToken);
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, (frame) => {
+          document.getElementById("status").innerText = "Connected";
+          console.log("Connected: " + frame);
+
+          stompClient.subscribe("/topic/chat/" + conversationId, (message) => {
+            const msgObj = JSON.parse(message.body);
+            showMessage(msgObj);
+          });
+        }, (error) => {
+          document.getElementById("status").innerText = "Connection failed";
+          console.error("WebSocket error:", error);
+        });
+
+      } catch (err) {
+        console.error("Error fetching conversation:", err);
+      }
+    }
+
+    function disconnect() {
+      if (stompClient && stompClient.connected) {
+        stompClient.disconnect(() => {
+          document.getElementById("status").innerText = "Disconnected";
+          console.log("Disconnected");
+        });
+      }
+    }
+
+    function sendMessage() {
+      const conversationId = document.getElementById("conversationId").value;
+      const receiverId = document.getElementById("receiverId").value;
+      const message = document.getElementById("messageInput").value;
+
+      if (!message) {
+        alert("Message cannot be empty");
+        return;
+      }
+
+      fetch("http://localhost:9999/api/v1/chat/send", {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + jwtToken,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          conversationId: parseInt(conversationId),
+          receiverId: parseInt(receiverId),
+          message: message,
+          messageType: "TEXT"
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log("Send response:", data);
+        showMessage({
+          senderName: currentUser,
+          receiverId: receiverId,
+          message: message,
+          timestamp: new Date().toISOString()
+        });
+        document.getElementById("messageInput").value = "";
+      })
+      .catch(err => console.error("Send error:", err));
+    }
+
+    function showMessage(msg) {
+      const messagesDiv = document.getElementById("messages");
+
+      const sender = msg.senderName || ("User#" + msg.senderId) || "Unknown";
+      const text = msg.message || "";
+      const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString() : "";
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "msg " + (sender === currentUser ? "me" : "them");
+
+      wrapper.innerHTML = `
+        <div><strong>${sender}</strong></div>
+        <div>${text}</div>
+        <div class="meta">${time}</div>
+      `;
+
+      messagesDiv.appendChild(wrapper);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+  </script>
+</body>
+</html>

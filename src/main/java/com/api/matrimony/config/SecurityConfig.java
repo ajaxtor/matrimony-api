@@ -31,60 +31,72 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SecurityConfig {
 
-	private final UserServiceImpl userService;
-	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final UserServiceImpl userService;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder(12);
-	}
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(12);
+    }
 
-	@Bean
-	public AuthenticationProvider authenticationProvider() {
-		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-		authProvider.setUserDetailsService(userService);
-		authProvider.setPasswordEncoder(passwordEncoder());
-		return authProvider;
-	}
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
 
-	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-		return config.getAuthenticationManager();
-	}
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
 
-	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		log.info("Configuring Security Filter Chain...");
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        log.info("Configuring Security Filter Chain...");
 
-		http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(authz -> {
-			log.info("Configuring request authorization...");
-			authz
-					// Public endpoints - ORDER MATTERS! Most specific first
-			 .requestMatchers("/api/v1/auth/**").permitAll() // <-- This is the important fix
-		        .requestMatchers("/auth/**").permitAll()
-		        .requestMatchers("/public/**").permitAll()
-		        .requestMatchers("/admin/**").hasRole("ADMIN")
-		        .requestMatchers("/health/**").permitAll()
-		        .requestMatchers("/actuator/**").permitAll()
-		        .requestMatchers("/api/v1/subscriptions/plans").permitAll()
-		        .requestMatchers("/subscriptions/plans").permitAll()
-		        .requestMatchers("/error").permitAll()
-		        .requestMatchers("/favicon.ico").permitAll()
-		        .requestMatchers("/swagger-ui/**").permitAll()
-		        .requestMatchers("/v3/api-docs/**").permitAll()
-		       // .requestMatchers("/ws/**").permitAll()
-					// All other endpoints require authentication
-					.anyRequest().authenticated();
-		}).exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authenticationProvider(authenticationProvider())
-				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(authz -> {
+                log.info("Configuring request authorization...");
+                authz
+                    // Public endpoints
+                    .requestMatchers("/api/v1/auth/**").permitAll()
+                    .requestMatchers("/auth/**").permitAll()
+                    .requestMatchers("/public/**").permitAll()
+                    .requestMatchers("/admin/**").hasRole("ADMIN")
+                    .requestMatchers("/health/**").permitAll()
+                    .requestMatchers("/actuator/**").permitAll()
+                    .requestMatchers("/api/v1/subscriptions/plans").permitAll()
+                    .requestMatchers("/subscriptions/plans").permitAll()
+                    .requestMatchers("/error").permitAll()
+                    .requestMatchers("/favicon.ico").permitAll()
+                    .requestMatchers("/swagger-ui/**").permitAll()
+                    .requestMatchers("/v3/api-docs/**").permitAll()
 
-		log.info("Security Filter Chain configured successfully");
-		return http.build();
-	}
-	
+                    // WebSocket handshake + messaging
+                    .requestMatchers("/ws/**").permitAll()
+                    .requestMatchers("/app/**").permitAll()
+                    .requestMatchers("/topic/**").permitAll()
+                    .requestMatchers("/queue/**").permitAll()
 
+                    // Static resources (simplified)
+                    .requestMatchers(
+                        "/chat-test.html",
+                        "/**.js",
+                        "/**.css",
+                        "/**.html"
+                    ).permitAll()
 
+                    .anyRequest().authenticated();
+            })
+            .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authenticationProvider(authenticationProvider())
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        log.info("Security Filter Chain configured successfully");
+        return http.build();
+    }
 }

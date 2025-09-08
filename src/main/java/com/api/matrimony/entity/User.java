@@ -27,6 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "users")
@@ -79,6 +80,7 @@ public class User implements UserDetails {
 
     // One-to-One relationship with UserProfile
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private UserProfile profile;
 
     // One-to-One relationship with UserPreference

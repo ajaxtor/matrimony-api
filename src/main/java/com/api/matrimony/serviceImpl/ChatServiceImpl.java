@@ -259,7 +259,7 @@ import lombok.extern.slf4j.Slf4j;
 
     private ConversationResponse mapToConversationResponse(Conversation conversation, Long currentUserId) {
         ConversationResponse response = new ConversationResponse();
-        response.setId(conversation.getId());
+        response.setConvId(conversation.getId());
         response.setUser1Id(conversation.getUser1().getId());
         response.setUser2Id(conversation.getUser2().getId());
         response.setMatchId(conversation.getMatch().getId());

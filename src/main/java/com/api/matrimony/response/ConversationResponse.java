@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ConversationResponse {
     
-    private Long id;
+    private Long convId;
     private Long user1Id;
     private Long user2Id;
     private Long matchId;

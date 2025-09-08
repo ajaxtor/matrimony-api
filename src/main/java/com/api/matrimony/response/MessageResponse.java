@@ -27,6 +27,6 @@ public class MessageResponse {
     private String message;
     private String messageType;
     private Boolean isRead;
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime sentAt;
 }
