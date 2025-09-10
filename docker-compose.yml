@@ -55,15 +55,25 @@ services:
     restart: always
     depends_on:
       - app
-      - phpmyadmin
     ports:
       - "80:80"
-      # - "443:443"    # uncomment after you add TLS certs
+      - "443:443"
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      # - ./nginx/certs:/etc/nginx/certs:ro   # for TLS, if you add certs
+      - ./nginx/www:/var/www/certbot
+      - ./nginx/letsencrypt:/etc/letsencrypt:ro
     networks:
       - matrimony-network
+
+  certbot:
+    image: certbot/certbot:latest
+    container_name: matrimony-certbot
+    # No ports needed; runs on-demand
+    volumes:
+      - ./nginx/www:/var/www/certbot
+      - ./nginx/letsencrypt:/etc/letsencrypt
+    # keep this idle; we'll run commands with `docker compose run --rm certbot ...`
+    entrypoint: ["sh","-c","sleep infinity"]
 
 volumes:
   mysql_data:
