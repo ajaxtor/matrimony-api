@@ -28,9 +28,7 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
     @Query("SELECT m FROM Match m WHERE m.user.id = :userId AND m.status = 'MUTUAL'")
     List<Match> findMutualMatchesByUserId(@Param("userId") Long userId);
     
-    @Query("SELECT m FROM Match m WHERE " +
-           "(m.user.id = :userId AND m.matchedUser.id = :matchedUserId) OR " +
-           "(m.user.id = :matchedUserId AND m.matchedUser.id = :userId) AND m.status = 'MUTUAL' ")
+    @Query(value = "SELECT * FROM matches WHERE (user_id = :userId AND matched_user_id = :matchedUserId) OR (user_id= :matchedUserId AND matched_user_id = :userId) AND status = 'MUTUAL' " ,nativeQuery = true)
     Optional<Match> findMatchBetweenUsers(@Param("userId") Long userId, @Param("matchedUserId") Long matchedUserId);
     
     @Query("SELECT COUNT(m) FROM Match m WHERE m.user.id = :userId AND m.status = :status")
