@@ -49,6 +49,32 @@ services:
     networks:
       - matrimony-network
 
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: matrimony-nginx
+    restart: always
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/www:/var/www/certbot
+      - ./nginx/letsencrypt:/etc/letsencrypt:ro
+    networks:
+      - matrimony-network
+
+  certbot:
+    image: certbot/certbot:latest
+    container_name: matrimony-certbot
+    # No ports needed; runs on-demand
+    volumes:
+      - ./nginx/www:/var/www/certbot
+      - ./nginx/letsencrypt:/etc/letsencrypt
+    # keep this idle; we'll run commands with `docker compose run --rm certbot ...`
+    entrypoint: ["sh","-c","sleep infinity"]
+
 volumes:
   mysql_data:
 
