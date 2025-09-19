@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.api.matrimony.entity.UserPreference;
-import com.api.matrimony.response.PreferenceResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,11 +13,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.api.matrimony.SmsService;
 import com.api.matrimony.config.JwtUtil;
 import com.api.matrimony.entity.User;
 import com.api.matrimony.entity.UserPhoto;
+import com.api.matrimony.entity.UserPreference;
 import com.api.matrimony.entity.UserProfile;
-import com.api.matrimony.enums.Gender;
 import com.api.matrimony.enums.OtpPurpose;
 import com.api.matrimony.enums.UserType;
 import com.api.matrimony.exception.ApplicationException;
@@ -27,18 +26,22 @@ import com.api.matrimony.exception.ErrorEnum;
 import com.api.matrimony.repository.OtpVerificationRepository;
 import com.api.matrimony.repository.UserPhotoRepository;
 import com.api.matrimony.repository.UserRepository;
+import com.api.matrimony.request.EmailModel;
 import com.api.matrimony.request.ForgotPasswordRequest;
 import com.api.matrimony.request.LoginRequest;
 import com.api.matrimony.request.RegisterRequest;
 import com.api.matrimony.request.ResetPasswordRequest;
 import com.api.matrimony.request.VerifyOtpRequest;
+import com.api.matrimony.response.AdminResponse;
 import com.api.matrimony.response.LoginResponse;
+import com.api.matrimony.response.PreferenceResponse;
 import com.api.matrimony.response.ProfileResponse;
 import com.api.matrimony.response.UserResponse;
 import com.api.matrimony.service.AuthService;
 import com.api.matrimony.service.OtpService;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -58,6 +61,7 @@ public class AuthServiceImpl implements AuthService {
 	private final JwtUtil jwtUtil;
 	private final OtpService otpService;
 	private final UserPhotoRepository photoRepository;
+	private final SmsService smsService;
 
 	@Override
 	public String register(RegisterRequest request) {
@@ -89,15 +93,17 @@ public class AuthServiceImpl implements AuthService {
 		profile.setUser(user);
 		profile.setFullName(request.getFullName());
 		profile.setGender(request.getGender());
-
+		profile.setDateOfBirth(request.getDateOfBirth());
 		user.setProfile(profile);
 
 		// Save user
 		User savedUser = userRepository.save(user);
 		log.info("User registered successfully with ID: {}", savedUser.getId());
-
+		EmailModel model = new EmailModel();
+		model.setTo(request.getEmail());
+		model.setUsername(request.getFullName());
 		// Send OTP for verification
-		otpService.sendOtp(request.getPhone(), request.getEmail(), OtpPurpose.REGISTRATION);
+		otpService.sendOtp(request.getPhone(), model, OtpPurpose.REGISTRATION);
 
 		return "Registration successful. Please verify your phone number / Email  with the OTP sent.";
 	}
@@ -136,7 +142,10 @@ public class AuthServiceImpl implements AuthService {
 
 		log.info("Resending OTP for contact: {}", contact);
 		User user = findUserByEmailOrPhone(contact);
-		otpService.sendOtp(user.getPhone(), user.getEmail(), OtpPurpose.valueOf(purpose));
+		EmailModel model = new EmailModel();
+		model.setTo(user.getEmail());
+		model.setUsername(user.getUsername());
+		otpService.sendOtp(user.getPhone(), model, OtpPurpose.valueOf(purpose));
 
 		return "OTP sent successfully";
 	}
@@ -224,7 +233,10 @@ public class AuthServiceImpl implements AuthService {
 
 		log.info("Forgot password request for: {}", request.getEmailOrPhone());
 		User user = findUserByEmailOrPhone(request.getEmailOrPhone());
-		otpService.sendOtp(user.getPhone(), user.getEmail(), OtpPurpose.PASSWORD_RESET);
+		EmailModel model = new EmailModel();
+		model.setTo(user.getEmail());
+		model.setUsername(user.getUsername());
+		otpService.sendOtp(user.getPhone(), model, OtpPurpose.PASSWORD_RESET);
 
 		return "Password reset OTP sent successfully";
 	}
@@ -384,4 +396,52 @@ public class AuthServiceImpl implements AuthService {
 
         return response;
     }
+
+	@Override
+	public AdminResponse adminLogin(@Valid LoginRequest request) {
+		log.info("Login attempt for: {}", request.getEmailOrPhone());
+
+		// Find user
+		User user = findUserByEmailOrPhone(request.getEmailOrPhone());
+
+		if (!user.getIsActive()) {
+			throw new ApplicationException(ErrorEnum.INACTIVE_ACCOUNT.toString(),
+					ErrorEnum.INACTIVE_ACCOUNT.getExceptionError(), HttpStatus.OK);
+		}
+
+		// Authenticate user
+		Authentication authentication = authenticationManager
+				.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), request.getPassword()));
+
+		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+		// Generate tokens
+		String accessToken = jwtUtil.generateToken(userDetails);
+		String refreshToken = jwtUtil.generateRefreshToken(userDetails);
+
+		// Update last login
+		user.setLastLogin(LocalDateTime.now());
+		userRepository.save(user);
+
+		// Prepare response
+		AdminResponse userResponse = mapToAdminResponse(user);
+
+		userResponse.setAccessToken(accessToken);
+		userResponse.setRefreshToken(refreshToken);
+		userResponse.setExpiresIn(jwtUtil.getExpirationTime() / 1000); // Convert to seconds
+
+		log.info("Login successful for user: {}", user.getId());
+		return userResponse;
+	}
+
+	private AdminResponse mapToAdminResponse(User user) {
+		
+		AdminResponse response = new AdminResponse();
+		response.setEmail(user.getEmail());
+		response.setPhone(user.getPhone());
+		// response.setUserType(user.getUserType().name());
+		response.setActive(user.getIsActive());
+		response.setLastLogin(user.getLastLogin());
+		return response;
+	}
 }

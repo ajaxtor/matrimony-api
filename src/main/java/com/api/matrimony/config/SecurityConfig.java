@@ -57,46 +57,61 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         log.info("Configuring Security Filter Chain...");
 
-        http.csrf(AbstractHttpConfigurer::disable)
+        http
+            // Disable CSRF for APIs
+            .csrf(AbstractHttpConfigurer::disable)
+
+            // Authorize requests based on path patterns
             .authorizeHttpRequests(authz -> {
                 log.info("Configuring request authorization...");
+
+                // Public endpoints, combine where possible
                 authz
-                    // Public endpoints
-                    .requestMatchers("/api/v1/auth/**").permitAll()
-                    .requestMatchers("/auth/**").permitAll()
-                    .requestMatchers("/public/**").permitAll()
-                    .requestMatchers("/admin/**").hasRole("ADMIN")
-                    .requestMatchers("/health/**").permitAll()
-                    .requestMatchers("/actuator/**").permitAll()
-                    .requestMatchers("/api/v1/subscriptions/plans").permitAll()
-                    .requestMatchers("/subscriptions/plans").permitAll()
-                    .requestMatchers("/error").permitAll()
-                    .requestMatchers("/favicon.ico").permitAll()
-                    .requestMatchers("/swagger-ui/**").permitAll()
-                    .requestMatchers("/v3/api-docs/**").permitAll()
-
-                    // WebSocket handshake + messaging
-                    .requestMatchers("/ws/**").permitAll()
-                    .requestMatchers("/app/**").permitAll()
-                    .requestMatchers("/topic/**").permitAll()
-                    .requestMatchers("/queue/**").permitAll()
-
-                    // Static resources (simplified)
                     .requestMatchers(
+                        "/api/v1/auth/**",
+                        "/auth/**",
+                        "/public/**",
+                        "/health/**",
+                        "/actuator/**",
+                        "/api/v1/subscriptions/plans",
+                        "/subscriptions/plans",
+                        "/error",
+                        "/favicon.ico",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/api/v1/admin/login",
+                        "/admin/login",
+                        "/ws/**",
+                        "/app/**",
+                        "/topic/**",
+                        "/queue/**",
                         "/chat-test.html",
                         "/**.js",
                         "/**.css",
                         "/**.html"
                     ).permitAll()
 
+                    // Admin endpoints - restricted to ADMIN role
+                    .requestMatchers("/admin/**").hasRole("ADMIN")
+
+                    // All other endpoints require authentication
                     .anyRequest().authenticated();
             })
+
+            // Configure exception handling for unauthorized access
             .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+
+            // Stateless session; no session created or used by Spring Security
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+            // Use your custom authentication provider
             .authenticationProvider(authenticationProvider())
+
+            // Add JWT filter before UsernamePasswordAuthenticationFilter
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         log.info("Security Filter Chain configured successfully");
+
         return http.build();
     }
 }

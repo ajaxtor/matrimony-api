@@ -19,15 +19,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.matrimony.request.CreateSubscriptionPlanRequest;
+import com.api.matrimony.request.LoginRequest;
 import com.api.matrimony.request.UpdateReportRequest;
 import com.api.matrimony.request.UpdateSubscriptionPlanRequest;
 import com.api.matrimony.response.APIResonse;
 import com.api.matrimony.response.AdminDashboardStats;
+import com.api.matrimony.response.AdminResponse;
 import com.api.matrimony.response.PagedResponse;
 import com.api.matrimony.response.UserReportResponse;
 import com.api.matrimony.response.UserResponse;
 import com.api.matrimony.response.UserSubscriptionResponse;
 import com.api.matrimony.service.AdminService;
+import com.api.matrimony.service.AuthService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +50,8 @@ public class AdminController {
 
 	@Autowired
 	private AdminService adminService;
+	@Autowired
+	private AuthService authService;
 
 	/**
 	 * Get dashboard statistics

@@ -5,7 +5,10 @@ import com.api.matrimony.request.LoginRequest;
 import com.api.matrimony.request.RegisterRequest;
 import com.api.matrimony.request.ResetPasswordRequest;
 import com.api.matrimony.request.VerifyOtpRequest;
+import com.api.matrimony.response.AdminResponse;
 import com.api.matrimony.response.LoginResponse;
+
+import jakarta.validation.Valid;
 
 /**
  * Authentication Service Interface
@@ -22,4 +25,5 @@ public interface AuthService {
     void logout(String token);
     boolean emailExists(String email);
     boolean phoneExists(String phone);
+    AdminResponse adminLogin(@Valid LoginRequest request);
 }

@@ -13,6 +13,8 @@ import com.api.matrimony.response.RazorpayOrderResponse;
 @Service
 public class RazorpayService {
 
+    private static final String RAZORPAY_TEST_API_KEY = "rzp_test_R8Qu5t36pGhI5U";
+    private static final String RAZORPAY_TEST_API_SECRET = "4KKgoDG2ejRMoWBwiCvmzX7v";
     private static final String RAZORPAY_API_KEY = "rzp_test_R8Qu5t36pGhI5U";
     private static final String RAZORPAY_API_SECRET = "4KKgoDG2ejRMoWBwiCvmzX7v";
     private static final String RAZORPAY_ORDER_URL = "https://api.razorpay.com/v1/orders";
@@ -27,9 +29,14 @@ public class RazorpayService {
     public RazorpayOrderResponse createOrder(RazorpayOrderRequest request) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-
+        String auth = null;
         // Set Basic Auth Header
-        String auth = RAZORPAY_API_KEY + ":" + RAZORPAY_API_SECRET;
+//        if(flag.equals(1)) {
+//        	 auth = RAZORPAY_API_KEY + ":" + RAZORPAY_API_SECRET;
+//        }else {
+        	  auth = RAZORPAY_TEST_API_KEY + ":" + RAZORPAY_TEST_API_SECRET;
+     //   }
+       
         byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes(StandardCharsets.US_ASCII));
         headers.set("Authorization", "Basic " + new String(encodedAuth));
 

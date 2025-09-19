@@ -14,6 +14,7 @@ import com.api.matrimony.enums.OtpPurpose;
 import com.api.matrimony.exception.ApplicationException;
 import com.api.matrimony.exception.ErrorEnum;
 import com.api.matrimony.repository.OtpVerificationRepository;
+import com.api.matrimony.request.EmailModel;
 import com.api.matrimony.service.NotificationService;
 import com.api.matrimony.service.OtpService;
 
@@ -44,7 +45,7 @@ public class OtpServiceImpl implements OtpService {
     private int maxAttempts;
 
     @Override
-    public void sendOtp(String phone,String email, OtpPurpose purpose) {
+    public void sendOtp(String phone,EmailModel model, OtpPurpose purpose) {
         log.info("Sending OTP to contact: {}, purpose: {}", phone, purpose);
         
         // Check rate limiting
@@ -61,8 +62,8 @@ public class OtpServiceImpl implements OtpService {
         
         // Save OTP
         OtpVerification otpVerification = new OtpVerification();
-        if (email.contains("@")) {
-            otpVerification.setEmail(email);
+        if (model.getTo().contains("@")) {
+            otpVerification.setEmail(model.getTo());
         } else {
             otpVerification.setPhone(phone);
         }
@@ -70,19 +71,16 @@ public class OtpServiceImpl implements OtpService {
         otpVerification.setPurpose(purpose);
         otpVerification.setExpiresAt(LocalDateTime.now().plusMinutes(expirationMinutes));
         
-        otpRepository.save(otpVerification);
+        OtpVerification verifyBody = otpRepository.save(otpVerification);
 
         // Send OTP via SMS or Email
-       // if (request.getEmail().contains("@")) {
-            notificationService.sendEmailNotification(email, 
-                    "Your OTP for " + purpose.name(), 
-                    "Your OTP is: " + otp + ". Valid for " + expirationMinutes + " minutes.");
-//        } else {
-//            notificationService.sendSmsNotification(request.getPhone(), 
-//                    "Your OTP is: " + otp + ". Valid for " + expirationMinutes + " minutes.");
-//        }
+        
+        if (model.getTo().contains("@")) {
+            notificationService.sendEmailNotification(verifyBody);
+        }
+            notificationService.sendSmsNotification(phone,otp);
 
-        log.info("OTP sent successfully to: {}", email +" or "+phone);
+        log.info("OTP sent successfully to: {}", model.getTo() +" or "+phone);
     }
 
     @Override

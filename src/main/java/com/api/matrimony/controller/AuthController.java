@@ -19,6 +19,7 @@ import com.api.matrimony.request.RegisterRequest;
 import com.api.matrimony.request.ResetPasswordRequest;
 import com.api.matrimony.request.VerifyOtpRequest;
 import com.api.matrimony.response.APIResonse;
+import com.api.matrimony.response.AdminResponse;
 import com.api.matrimony.response.LoginResponse;
 import com.api.matrimony.service.AuthService;
 
@@ -85,7 +86,7 @@ public class AuthController {
         log.info("Login attempt for: {}", request.getEmailOrPhone());
         
         APIResonse<LoginResponse> response = new APIResonse<>();
-            LoginResponse logInRes = authService.login(request);
+        LoginResponse logInRes = authService.login(request);
             response.setData(logInRes);
             return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -153,6 +154,19 @@ public class AuthController {
             response.setData(exists);
             return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    
+    @PostMapping("/login/admin")
+    public ResponseEntity<APIResonse<AdminResponse>> adminLogin(@Valid @RequestBody LoginRequest request) {
+        log.info("Login attempt for: {}", request.getEmailOrPhone());
+        
+        APIResonse<AdminResponse> response = new APIResonse<>();
+        AdminResponse asdminRes = authService.adminLogin(request);
+            response.setData(asdminRes);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    
+	
 }
 
   

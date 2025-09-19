@@ -33,19 +33,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        
+
         String requestPath = request.getRequestURI();
         String method = request.getMethod();
-        
+
         log.debug("JWT Filter - Processing request: {} {}", method, requestPath);
-        
+
         // Skip JWT validation for public endpoints
         if (isPublicEndpoint(requestPath)) {
             log.debug("JWT Filter - Skipping JWT validation for public endpoint: {}", requestPath);
             filterChain.doFilter(request, response);
             return;
         }
-        
+
         // Extract JWT token from Authorization header
         String authHeader = request.getHeader("Authorization");
         String token = null;
@@ -67,7 +67,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
                 UserDetails userDetails = userService.loadUserByUsername(username);
-                
+
                 if (jwtUtil.validateToken(token, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken = 
                         new UsernamePasswordAuthenticationToken(
@@ -82,7 +82,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 log.error("JWT Filter - Error setting user authentication for path {}: {}", requestPath, e.getMessage());
             }
         }
-        
+
         filterChain.doFilter(request, response);
     }
 
@@ -103,23 +103,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                path.equals("/error") ||
                path.equals("/favicon.ico") ||
                path.startsWith("/swagger-ui") ||
-               path.startsWith("/v3/api-docs");
-        
+               path.startsWith("/v3/api-docs") ||
+               path.equals("/api/v1/admin/login");  // <-- Added login path here
+
         if (isPublic) {
             log.debug("JWT Filter - Path {} identified as public endpoint", path);
         }
-        
+
         return isPublic;
     }
 
     /**
-     * Skip filter for OPTIONS requests (CORS preflight)
+     * Skip filter for OPTIONS requests (CORS preflight) and login endpoint
      */
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        boolean skipFilter = "OPTIONS".equalsIgnoreCase(request.getMethod());
+        String path = request.getRequestURI();
+        boolean skipFilter = "OPTIONS".equalsIgnoreCase(request.getMethod()) || 
+                             path.equals("/api/v1/admin/login"); // <-- skip login endpoint
         if (skipFilter) {
-            log.debug("JWT Filter - Skipping filter for OPTIONS request: {}", request.getRequestURI());
+            log.debug("JWT Filter - Skipping filter for request: {} {}", request.getMethod(), path);
         }
         return skipFilter;
     }

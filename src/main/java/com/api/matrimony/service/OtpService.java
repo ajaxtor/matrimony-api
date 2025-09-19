@@ -1,6 +1,7 @@
 package com.api.matrimony.service;
 
 import com.api.matrimony.enums.OtpPurpose;
+import com.api.matrimony.request.EmailModel;
 import com.api.matrimony.request.RegisterRequest;
 
 /**
@@ -8,7 +9,7 @@ import com.api.matrimony.request.RegisterRequest;
  */
 
 public interface OtpService {
-    void sendOtp(String phone,String email, OtpPurpose purpose);
+    void sendOtp(String phone,EmailModel model, OtpPurpose purpose);
     boolean verifyOtp(String contact, String otp, OtpPurpose purpose);
    // void resendOtp(String contact, OtpPurpose purpose);
     void cleanupExpiredOtps();

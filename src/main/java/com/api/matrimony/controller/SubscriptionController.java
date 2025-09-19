@@ -49,7 +49,7 @@ public class SubscriptionController {
     @PostMapping("/createOrder/{planId}")
     public ResponseEntity<APIResonse<RazorpayOrderResponse>> createOrder(
             @AuthenticationPrincipal User currentUser,
-            @PathVariable Long planId) {
+            @PathVariable Long planId) {  //,@PathVariable Integer flag
         
         log.info("Subscribing user: {} to plan: {}", currentUser.getId(), planId);
         APIResonse<RazorpayOrderResponse> response = new APIResonse<>();
