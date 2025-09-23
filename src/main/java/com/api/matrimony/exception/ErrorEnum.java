@@ -34,7 +34,7 @@ public enum ErrorEnum {
 	RECIVER_NOT_FUND("Receiver not found"),SENDER_NOT_FUND("Sender not found"),ONLY_CAN_DELETE_OWN_MSG("You can only delete your own messages"),
 	MESSAGE_NOT_FUND("Message not found"),INVALID_GENDER("Invalid user Gender Input"), INVALID_DIET ("Invalid Dite Type "),
 	ORDER_CREATION_FAILED("Order Creation Failed"),SUBSCRIPTION_NOT_FOUND("Subscription not found for given orderId and receiptId"),
-	INVALID_SIGNATURE("Razorpay Signature is invalid"),;
+	INVALID_SIGNATURE("Razorpay Signature is invalid"),BAD_CREDENTIALS("Invalid username or password"),;
 ;
 
 	private String exceptionError;

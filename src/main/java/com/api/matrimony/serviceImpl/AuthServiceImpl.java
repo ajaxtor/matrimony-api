@@ -5,8 +5,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.naming.AuthenticationException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -168,10 +173,17 @@ public class AuthServiceImpl implements AuthService {
 		}
 
 		// Authenticate user
-		Authentication authentication = authenticationManager
-				.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), request.getPassword()));
-
-		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+//		Authentication authentication = authenticationManager
+//				.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), request.getPassword()));
+		UserDetails userDetails = null;
+		try {
+			Authentication authentication = authenticationManager
+					.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), request.getPassword()));
+			 userDetails = (UserDetails) authentication.getPrincipal();
+		} catch (BadCredentialsException e) {
+			throw new ApplicationException(ErrorEnum.BAD_CREDENTIALS.toString(),
+					ErrorEnum.BAD_CREDENTIALS.getExceptionError(), HttpStatus.OK);
+		} 
 
 		// Generate tokens
 		String accessToken = jwtUtil.generateToken(userDetails);
@@ -352,6 +364,7 @@ public class AuthServiceImpl implements AuthService {
 			profileResponse.setCreatedAt(profile.getCreatedAt());
 			profileResponse.setUpdatedAt(profile.getUpdatedAt());
 			profileResponse.setHiseStatus(profile.getIsHide());
+			profileResponse.setDiet(profile.getDiet());
 			response.setProfile(profileResponse);
 		}
 

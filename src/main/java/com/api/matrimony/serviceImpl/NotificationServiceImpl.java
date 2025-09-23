@@ -76,9 +76,9 @@ public class NotificationServiceImpl implements NotificationService {
 
 		    String htmlContent = templateEngine.process("email-template", context);
 
-		    helper.setFrom(fromEmail, "Dhol AI");
+		    helper.setFrom(fromEmail, "dhol matrimony");
 		    helper.setTo(model.getEmail());
-		    helper.setSubject("Your Verification Code");
+		    helper.setSubject("Verify your email");
 		    helper.setText(htmlContent, true); // true = HTML
 
 		    mailSender.send(message);
