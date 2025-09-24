@@ -52,7 +52,7 @@ public class PreferenceRequest {
     private String subCastes;
 
     private String familyTypes;
-
+    @JsonProperty("diet")
     private String diets;
 }
 
