@@ -86,9 +86,9 @@ public class MatchingAlgorithm {
 	        totalWeight += 10;
 	        
 	        // 9. Income match (weight: 8)
-	        double incomeScore = calculateIncomeScore(candidate.getAnnualIncome(), preferences);
-	        totalScore += incomeScore * 8;
-	        totalWeight += 8;
+//	        double incomeScore = calculateIncomeScore(candidate.getAnnualIncome(), preferences);
+//	        totalScore += incomeScore * 8;
+//	        totalWeight += 8;
 	        
 	        // 10. Location match (weight: 8)
 	        double locationScore = calculateLocationScore(candidate, preferences);
@@ -150,17 +150,17 @@ public class MatchingAlgorithm {
 	        return preferences.contains(candidateValue.toUpperCase()) ? 1.0 : 0.0;
 	    }
 	    
-	    public double calculateIncomeScore(BigDecimal income, UserPreference preferences) {
-	        if (income == null) return 0.5; // Neutral score if income not provided
-	        
-	        if (preferences.getMinIncome() != null && income.compareTo(preferences.getMinIncome()) < 0) {
-	            return 0.0;
-	        }
-	        if (preferences.getMaxIncome() != null && income.compareTo(preferences.getMaxIncome()) > 0) {
-	            return 0.0;
-	        }
-	        return 1.0;
-	    }
+//	    public double calculateIncomeScore(String income, UserPreference preferences) {
+//	        if (income == null) return 0.5; // Neutral score if income not provided
+//	        
+//	        if (preferences.getMinIncome() != null && income.compareTo(preferences.getMinIncome()) < 0) {
+//	            return 0.0;
+//	        }
+//	        if (preferences.getMaxIncome() != null && income.compareTo(preferences.getMaxIncome()) > 0) {
+//	            return 0.0;
+//	        }
+//	        return 1.0;
+//	    }
 	    
 	    public double calculateLocationScore(UserProfile profile, UserPreference preferences) {
 	        double score = 0.0;

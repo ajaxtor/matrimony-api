@@ -120,53 +120,6 @@ public class UserController {
             return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    /**
-     * Upload user photo
-     */
-    @PostMapping("/photos")
-    public ResponseEntity<APIResonse<String>> uploadPhoto(
-            @AuthenticationPrincipal User currentUser,
-            @RequestParam("photo") MultipartFile file,
-            @RequestParam(defaultValue = "false") Boolean isPrimary) {
-        
-        log.info("Uploading photo for user: {}, isPrimary: {}", currentUser.getId(), isPrimary);
-        
-        APIResonse<String> response = new APIResonse<>();
-            String photoUrl = userService.uploadPhoto(currentUser.getId(), file, isPrimary);
-            response.setData(photoUrl);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    /**
-     * Get user photos
-     */
-    @GetMapping("/photos")
-    public ResponseEntity<APIResonse<List<String>>> getUserPhotos(
-            @AuthenticationPrincipal User currentUser) {
-        
-        log.info("Getting photos for user: {}", currentUser.getId());
-        
-        APIResonse<List<String>> response = new APIResonse<>();
-            List<String> photos = userService.getUserPhotos(currentUser.getId());
-            response.setData(photos);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    /**
-     * Delete user photo
-     */
-    @DeleteMapping("/photos/{photoId}")
-    public ResponseEntity<APIResonse<String>> deletePhoto(
-            @AuthenticationPrincipal User currentUser,
-            @PathVariable Long photoId) {
-        
-        log.info("Deleting photo: {} for user: {}", photoId, currentUser.getId());
-        APIResonse<String> response = new APIResonse<>();
-       
-            userService.deletePhoto(currentUser.getId(), photoId);
-            response.setData("User Deleted");
-            return new ResponseEntity<>(response, HttpStatus.OK);
-    }
 
     /**
      * Block user
@@ -214,5 +167,53 @@ public class UserController {
             response.setData(blockedUsers);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
+    
+    /**
+     * Upload user photo
+     */
+    @PostMapping("/photos")
+    public ResponseEntity<APIResonse<String>> uploadPhoto(
+            @AuthenticationPrincipal User currentUser,
+            @RequestParam("photo") MultipartFile file,
+            @RequestParam(defaultValue = "false") Boolean isPrimary) {
+        
+        log.info("Uploading photo for user: {}, isPrimary: {}", currentUser.getId(), isPrimary);
+        
+        APIResonse<String> response = new APIResonse<>();
+            String photoUrl = userService.uploadPhoto(currentUser.getId(), file, isPrimary);
+            response.setData(photoUrl);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * Get user photos
+     */
+    @GetMapping("/photos")
+    public ResponseEntity<APIResonse<List<String>>> getUserPhotos(
+            @AuthenticationPrincipal User currentUser) {
+        
+        log.info("Getting photos for user: {}", currentUser.getId());
+        
+        APIResonse<List<String>> response = new APIResonse<>();
+            List<String> photos = userService.getUserPhotos(currentUser.getId());
+            response.setData(photos);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * Delete user photo
+     */
+    @DeleteMapping("/photos/{photoId}")
+    public ResponseEntity<APIResonse<String>> deletePhoto(
+            @AuthenticationPrincipal User currentUser,
+            @PathVariable Long photoId) {
+        
+        log.info("Deleting photo: {} for user: {}", photoId, currentUser.getId());
+        APIResonse<String> response = new APIResonse<>();
+       
+            userService.deletePhoto(currentUser.getId(), photoId);
+            response.setData("User Deleted");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+    }
     
 }

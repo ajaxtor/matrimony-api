@@ -1,7 +1,8 @@
 package com.api.matrimony.request;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
+
+import com.api.matrimony.enums.AnnualIncomeRanges;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,7 +29,7 @@ public class ProfileUpdateRequest {
     private String motherTongue;
     private String education;
     private String occupation;
-    private BigDecimal annualIncome;
+    private AnnualIncomeRanges annualIncome;
     private String aboutMe;
     private String familyType;
     private String familyValue;

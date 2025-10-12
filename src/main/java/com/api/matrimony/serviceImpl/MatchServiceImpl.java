@@ -340,7 +340,7 @@ public class MatchServiceImpl implements MatchService {
 		response.setMotherTongue(profile.getMotherTongue());
 		response.setEducation(profile.getEducation());
 		response.setOccupation(profile.getOccupation());
-		response.setAnnualIncome(profile.getAnnualIncome());
+		response.setAnnualIncome(profile.getAnnualIncome() != null ? profile.getAnnualIncome().name() : null);
 		response.setAboutMe(profile.getAboutMe());
 		response.setFamilyType(profile.getFamilyType());
 		response.setFamilyValue(profile.getFamilyValue());

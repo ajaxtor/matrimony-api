@@ -3,6 +3,7 @@ package com.api.matrimony.entity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.api.matrimony.enums.AnnualIncomeRanges;
 import com.api.matrimony.enums.Gender;
 import com.api.matrimony.enums.MaritalStatus;
 
@@ -75,8 +76,9 @@ public class UserProfile {
     @Column(name = "occupation")
     private String occupation;
 
-    @Column(name = "annual_income", precision = 15, scale = 2)
-    private java.math.BigDecimal annualIncome;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "annual_income")
+    private AnnualIncomeRanges annualIncome;
 
     @Column(name = "about_me", columnDefinition = "TEXT")
     private String aboutMe;

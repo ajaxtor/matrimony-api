@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
@@ -63,7 +64,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Value("${app.file.base-url}")
 	private String baseUrl;
-
+	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		return userRepository.findByEmail(username)
@@ -282,106 +283,151 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		return mapToUserResponse(user);
 	}
 
-	@Override
-	public String uploadPhoto(Long userId, MultipartFile file, Boolean isPrimary) {
-		log.info("Uploading photo for user: {}, isPrimary: {}", userId, isPrimary);
+	 @Override
+	    public String uploadPhoto(Long userId, MultipartFile file, Boolean isPrimary) {
+	        log.info("Uploading photo for user: {}, isPrimary: {}", userId, isPrimary);
 
-		if (file.isEmpty()) {
-			throw new ApplicationException(ErrorEnum.IMAGE_ALLOW.toString(), ErrorEnum.IMAGE_ALLOW.getExceptionError(),
-					HttpStatus.OK);
-		}
+	        validateFile(file);
 
-		// Validate file type
-		String contentType = file.getContentType();
-		if (contentType == null || !contentType.startsWith("image/")) {
-			throw new ApplicationException(ErrorEnum.EMPTY_FILE.toString(), ErrorEnum.EMPTY_FILE.getExceptionError(),
-					HttpStatus.OK);
-		}
+	        User user = userRepository.findById(userId)
+	                .orElseThrow(() -> new ApplicationException(
+	                        ErrorEnum.INVALID_USER.toString(),
+	                        ErrorEnum.INVALID_USER.getExceptionError(),
+	                        HttpStatus.BAD_REQUEST
+	                ));
 
-		// Validate file size (10MB)
-		if (file.getSize() > 10 * 1024 * 1024) {
-			throw new ApplicationException(ErrorEnum.FILE_SIZE_IS_MORE_THAN_REQ.toString(),
-					ErrorEnum.FILE_SIZE_IS_MORE_THAN_REQ.getExceptionError(), HttpStatus.OK);
-		}
+	        try {
+	            // Ensure upload directory exists
+	            Path uploadPath = Paths.get(uploadDir);
+	            Files.createDirectories(uploadPath);
 
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new ApplicationException(ErrorEnum.INVALID_USER.toString(),
-						ErrorEnum.INVALID_USER.getExceptionError(), HttpStatus.OK));
+	            // Generate unique file name
+	            String filename = generateUniqueFilename(file.getOriginalFilename());
+	            Path filePath = uploadPath.resolve(filename);
 
-		try {
-			// Create upload directory if not exists
-			Path uploadPath = Paths.get(uploadDir);
-			if (!Files.exists(uploadPath)) {
-				Files.createDirectories(uploadPath);
-			}
+	            // Copy file safely (replace if already exists)
+	            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-			// Generate unique filename
-			String originalFilename = file.getOriginalFilename();
-			String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-			String filename = UUID.randomUUID().toString() + extension;
+	            // Handle primary photo update
+	            if (Boolean.TRUE.equals(isPrimary)) {
+	                resetPrimaryPhotos(userId);
+	            }
 
-			// Save file
-			Path filePath = uploadPath.resolve(filename);
-			Files.copy(file.getInputStream(), filePath);
+	            // Save photo record
+	            UserPhoto userPhoto = new UserPhoto();
+	            userPhoto.setUser(user);
+	            userPhoto.setPhotoUrl(baseUrl + filename);
+	            userPhoto.setIsPrimary(isPrimary != null && isPrimary);
+	            userPhoto.setDisplayOrder(getNextDisplayOrder(userId));
 
-			// If this is primary photo, remove primary flag from other photos
-			if (isPrimary != null && isPrimary) {
-				List<UserPhoto> existingPhotos = photoRepository.findByUserIdOrderByDisplayOrderAsc(userId);
-				existingPhotos.forEach(photo -> photo.setIsPrimary(false));
-				photoRepository.saveAll(existingPhotos);
-			}
+	            photoRepository.save(userPhoto);
 
-			// Save photo record
-			UserPhoto userPhoto = new UserPhoto();
-			userPhoto.setUser(user);
-			userPhoto.setPhotoUrl(baseUrl + filename);
-			userPhoto.setIsPrimary(isPrimary != null ? isPrimary : false);
-			userPhoto.setDisplayOrder(getNextDisplayOrder(userId));
+	            log.info("Photo uploaded successfully for user: {}", userId);
+	            return userPhoto.getPhotoUrl();
 
-			photoRepository.save(userPhoto);
+	        } catch (IOException e) {
+	            log.error("Error uploading photo for user: {}", userId, e);
+	            throw new ApplicationException(
+	                    ErrorEnum.FAILED_TO_UPLOAD_PHOTO.toString(),
+	                    ErrorEnum.FAILED_TO_UPLOAD_PHOTO.getExceptionError(),
+	                    HttpStatus.INTERNAL_SERVER_ERROR
+	            );
+	        }
+	    }
 
-			log.info("Photo uploaded successfully for user: {}", userId);
-			return userPhoto.getPhotoUrl();
+	    @Override
+	    public List<String> getUserPhotos(Long userId) {
+	        log.info("Fetching photos for user: {}", userId);
+	        return photoRepository.findByUserIdOrderByDisplayOrderAsc(userId)
+	                .stream()
+	                .map(UserPhoto::getPhotoUrl)
+	                .collect(Collectors.toList());
+	    }
 
-		} catch (IOException e) {
-			log.error("Error uploading photo for user: {}", userId, e);
-			throw new ApplicationException(ErrorEnum.FAILED_TO_UPLOAD_PHOTO.toString(),
-					ErrorEnum.FAILED_TO_UPLOAD_PHOTO.getExceptionError(), HttpStatus.OK);
-		}
-	}
+	    @Override
+	    public void deletePhoto(Long userId, Long photoId) {
+	        log.info("Deleting photo: {} for user: {}", photoId, userId);
 
-	@Override
-	public List<String> getUserPhotos(Long userId) {
-		log.info("Getting photos for user: {}", userId);
-		return photoRepository.findByUserIdOrderByDisplayOrderAsc(userId).stream().map(UserPhoto::getPhotoUrl)
-				.collect(Collectors.toList());
-	}
+	        UserPhoto photo = photoRepository.findById(photoId)
+	                .orElseThrow(() -> new ApplicationException(
+	                        ErrorEnum.PHOTO_CAN_NOT_FOUND.toString(),
+	                        ErrorEnum.PHOTO_CAN_NOT_FOUND.getExceptionError(),
+	                        HttpStatus.NOT_FOUND
+	                ));
 
-	@Override
-	public void deletePhoto(Long userId, Long photoId) {
-		log.info("Deleting photo: {} for user: {}", photoId, userId);
+	        if (!photo.getUser().getId().equals(userId)) {
+	            throw new ApplicationException(
+	                    ErrorEnum.ONLY_OWN_PHOTO_CAN_DELETE.toString(),
+	                    ErrorEnum.ONLY_OWN_PHOTO_CAN_DELETE.getExceptionError(),
+	                    HttpStatus.FORBIDDEN
+	            );
+	        }
 
-		UserPhoto photo = photoRepository.findById(photoId)
-				.orElseThrow(() -> new ApplicationException(ErrorEnum.PHOTO_CAN_NOT_FOUND.toString(),
-						ErrorEnum.PHOTO_CAN_NOT_FOUND.getExceptionError(), HttpStatus.OK));
+	        // Delete file from storage
+	        try {
+	            String filename = extractFilename(photo.getPhotoUrl());
+	            Path filePath = Paths.get(uploadDir, filename);
+	            Files.deleteIfExists(filePath);
+	        } catch (IOException e) {
+	            log.warn("Failed to delete photo file from storage: {}", e.getMessage());
+	        }
 
-		if (!photo.getUser().getId().equals(userId)) {
-			throw new ApplicationException(ErrorEnum.ONLY_OWN_PHOTO_CAN_DELETE.toString(),
-					ErrorEnum.ONLY_OWN_PHOTO_CAN_DELETE.getExceptionError(), HttpStatus.OK);
-		}
+	        photoRepository.delete(photo);
+	        log.info("Photo deleted successfully: {}", photoId);
+	    }
 
-		// Delete file from storage
-		try {
-			String filename = photo.getPhotoUrl().substring(photo.getPhotoUrl().lastIndexOf("/") + 1);
-			Path filePath = Paths.get(uploadDir, filename);
-			Files.deleteIfExists(filePath);
-		} catch (IOException e) {
-			log.warn("Failed to delete photo file: {}", e.getMessage());
-		}
+	    // ------------------------- //
+	    // 	Photo Helper Methods     //
+	    // ------------------------- //
 
-		photoRepository.delete(photo);
-		log.info("Photo deleted successfully: {}", photoId);
-	}
+	    private void validateFile(MultipartFile file) {
+	        if (file.isEmpty()) {
+	            throw new ApplicationException(
+	                    ErrorEnum.EMPTY_FILE.toString(),
+	                    ErrorEnum.EMPTY_FILE.getExceptionError(),
+	                    HttpStatus.BAD_REQUEST
+	            );
+	        }
+
+	        String contentType = file.getContentType();
+	        if (contentType == null || !contentType.startsWith("image/")) {
+	            throw new ApplicationException(
+	                    ErrorEnum.IMAGE_ALLOW.toString(),
+	                    ErrorEnum.IMAGE_ALLOW.getExceptionError(),
+	                    HttpStatus.UNSUPPORTED_MEDIA_TYPE
+	            );
+	        }
+
+	        if (file.getSize() > 10 * 1024 * 1024) { // 10MB
+	            throw new ApplicationException(
+	                    ErrorEnum.FILE_SIZE_IS_MORE_THAN_REQ.toString(),
+	                    ErrorEnum.FILE_SIZE_IS_MORE_THAN_REQ.getExceptionError(),
+	                    HttpStatus.PAYLOAD_TOO_LARGE
+	            );
+	        }
+	    }
+
+	    private String generateUniqueFilename(String originalFilename) {
+	        String extension = "";
+	        if (originalFilename != null && originalFilename.contains(".")) {
+	            extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+	        }
+	        return UUID.randomUUID().toString() + extension;
+	    }
+
+	    private void resetPrimaryPhotos(Long userId) {
+	        List<UserPhoto> existingPhotos = photoRepository.findByUserIdOrderByDisplayOrderAsc(userId);
+	        existingPhotos.forEach(photo -> photo.setIsPrimary(false));
+	        photoRepository.saveAll(existingPhotos);
+	    }
+
+	    private String extractFilename(String photoUrl) {
+	        return photoUrl.substring(photoUrl.lastIndexOf("/") + 1);
+	    }
+
+//	    private Integer getNextDisplayOrder(Long userId) {
+//	        return photoRepository.findByUserIdOrderByDisplayOrderAsc(userId).size() + 1;
+//	    }
 
 	@Override
 	public void blockUser(Long blockerId, Long blockedUserId) {
@@ -515,7 +561,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		response.setMotherTongue(profile.getMotherTongue());
 		response.setEducation(profile.getEducation());
 		response.setOccupation(profile.getOccupation());
-		response.setAnnualIncome(profile.getAnnualIncome());
+		response.setAnnualIncome(profile.getAnnualIncome() != null ? profile.getAnnualIncome().name() : null);
 		response.setAboutMe(profile.getAboutMe());
 		response.setFamilyType(profile.getFamilyType());
 		response.setFamilyValue(profile.getFamilyValue());

@@ -16,12 +16,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
-import com.api.matrimony.entity.SubscriptionPlan;
 import com.api.matrimony.entity.UserPhoto;
 import com.api.matrimony.entity.UserProfile;
+import com.api.matrimony.mapper.UserFeatures;
 import com.api.matrimony.repository.SubscriptionPlanRepository;
 import com.api.matrimony.repository.UserPhotoRepository;
 import com.api.matrimony.response.ProfileResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,6 +34,8 @@ public class GeneralMethods {
 	private UserPhotoRepository photoRepository;
 	@Autowired
 	private SubscriptionPlanRepository planRepository;
+	@Autowired
+	private  ObjectMapper objectMapper;
 
 	public static <T> Page<T> paginateList(List<T> fullList, int page, int size) {
 		int total = fullList.size();
@@ -64,7 +67,7 @@ public class GeneralMethods {
 		response.setMotherTongue(profile.getMotherTongue());
 		response.setEducation(profile.getEducation());
 		response.setOccupation(profile.getOccupation());
-		response.setAnnualIncome(profile.getAnnualIncome());
+		response.setAnnualIncome(profile.getAnnualIncome().toString());
 		response.setAboutMe(profile.getAboutMe());
 		response.setFamilyType(profile.getFamilyType());
 		response.setFamilyValue(profile.getFamilyValue());
@@ -128,8 +131,16 @@ public class GeneralMethods {
 		return LocalDate.parse(formatted, formatter); // parsed back to LocalDate
 	}
 
-//	public static SubscriptionPlan accessBasedOnPlan(Long planId) {
-//		planRepository
-//	}
+	 public UserFeatures accessBasedOnPlan(Long planId) {
+	        return planRepository.findById(planId)
+	                .map(plan -> {
+	                    try {
+	                        return objectMapper.readValue(plan.getFeatures(), UserFeatures.class);
+	                    } catch (Exception e) {
+	                        throw new RuntimeException("Failed to parse features JSON", e);
+	                    }
+	                })
+	                .orElse(null);
+	    }
 
 }

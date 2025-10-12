@@ -38,7 +38,7 @@ public class ProfileResponse {
     private String motherTongue;
     private String education;
     private String occupation;
-    private BigDecimal annualIncome;
+    private String annualIncome;
     private String aboutMe;
     private String familyType;
     private String familyValue;

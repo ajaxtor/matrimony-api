@@ -352,7 +352,7 @@ public class AuthServiceImpl implements AuthService {
 			profileResponse.setMotherTongue(profile.getMotherTongue());
 			profileResponse.setEducation(profile.getEducation());
 			profileResponse.setOccupation(profile.getOccupation());
-			profileResponse.setAnnualIncome(profile.getAnnualIncome());
+			profileResponse.setAnnualIncome(profile.getAnnualIncome() != null ? profile.getAnnualIncome().name() : null);
 			profileResponse.setAboutMe(profile.getAboutMe());
 			profileResponse.setFamilyType(profile.getFamilyType());
 			profileResponse.setFamilyValue(profile.getFamilyValue());
