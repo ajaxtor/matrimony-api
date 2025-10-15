@@ -210,6 +210,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     // Helper methods
     private void updateProfileFields(UserProfile profile, ProfileUpdateRequest request) {
+
         if (request.getFullName() != null) {
             profile.setFullName(request.getFullName());
         }
@@ -255,6 +256,7 @@ public class ProfileServiceImpl implements ProfileService {
         if (request.getFamilyType() != null) {
             profile.setFamilyType(request.getFamilyType());
         }
+        // ✅ Fixed: updated key name to match JSON (`familyValues`)
         if (request.getFamilyValue() != null) {
             profile.setFamilyValue(request.getFamilyValue());
         }
@@ -276,6 +278,24 @@ public class ProfileServiceImpl implements ProfileService {
         if (request.getDiet() != null) {
             profile.setDiet(request.getDiet());
         }
+        // new fields
+        
+        if (request.getSmokingHabits() != null) {
+            profile.setSmokingHabits(request.getSmokingHabits());
+        }
+        if (request.getDrinkingHabits() != null) {
+            profile.setDrinkingHabits(request.getDrinkingHabits());
+        }
+        if (request.getGothra() != null) {
+            profile.setGothra(request.getGothra());
+        }
+        if (request.getNickName() != null) {
+            profile.setNickName(request.getNickName());
+        }
+        if (request.getManglikStatus() != null) {
+            profile.setManglikStatus(request.getManglikStatus());
+        }
+        
     }
 
     public ProfileResponse mapToProfileResponse(UserProfile profile) {
@@ -311,6 +331,12 @@ public class ProfileServiceImpl implements ProfileService {
         response.setUpdatedAt(profile.getUpdatedAt());
         response.setDiet(profile.getDiet());
         response.setHiseStatus(profile.getIsHide());
+        
+        response.setManglikStatus(profile.getManglikStatus() != null ? profile.getManglikStatus().name() : null); // new field
+        response.setSmokingHabits(profile.getSmokingHabits() != null ? profile.getSmokingHabits().name() : null); //  new field
+        response.setDrinkingHabits(profile.getDrinkingHabits() != null ? profile.getDrinkingHabits().name() : null); //  new field
+        response.setNickName(profile.getNickName()); //  new field
+        response.setGothra(profile.getGothra()); //  new field
 
         // Get photos
         List<UserPhoto> photos = photoRepository.findByUserIdOrderByDisplayOrderAsc(profile.getUser().getId());

@@ -365,6 +365,13 @@ public class AuthServiceImpl implements AuthService {
 			profileResponse.setUpdatedAt(profile.getUpdatedAt());
 			profileResponse.setHiseStatus(profile.getIsHide());
 			profileResponse.setDiet(profile.getDiet());
+			
+			profileResponse.setManglikStatus(profile.getManglikStatus() != null ? profile.getManglikStatus().name() : null); // new field
+			profileResponse.setSmokingHabits(profile.getSmokingHabits() != null ? profile.getSmokingHabits().name() : null); //  new field
+			profileResponse.setDrinkingHabits(profile.getDrinkingHabits() != null ? profile.getDrinkingHabits().name() : null); //  new field
+			profileResponse.setNickName(profile.getNickName()); //  new field
+			profileResponse.setGothra(profile.getGothra()); //  new field
+			
 			response.setProfile(profileResponse);
 		}
 

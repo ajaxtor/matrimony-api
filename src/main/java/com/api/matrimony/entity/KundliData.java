@@ -63,7 +63,7 @@ public class KundliData {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "manglik_status")
-    private ManglikStatus manglikStatus = ManglikStatus.UNKNOWN;
+    private ManglikStatus manglikStatus = ManglikStatus.DONT_KNOW;
 
     @Column(name = "kundli_details", columnDefinition = "JSON")
     private String kundliDetails;

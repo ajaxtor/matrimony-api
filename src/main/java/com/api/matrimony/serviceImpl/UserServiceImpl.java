@@ -166,6 +166,26 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			profile.setProfileCreatedBy(request.getProfileCreatedBy());
 		}
 		
+        //  updated key name 
+        if (request.getFamilyValue() != null) {
+            profile.setFamilyValue(request.getFamilyValue());
+        }
+		 if (request.getSmokingHabits() != null) {
+	            profile.setSmokingHabits(request.getSmokingHabits());
+	        }
+	        if (request.getDrinkingHabits() != null) {
+	            profile.setDrinkingHabits(request.getDrinkingHabits());
+	        }
+	        if (request.getGothra() != null) {
+	            profile.setGothra(request.getGothra());
+	        }
+	        if (request.getNickName() != null) {
+	            profile.setNickName(request.getNickName());
+	        }
+	        if (request.getManglikStatus() != null) {
+	            profile.setManglikStatus(request.getManglikStatus());
+	        }
+		
 		String dietStr = request.getDiet();
 		String normalizedDiet = normalizeDiet(dietStr);
 		if (normalizedDiet != null) {
@@ -574,6 +594,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		response.setUpdatedAt(profile.getUpdatedAt());
 		response.setDiet(profile.getDiet());
 		response.setHiseStatus(profile.getIsHide());
+		
+		response.setManglikStatus(profile.getManglikStatus() != null ? profile.getManglikStatus().name() : null); // new field
+		response.setSmokingHabits(profile.getSmokingHabits() != null ? profile.getSmokingHabits().name() : null); //  new field
+		response.setDrinkingHabits(profile.getDrinkingHabits() != null ? profile.getDrinkingHabits().name() : null); //  new field
+		response.setNickName(profile.getNickName()); //  new field
+		response.setGothra(profile.getGothra()); //  new field
 
 		// Get photos
 		List<UserPhoto> photos = photoRepository.findByUserIdOrderByDisplayOrderAsc(profile.getUser().getId());

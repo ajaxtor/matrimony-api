@@ -22,11 +22,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.ALWAYS)
 public class ProfileResponse {
-    
+
     private Long userId;
     private String fullName;
+    private String nickName; // ✅ New field
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
+
     private Integer age;
     private String gender;
     private Integer height;
@@ -35,6 +38,8 @@ public class ProfileResponse {
     private String religion;
     private String caste;
     private String subCaste;
+    private String gothra; // ✅ New field
+    private String manglikStatus; // ✅ New field
     private String motherTongue;
     private String education;
     private String occupation;
@@ -42,18 +47,26 @@ public class ProfileResponse {
     private String aboutMe;
     private String familyType;
     private String familyValue;
+    private String area; // ✅ New field
     private String city;
     private String state;
     private String country;
     private String pincode;
     private String diet;
+    private String smokingHabits; // ✅ New field
+    private String drinkingHabits; // ✅ New field
+
     @JsonProperty("isHide")
     private boolean hiseStatus;
+
     private String profileCreatedBy;
+
     private List<String> photoUrls;
     private String primaryPhotoUrl;
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdAt;
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime updatedAt;
 }

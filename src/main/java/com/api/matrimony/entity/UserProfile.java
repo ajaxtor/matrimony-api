@@ -4,7 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.api.matrimony.enums.AnnualIncomeRanges;
+import com.api.matrimony.enums.BadHabits;
 import com.api.matrimony.enums.Gender;
+import com.api.matrimony.enums.ManglikStatus;
 import com.api.matrimony.enums.MaritalStatus;
 
 import jakarta.persistence.Column;
@@ -22,7 +24,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-//UserProfile Entity
 @Entity
 @Table(name = "user_profiles")
 @Data
@@ -40,6 +41,9 @@ public class UserProfile {
 
     @Column(name = "full_name", nullable = false, length = 50)
     private String fullName;
+
+    @Column(name = "nick_name", length = 50)
+    private String nickName; // ✅ New field
 
     @Column(name = "date_of_birth", nullable = false)
     private LocalDate dateOfBirth;
@@ -60,12 +64,19 @@ public class UserProfile {
 
     @Column(name = "religion")
     private String religion;
-    
+
     @Column(name = "caste")
     private String caste;
 
     @Column(name = "sub_caste")
     private String subCaste;
+
+    @Column(name = "gothra")
+    private String gothra; // ✅ New field
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "manglik_status")
+    private ManglikStatus manglikStatus = ManglikStatus.DONT_KNOW; // ✅ New field
 
     @Column(name = "mother_tongue")
     private String motherTongue;
@@ -89,6 +100,9 @@ public class UserProfile {
     @Column(name = "family_value")
     private String familyValue;
 
+    @Column(name = "area")
+    private String area; // ✅ New field
+
     @Column(name = "city")
     private String city;
 
@@ -103,7 +117,15 @@ public class UserProfile {
 
     @Column(name = "diet")
     private String diet;
-    
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "smoking_habits")
+    private BadHabits smokingHabits = BadHabits.NO; // ✅ New field
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "drinking_habits")
+    private BadHabits drinkingHabits = BadHabits.NO; // ✅ New field
+
     @Column(name = "is_hide")
     private Boolean isHide = false;
 
