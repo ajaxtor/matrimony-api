@@ -46,6 +46,9 @@ public class User implements UserDetails {
 
     @Column(unique = true, nullable = false, length = 15)
     private String phone;
+    
+    @Column(name = "country_code",unique = true, nullable = false, length = 10)
+    private String countryCode;
 
     @Column(nullable = false)
     private String password;

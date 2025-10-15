@@ -142,5 +142,22 @@ public class GeneralMethods {
 	                })
 	                .orElse(null);
 	    }
+	 
+	 public boolean isValidCountryCode(String countryCode) {
+		    if (countryCode == null || countryCode.isEmpty()) {
+		        return false;
+		    }
+		    // Get list of ISO country codes (built-in Java utility)
+		    String[] isoCountries = java.util.Locale.getISOCountries();
+
+		    for (String code : isoCountries) {
+		        if (code.equalsIgnoreCase(countryCode)) {
+		            return true;
+		        }
+		    }
+
+		    return false;
+		}
+
 
 }

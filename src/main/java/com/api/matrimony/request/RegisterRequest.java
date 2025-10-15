@@ -29,6 +29,8 @@ public class RegisterRequest {
     @NotBlank(message = "Phone is required")
     @Pattern(regexp = "^[6-9]\\d{9}$", message = "Invalid phone number format")
     private String phone;
+    @NotBlank(message = "country Code is required")
+    private String countryCode;
     
     @NotBlank(message = "Password is required")
     @Size(min = 6, max = 20, message = "Password must be between 6 and 20 characters")
@@ -44,6 +46,8 @@ public class RegisterRequest {
     @NotNull(message = "Date of birth is required")
     @Past(message = "Date of birth must be in the past")
     private LocalDate dateOfBirth; 
+    @NotNull(message = "looking For is required")
+    private Gender lookingFor;
     
 }
 

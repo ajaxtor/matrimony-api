@@ -86,6 +86,7 @@ public class AuthServiceImpl implements AuthService {
 		User user = new User();
 		user.setEmail(request.getEmail());
 		user.setPhone(request.getPhone());
+		user.setCountryCode(request.getCountryCode());
 		user.setPassword(passwordEncoder.encode(request.getPassword()));
 		user.setUserType(request.getGender().name().equalsIgnoreCase("MALE")? UserType.GROOM : UserType.BRIDE);
 		user.setIsVerified(false);
@@ -100,7 +101,13 @@ public class AuthServiceImpl implements AuthService {
 		profile.setGender(request.getGender());
 		profile.setDateOfBirth(request.getDateOfBirth());
 		user.setProfile(profile);
-
+		
+		// Create user preferences
+		UserPreference preferences = new UserPreference();
+		preferences.setUser(user);
+		preferences.setGender(request.getLookingFor().name());
+		user.setPreferences(preferences);
+		
 		// Save user
 		User savedUser = userRepository.save(user);
 		log.info("User registered successfully with ID: {}", savedUser.getId());
