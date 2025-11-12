@@ -12,12 +12,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class VerifyOtpRequest {
+public class VerifyPhoneOtpRequest {
     
 //   // @NotBlank(message = "Contact (email or phone) is required")
 //    private String contact;
     
-    @NotBlank(message = "email (email or phone) is required")
+    @NotBlank(message = "phone is required")
     private String emailOrPhone;
     
     @NotBlank(message = "OTP is required")

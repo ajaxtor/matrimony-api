@@ -13,13 +13,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginRequest {
+	
+	 private String countryCode;
     
     @NotBlank(message = "Email or phone is required")
     private String emailOrPhone;
-    
-    @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must be at least 6 characters")
     private String password;
-    
+    private String otp; 
     private boolean rememberMe = false;
 }

@@ -1,17 +1,16 @@
 package com.api.matrimony.serviceImpl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.naming.AuthenticationException;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,7 +27,6 @@ import com.api.matrimony.enums.OtpPurpose;
 import com.api.matrimony.enums.UserType;
 import com.api.matrimony.exception.ApplicationException;
 import com.api.matrimony.exception.ErrorEnum;
-import com.api.matrimony.repository.OtpVerificationRepository;
 import com.api.matrimony.repository.UserPhotoRepository;
 import com.api.matrimony.repository.UserRepository;
 import com.api.matrimony.request.EmailModel;
@@ -60,7 +58,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthServiceImpl implements AuthService {
 
 	private final UserRepository userRepository;
-	private final OtpVerificationRepository otpRepository;
+	//private final OtpVerificationRepository otpRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final AuthenticationManager authenticationManager;
 	private final JwtUtil jwtUtil;
@@ -80,6 +78,11 @@ public class AuthServiceImpl implements AuthService {
 		if (userRepository.existsByPhone(request.getPhone())) {
 			throw new ApplicationException(ErrorEnum.NUMBER_ALREADY_EXIST.toString(),
 					ErrorEnum.NUMBER_ALREADY_EXIST.getExceptionError(), HttpStatus.OK);
+		}
+		
+		if(!is21OrOlder(request.getDateOfBirth().toString())) {
+			throw new ApplicationException(ErrorEnum.ILLEGAL_USER_AGE.toString(),
+					ErrorEnum.ILLEGAL_USER_AGE.getExceptionError(), HttpStatus.OK);
 		}
 
 		// Create new user
@@ -122,10 +125,10 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public String verifyOtp(VerifyOtpRequest request) {
-		log.info("Verifying OTP for contact: {}", request.getEmail());
+		log.info("Verifying OTP for contact: {}", request.getEmailOrPhone());
 
 		// Verify OTP
-		boolean isValid = otpService.verifyOtp(request.getEmail(), request.getOtp(),
+		boolean isValid = otpService.verifyOtp(request.getEmailOrPhone(), request.getOtp(),
 				OtpPurpose.valueOf(request.getPurpose()));
 
 		if (!isValid) {
@@ -134,7 +137,7 @@ public class AuthServiceImpl implements AuthService {
 		}
 
 		// Update user verification status
-		User user = findUserByEmailOrPhone(request.getEmail());
+		User user = findUserByEmailOrPhone(request.getEmailOrPhone());
 
 		if (request.getPurpose().equals("REGISTRATION")) {
 			user.setIsVerified(true);
@@ -178,19 +181,38 @@ public class AuthServiceImpl implements AuthService {
 			throw new ApplicationException(ErrorEnum.ACCOUNT_IS_NOT_VERIFIED.toString(),
 					ErrorEnum.ACCOUNT_IS_NOT_VERIFIED.getExceptionError(), HttpStatus.OK);
 		}
+		UserDetails userDetails = user;
+		//  Case 1: OTP-based login
+		
+	    if (request.getOtp() != null && !request.getOtp().isEmpty()) {
+	    	String purpose = "LOGIN";
+	    	VerifyOtpRequest otpVerifyRequest = new VerifyOtpRequest();
+	    	otpVerifyRequest.setEmailOrPhone(user.getPhone());
+	    	otpVerifyRequest.setOtp(request.getOtp());
+	    	otpVerifyRequest.setPurpose(purpose);
+	        boolean validOtp = otpService.verifyOtp(user.getPhone(), request.getOtp(), OtpPurpose.LOGIN);
+	        if (!validOtp) {
+	            throw new ApplicationException(ErrorEnum.INVALID_OTP.toString(),
+	                    ErrorEnum.INVALID_OTP.getExceptionError(), HttpStatus.OK);
+	        }
+	        log.info("OTP verified successfully for {}", user.getPhone());
+	    }else {
+	    
+	    //  Case 2: Password-based login
 
 		// Authenticate user
 //		Authentication authentication = authenticationManager
 //				.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), request.getPassword()));
-		UserDetails userDetails = null;
+		
 		try {
 			Authentication authentication = authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), request.getPassword()));
-			 userDetails = (UserDetails) authentication.getPrincipal();
+			 //userDetails = (UserDetails) authentication.getPrincipal();
 		} catch (BadCredentialsException e) {
 			throw new ApplicationException(ErrorEnum.BAD_CREDENTIALS.toString(),
 					ErrorEnum.BAD_CREDENTIALS.getExceptionError(), HttpStatus.OK);
 		} 
+	    }
 
 		// Generate tokens
 		String accessToken = jwtUtil.generateToken(userDetails);
@@ -470,5 +492,11 @@ public class AuthServiceImpl implements AuthService {
 		response.setActive(user.getIsActive());
 		response.setLastLogin(user.getLastLogin());
 		return response;
+	}
+	
+	public boolean is21OrOlder(String dobString) {
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); // match your input format
+	    LocalDate dob = LocalDate.parse(dobString, formatter);
+	    return Period.between(dob, LocalDate.now()).getYears() >= 21;
 	}
 }

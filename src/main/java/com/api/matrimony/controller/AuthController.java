@@ -18,6 +18,7 @@ import com.api.matrimony.request.RefreshTokenRequest;
 import com.api.matrimony.request.RegisterRequest;
 import com.api.matrimony.request.ResetPasswordRequest;
 import com.api.matrimony.request.VerifyOtpRequest;
+import com.api.matrimony.request.VerifyPhoneOtpRequest;
 import com.api.matrimony.response.APIResonse;
 import com.api.matrimony.response.AdminResponse;
 import com.api.matrimony.response.LoginResponse;
@@ -57,13 +58,23 @@ public class AuthController {
      */
     @PostMapping("/verify-otp")
     public ResponseEntity<APIResonse<String>> verifyOtp(@Valid @RequestBody VerifyOtpRequest request) {
-        log.info("OTP verification attempt for: {}", request.getEmail());
+        log.info("OTP verification attempt for: {}", request.getEmailOrPhone());
         
         APIResonse<String> response = new APIResonse<>();
             String result = authService.verifyOtp(request);
             response.setData(result);
             return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    
+//    @PostMapping("/verify-Phone-otp")
+//    public ResponseEntity<APIResonse<String>> verifyPhoneOtp(@Valid @RequestBody VerifyOtpRequest request) {
+//        log.info("OTP verification attempt for: {}", request.getEmailOrPhone());
+//        
+//        APIResonse<String> response = new APIResonse<>();
+//            String result = authService.verifyOtp(request);
+//            response.setData(result);
+//            return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
 
     /**
      * Resend OTP
