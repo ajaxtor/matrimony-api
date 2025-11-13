@@ -85,12 +85,13 @@ public class AuthServiceImpl implements AuthService {
 					ErrorEnum.ILLEGAL_USER_AGE.getExceptionError(), HttpStatus.OK);
 		}
 
+		 String password = "t#estDhol@90123467";
 		// Create new user
 		User user = new User();
 		user.setEmail(request.getEmail());
 		user.setPhone(request.getPhone());
 		user.setCountryCode(request.getCountryCode());
-		user.setPassword(passwordEncoder.encode(request.getPassword()));
+		user.setPassword(passwordEncoder.encode(password));
 		user.setUserType(request.getGender().name().equalsIgnoreCase("MALE")? UserType.GROOM : UserType.BRIDE);
 		user.setIsVerified(false);
 		user.setIsActive(false);
@@ -196,23 +197,24 @@ public class AuthServiceImpl implements AuthService {
 	                    ErrorEnum.INVALID_OTP.getExceptionError(), HttpStatus.OK);
 	        }
 	        log.info("OTP verified successfully for {}", user.getPhone());
-	    }else {
-	    
-	    //  Case 2: Password-based login
-
-		// Authenticate user
-//		Authentication authentication = authenticationManager
-//				.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), request.getPassword()));
-		
-		try {
-			Authentication authentication = authenticationManager
-					.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), request.getPassword()));
-			 //userDetails = (UserDetails) authentication.getPrincipal();
-		} catch (BadCredentialsException e) {
-			throw new ApplicationException(ErrorEnum.BAD_CREDENTIALS.toString(),
-					ErrorEnum.BAD_CREDENTIALS.getExceptionError(), HttpStatus.OK);
-		} 
 	    }
+//	    else {
+//	    
+//	    //  Case 2: Password-based login
+//
+//		// Authenticate user
+////		Authentication authentication = authenticationManager
+////				.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), request.getPassword()));
+//		
+//		try {
+//			Authentication authentication = authenticationManager
+//					.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), request.getPassword()));
+//			 //userDetails = (UserDetails) authentication.getPrincipal();
+//		} catch (BadCredentialsException e) {
+//			throw new ApplicationException(ErrorEnum.BAD_CREDENTIALS.toString(),
+//					ErrorEnum.BAD_CREDENTIALS.getExceptionError(), HttpStatus.OK);
+//		} 
+//	    }
 
 		// Generate tokens
 		String accessToken = jwtUtil.generateToken(userDetails);
@@ -459,10 +461,10 @@ public class AuthServiceImpl implements AuthService {
 		}
 
 		// Authenticate user
-		Authentication authentication = authenticationManager
-				.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), request.getPassword()));
+//		Authentication authentication = authenticationManager
+//				.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), request.getPassword()));
 
-		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+		UserDetails userDetails = user;
 
 		// Generate tokens
 		String accessToken = jwtUtil.generateToken(userDetails);

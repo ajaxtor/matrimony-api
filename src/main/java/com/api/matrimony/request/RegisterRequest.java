@@ -33,9 +33,9 @@ public class RegisterRequest {
     @NotBlank(message = "country Code is required")
     private String countryCode;
     
-    @NotBlank(message = "Password is required")
-    @Size(min = 6, max = 20, message = "Password must be between 6 and 20 characters")
-    private String password;
+//    @NotBlank(message = "Password is required")
+//    @Size(min = 6, max = 20, message = "Password must be between 6 and 20 characters")
+ //   private String password;
     
     @NotNull(message = "User type is required")
     private Gender gender;
