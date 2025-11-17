@@ -17,7 +17,7 @@ public interface AuthService {
     
     String register(RegisterRequest request);
     String verifyOtp(VerifyOtpRequest request);
-    String resendOtp(String contact, String purpose);
+    String resendOtp(String code, String contact, String purpose);
     LoginResponse login(LoginRequest request);
     LoginResponse refreshToken(String refreshToken);
     String forgotPassword(ForgotPasswordRequest request);

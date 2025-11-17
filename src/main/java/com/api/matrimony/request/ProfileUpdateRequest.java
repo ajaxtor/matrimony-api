@@ -21,8 +21,8 @@ public class ProfileUpdateRequest {
     
     private String fullName;
     private String nickName; // ✅ New field
-    private LocalDate dateOfBirth;
-    private String gender;
+//    private LocalDate dateOfBirth;
+//    private String gender;
     private Integer height;
     private Integer weight;
     private String maritalStatus;

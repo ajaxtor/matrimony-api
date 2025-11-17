@@ -105,12 +105,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		if (request.getFullName() != null) {
 			profile.setFullName(request.getFullName());
 		}
-		if (request.getDateOfBirth() != null) {
-			profile.setDateOfBirth(request.getDateOfBirth());
-		}
-		if (request.getGender() != null) {
-			profile.setGender(Gender.valueOf(request.getGender().toUpperCase()));
-		}
+//		if (request.getDateOfBirth() != null) {
+//			profile.setDateOfBirth(request.getDateOfBirth());
+//		}
+//		if (request.getGender() != null) {
+//			profile.setGender(Gender.valueOf(request.getGender().toUpperCase()));
+//		}
 		if (request.getHeight() != null) {
 			profile.setHeight(request.getHeight());
 		}

@@ -154,7 +154,7 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	@Override
-	public String resendOtp(String contact, String purpose) {
+	public String resendOtp(String code,String contact, String purpose) {
 
 		log.info("Resending OTP for contact: {}", contact);
 		User user = findUserByEmailOrPhone(contact);

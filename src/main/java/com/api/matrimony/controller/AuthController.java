@@ -80,11 +80,11 @@ public class AuthController {
      * Resend OTP
      */
     @PostMapping("/resend-otp")
-    public ResponseEntity<APIResonse<String>> resendOtp(@RequestParam String contact, @RequestParam String purpose) {
+    public ResponseEntity<APIResonse<String>> resendOtp(@RequestParam String code,@RequestParam String contact, @RequestParam String purpose) {
         log.info("Resend OTP request for: {}", contact);
         
         APIResonse<String> response = new APIResonse<>();
-            String result = authService.resendOtp(contact, purpose);
+            String result = authService.resendOtp(code,contact, purpose);
             response.setData(result);
             return new ResponseEntity<>(response, HttpStatus.OK);
     }
