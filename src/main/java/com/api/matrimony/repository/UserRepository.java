@@ -33,4 +33,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     
     @Query("SELECT COUNT(u) FROM User u WHERE u.createdAt >= :date")
     Long countNewUsersFromDate(@Param("date") LocalDateTime date);
+    
+    @Query(value = "SELECT * FROM users WHERE provider_id = :providerId ", nativeQuery = true)
+	Optional<User> findByProviderId(String providerId);
 }

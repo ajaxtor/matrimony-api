@@ -34,6 +34,7 @@ public class SecurityConfig {
     private final UserServiceImpl userService;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -108,7 +109,13 @@ public class SecurityConfig {
             .authenticationProvider(authenticationProvider())
 
             // Add JWT filter before UsernamePasswordAuthenticationFilter
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+        
+        // ----------- ADD THIS FOR SOCIAL LOGIN -----------
+        .oauth2Login(oauth -> oauth
+                .loginPage("/oauth2/authorization/google")  // optional
+                .successHandler(oAuth2SuccessHandler)       // IMPORTANT → create JWT
+        );
 
         log.info("Security Filter Chain configured successfully");
 

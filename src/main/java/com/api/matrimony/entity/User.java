@@ -81,6 +81,12 @@ public class User implements UserDetails {
     @Column(name = "is_hide")
     private Boolean isHide = false;
 
+    @Column(name = "provider_id")
+    private String providerId ;
+
+    @Column(name = "provider")
+    private String provider;
+
     // One-to-One relationship with UserProfile
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude

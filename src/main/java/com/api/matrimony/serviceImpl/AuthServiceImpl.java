@@ -183,8 +183,9 @@ public class AuthServiceImpl implements AuthService {
 					ErrorEnum.ACCOUNT_IS_NOT_VERIFIED.getExceptionError(), HttpStatus.OK);
 		}
 		UserDetails userDetails = user;
-		//  Case 1: OTP-based login
 		
+		
+		//  Case 1: OTP-based login	
 	    if (request.getOtp() != null && !request.getOtp().isEmpty()) {
 	    	String purpose = "LOGIN";
 	    	VerifyOtpRequest otpVerifyRequest = new VerifyOtpRequest();
@@ -198,24 +199,46 @@ public class AuthServiceImpl implements AuthService {
 	        }
 	        log.info("OTP verified successfully for {}", user.getPhone());
 	    }
-//	    else {
-//	    
-//	    //  Case 2: Password-based login
-//
-//		// Authenticate user
-////		Authentication authentication = authenticationManager
-////				.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), request.getPassword()));
-//		
-//		try {
-//			Authentication authentication = authenticationManager
-//					.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), request.getPassword()));
-//			 //userDetails = (UserDetails) authentication.getPrincipal();
-//		} catch (BadCredentialsException e) {
-//			throw new ApplicationException(ErrorEnum.BAD_CREDENTIALS.toString(),
-//					ErrorEnum.BAD_CREDENTIALS.getExceptionError(), HttpStatus.OK);
-//		} 
-//	    }
+	    
+	    else {
+	    	
+	    	// Case 2.1. Provider ID already exists for social media login → LOGIN
+	    	
+		    Optional<User> existing = userRepository.findByProviderId(request.getProviderId());
+		    if (existing.isPresent()) {
+		    	userDetails = existing.get();
+		    }
 
+		    // case 2.2 Completely new user → REGISTER + LOGIN [ Social Media Login ]
+		    
+		    else {
+		        user = new User();
+		        user.setEmail(request.getEmailOrPhone());
+		        user.setProvider(request.getProvider());
+		        user.setProviderId(request.getProviderId());
+		        user.setPassword(passwordEncoder.encode("SOCIAL_USER"));
+
+		        user.setIsVerified(true);
+		        user.setIsActive(true);
+		        user.setEmailVerified(true);
+
+		        // Profile
+		        UserProfile profile = new UserProfile();
+		        profile.setUser(user);
+		        profile.setFullName(request.getFullName());
+		        user.setProfile(profile);
+
+		        // Preferences
+		        UserPreference pref = new UserPreference();
+		        pref.setUser(user);
+//		        pref.setGender(request.getLookingFor() != null ? request.getLookingFor().name() : null);
+		        user.setPreferences(pref);
+
+		        userDetails = userRepository.save(user);
+		    }
+	    	
+	    }
+		
 		// Generate tokens
 		String accessToken = jwtUtil.generateToken(userDetails);
 		String refreshToken = jwtUtil.generateRefreshToken(userDetails);

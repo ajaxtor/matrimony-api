@@ -20,4 +20,16 @@ public class LoginRequest {
     private String emailOrPhone;
     private String otp; 
     private boolean rememberMe = false;
+    
+    private String provider;  // GOOGLE, FACEBOOK, APPLE
+
+    @NotBlank(message = "Provider ID is required")
+    private String providerId;  // Unique UID from Google/Facebook
+
+    private String fullName;
+    private String profilePic;
+
+//    private Gender gender;
+//    private LocalDate dateOfBirth;
+//    private Gender lookingFor;
 }
