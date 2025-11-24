@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "dhol-matrimony-ef849",
+  "private_key_id": "1d66493a4b1dd9053ac8cf3e0a58ff94600fcb74",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCycxVoPUdbawD0\nkrKAwma36DklZm8KdsVwUAwv6EfArpUZ1nbGDsHzqeMslWZXIe+wJ+dJTKmeVYit\nQ4p+Ot/kJHjVIfHXxMBEk6MurCBp2RYPh5PbgvhCsmn6Aut+qBm+WK/KUMuU2hMF\nBhfQ21Jhnk62ACCOH6qgNmpifXFUxJFYKZNVr5ejKyWBY/MhGGDYLDJQNKgPb79X\nlI0+6pPOxZoZJQ/2sCTAT8SiIy753IB6spznI2dij5dakAiPLFRCDKdkqUH8UYxO\n4nTG7g1tY0Tayzdc5ZlN1gmqY6K6rVIKXfcOQIWh+rpR7JyjqqVV0Z6HYQ2fqbxF\nXbDDUoJ9AgMBAAECggEAOB/B59r+Cl6JGmLZCW4a6FR9RKoG2n+ocT571sVza8J8\n2nd9O6WAkqYn8Om8GkNuIzUppQAbiNTV+8h2UmUp7ZMa/c2DRp126xqUBCXWu/Ou\n4It/kVaLxk5ezmcEsf0ku50hDLyEivhbawUTkHiqXFFx6AP6OTj0bRcwNnHFpyb0\n3kEERlI+8M2HQ303L3dtPAMFlE6/NnD77DKkUAD0WUUfLiRpaML7kz7EIhdWqw4B\nfHQawurEhN/sOuyOqU1DQMGYUs+aCBUCo4mhMpxkEj+PSE6J92xHePxVX6Lvci/s\nohgrl+8X/UEnxWqLv7jn2D3xyxncyMLjFU1BrZHs8QKBgQDkugyAip/JiP9w0FJS\nJHXclVtt0a7HQY7X7hLWttheDnj4CsAPyUqTUDbCNLdrZ8dqT0vTuuHa3cUFWndD\nc8JxfZwZ9Smw0RNnTrczzEaw/M8hMhBlulpONf2ujJNCOPKR+7Lfr/LliYwK4RUY\nF6epkzK1UFn1v8xEk0TxP1mVjwKBgQDHuk7rp1w/IrW3KbwyMUNSSkOoPBjWQeDf\n5VOalCCpk6srCFayz7Ie2T2hl0IGAzHk6AQU8lwvLMDRwP5eyxUTVECMYyEEFQw7\ncvnDfCY1wY+y4zrde+o+wcChHZyFzWZPKOOn1f+HmVZUWIUI6lhwJU/xy+weWZWu\no6K4uVVZMwKBgBVpUThLQdAE8hymc75ayWm/1ZI/OcRPX8bY84yEC1cqtapKn1Ya\n+s81iBrAApecXG+YQrnsWa46anIo2NdIo+Ap6Q4JBEEYIV/fX4kKy2dQEzfBTwWm\n30NJDJllcXeWiyadUE5eUzenm6N9FJNvy3M1Y17TycgWj1GwE5kd3A4DAoGARV2O\nVUetwPukErX694+maukB8GbW1WrR19DEpXX2lg6ELxDZU4bQvOgEAKAQvRfU90Qh\nTskRfQzU9sRJU9DCRBFJzbgL2mgY9HitB9iRSLAt4RoL8qo7o4oVBZ/MIahBdRKl\nZj/rXEPD+M05fuwsxN4gksCZA71nP9zzAabUXoMCgYEAmOn4w1qftFIv7mwTW3J8\n8gAtle71Cln0mre7MGx8sOewuW54HNQwq7ztqjXQWD7Wbt9i/VGK2WuFtuhRc/Rb\nSpHESktRjEPxCjSiKZsTxJ+fiK69z0aEwKAgxSorbKzv0zUDlj5yLwHcwmlVJNOv\nEYYTUwpHV+4gpfkYPWL+XPE=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-fbsvc@dhol-matrimony-ef849.iam.gserviceaccount.com",
+  "client_id": "117621875374470027264",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40dhol-matrimony-ef849.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

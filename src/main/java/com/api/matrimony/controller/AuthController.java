@@ -12,18 +12,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.api.matrimony.exception.ApplicationException;
 import com.api.matrimony.request.ForgotPasswordRequest;
 import com.api.matrimony.request.LoginRequest;
 import com.api.matrimony.request.RefreshTokenRequest;
 import com.api.matrimony.request.RegisterRequest;
 import com.api.matrimony.request.ResetPasswordRequest;
 import com.api.matrimony.request.VerifyOtpRequest;
-import com.api.matrimony.request.VerifyPhoneOtpRequest;
 import com.api.matrimony.response.APIResonse;
 import com.api.matrimony.response.AdminResponse;
 import com.api.matrimony.response.LoginResponse;
 import com.api.matrimony.service.AuthService;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -101,6 +105,44 @@ public class AuthController {
             response.setData(logInRes);
             return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    
+    
+    @PostMapping("/social-login")
+    public ResponseEntity<APIResonse<LoginResponse>>  socialLogin(HttpServletRequest request) {
+    	APIResonse<LoginResponse> response = new APIResonse<>();
+        String idToken = request.getHeader("Authorization").replace("Bearer ", "");
+
+        try {
+            FirebaseToken token = FirebaseAuth.getInstance().verifyIdToken(idToken);
+
+            String email = token.getEmail();
+            String name = token.getName();
+            String providerId = token.getUid();
+
+            String provider =
+                    token.getIssuer().contains("google") ? "google" :
+                    token.getIssuer().contains("facebook") ? "facebook" :
+                    "unknown";
+
+            // Build LoginRequest to pass to your existing login()
+            LoginRequest req = new LoginRequest();
+            req.setEmailOrPhone(email);
+            req.setFullName(name);
+            req.setProvider(provider);
+            req.setProviderId(providerId);
+
+            LoginResponse logInRes = authService.login(req);
+            response.setData(logInRes);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
+        } catch (FirebaseAuthException e) {
+            throw new ApplicationException("INVALID_FIREBASE_TOKEN",
+                    "Google/Facebook token verification failed",
+                    HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    
 
     /**
      * Refresh JWT token

@@ -18,13 +18,14 @@ public class LoginRequest {
     
     @NotBlank(message = "Email or phone is required")
     private String emailOrPhone;
-    private String otp; 
+    private String passWord;
+   // private String otp; 
     private boolean rememberMe = false;
     
     private String provider;  // GOOGLE, FACEBOOK, APPLE
 
-    @NotBlank(message = "Provider ID is required")
-    private String providerId;  // Unique UID from Google/Facebook
+   // @NotBlank(message = "Provider ID is required")
+    private String providerId;  
 
     private String fullName;
     private String profilePic;

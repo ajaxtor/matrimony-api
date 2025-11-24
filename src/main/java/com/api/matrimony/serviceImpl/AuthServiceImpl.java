@@ -85,13 +85,13 @@ public class AuthServiceImpl implements AuthService {
 					ErrorEnum.ILLEGAL_USER_AGE.getExceptionError(), HttpStatus.OK);
 		}
 
-		 String password = "t#estDhol@90123467";
+		// String password = "t#estDhol@90123467";
 		// Create new user
 		User user = new User();
 		user.setEmail(request.getEmail());
 		user.setPhone(request.getPhone());
 		user.setCountryCode(request.getCountryCode());
-		user.setPassword(passwordEncoder.encode(password));
+		user.setPassword(passwordEncoder.encode(request.getPassword()));
 		user.setUserType(request.getGender().name().equalsIgnoreCase("MALE")? UserType.GROOM : UserType.BRIDE);
 		user.setIsVerified(false);
 		user.setIsActive(false);
@@ -168,97 +168,71 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public LoginResponse login(LoginRequest request) {
-		log.info("Login attempt for: {}", request.getEmailOrPhone());
 
-		// Find user
-		User user = findUserByEmailOrPhone(request.getEmailOrPhone());
+	    log.info("Login attempt for: {}", request.getEmailOrPhone());
 
-		if (!user.getIsActive()) {
-			throw new ApplicationException(ErrorEnum.INACTIVE_ACCOUNT.toString(),
-					ErrorEnum.INACTIVE_ACCOUNT.getExceptionError(), HttpStatus.OK);
-		}
+	    User user;
+	    UserDetails userDetails;
 
-		if (!user.getIsVerified()) {
-			throw new ApplicationException(ErrorEnum.ACCOUNT_IS_NOT_VERIFIED.toString(),
-					ErrorEnum.ACCOUNT_IS_NOT_VERIFIED.getExceptionError(), HttpStatus.OK);
-		}
-		UserDetails userDetails = user;
-		
-		
-		//  Case 1: OTP-based login	
-	    if (request.getOtp() != null && !request.getOtp().isEmpty()) {
-	    	String purpose = "LOGIN";
-	    	VerifyOtpRequest otpVerifyRequest = new VerifyOtpRequest();
-	    	otpVerifyRequest.setEmailOrPhone(user.getPhone());
-	    	otpVerifyRequest.setOtp(request.getOtp());
-	    	otpVerifyRequest.setPurpose(purpose);
-	        boolean validOtp = otpService.verifyOtp(user.getPhone(), request.getOtp(), OtpPurpose.LOGIN);
-	        if (!validOtp) {
-	            throw new ApplicationException(ErrorEnum.INVALID_OTP.toString(),
-	                    ErrorEnum.INVALID_OTP.getExceptionError(), HttpStatus.OK);
-	        }
-	        log.info("OTP verified successfully for {}", user.getPhone());
+	    // ---------------------------------------------------------
+	    // CASE 1: OTP LOGIN
+	    // ---------------------------------------------------------
+	    if (isOtpLogin(request)) {
+
+	        user = findUserByEmailOrPhone(request.getEmailOrPhone());
+	        validateUserState(user);
+	       // verifyOtp(user, request.getOtp());
+	        
+	        try {
+				Authentication authentication = authenticationManager
+						.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), request.getPassWord()));
+				 userDetails = (UserDetails) authentication.getPrincipal();
+			} catch (BadCredentialsException e) {
+				throw new ApplicationException(ErrorEnum.BAD_CREDENTIALS.toString(),
+						ErrorEnum.BAD_CREDENTIALS.getExceptionError(), HttpStatus.OK);
+			} 
+
+	        log.info("OTP login successful for {}", user.getPhone());
 	    }
-	    
+
+	    // ---------------------------------------------------------
+	    // CASE 2: SOCIAL LOGIN
+	    // ---------------------------------------------------------
 	    else {
-	    	
-	    	// Case 2.1. Provider ID already exists for social media login → LOGIN
-	    	
-		    Optional<User> existing = userRepository.findByProviderId(request.getProviderId());
-		    if (existing.isPresent()) {
-		    	userDetails = existing.get();
-		    }
 
-		    // case 2.2 Completely new user → REGISTER + LOGIN [ Social Media Login ]
-		    
-		    else {
-		        user = new User();
-		        user.setEmail(request.getEmailOrPhone());
-		        user.setProvider(request.getProvider());
-		        user.setProviderId(request.getProviderId());
-		        user.setPassword(passwordEncoder.encode("SOCIAL_USER"));
-
-		        user.setIsVerified(true);
-		        user.setIsActive(true);
-		        user.setEmailVerified(true);
-
-		        // Profile
-		        UserProfile profile = new UserProfile();
-		        profile.setUser(user);
-		        profile.setFullName(request.getFullName());
-		        user.setProfile(profile);
-
-		        // Preferences
-		        UserPreference pref = new UserPreference();
-		        pref.setUser(user);
-//		        pref.setGender(request.getLookingFor() != null ? request.getLookingFor().name() : null);
-		        user.setPreferences(pref);
-
-		        userDetails = userRepository.save(user);
-		    }
-	    	
+	        user = handleSocialLogin(request);
+	        userDetails = user;
 	    }
-		
-		// Generate tokens
-		String accessToken = jwtUtil.generateToken(userDetails);
-		String refreshToken = jwtUtil.generateRefreshToken(userDetails);
 
-		// Update last login
-		user.setLastLogin(LocalDateTime.now());
-		userRepository.save(user);
+	    // ---------------------------------------------------------
+	    // Generate Tokens
+	    // ---------------------------------------------------------
+	    
+	    String accessToken = jwtUtil.generateToken(userDetails);
+	    String refreshToken = jwtUtil.generateRefreshToken(userDetails);
 
-		// Prepare response
-		UserResponse userResponse = mapToUserResponse(user);
+	    // ---------------------------------------------------------
+	    // Update Last Login
+	    // ---------------------------------------------------------
+	    
+	    user.setLastLogin(LocalDateTime.now());
+	    userRepository.save(user);
 
-		LoginResponse response = new LoginResponse();
-		response.setAccessToken(accessToken);
-		response.setRefreshToken(refreshToken);
-		response.setExpiresIn(jwtUtil.getExpirationTime() / 1000); // Convert to seconds
-		response.setUser(userResponse);
+	    // ---------------------------------------------------------
+	    // Prepare Response
+	    // ---------------------------------------------------------
+	    
+	    LoginResponse response = new LoginResponse();
+	    response.setAccessToken(accessToken);
+	    response.setRefreshToken(refreshToken);
+	    response.setExpiresIn(jwtUtil.getExpirationTime() / 1000);
+	    response.setUser(mapToUserResponse(user));
 
-		log.info("Login successful for user: {}", user.getId());
-		return response;
+	    log.info("Login successful for user: {}", user.getId());
+
+	    return response;
 	}
+
 
 	@Override
 	public LoginResponse refreshToken(String refreshToken) {
@@ -339,6 +313,92 @@ public class AuthServiceImpl implements AuthService {
 		// For now, we'll just log the logout event
 		// You can implement token blacklisting using Redis or database
 	}
+	
+	private void validateUserState(User user) {
+
+	    if (user == null) {
+	        throw new ApplicationException(
+	                "USER_NOT_FOUND",
+	                "User does not exist",
+	                HttpStatus.BAD_REQUEST
+	        );
+	    }
+
+	    if (Boolean.FALSE.equals(user.getIsActive())) {
+	        throw new ApplicationException(
+	                ErrorEnum.INACTIVE_ACCOUNT.toString(),
+	                ErrorEnum.INACTIVE_ACCOUNT.getExceptionError(),
+	                HttpStatus.OK
+	        );
+	    }
+
+	    if (Boolean.FALSE.equals(user.getIsVerified())) {
+	        throw new ApplicationException(
+	                ErrorEnum.ACCOUNT_IS_NOT_VERIFIED.toString(),
+	                ErrorEnum.ACCOUNT_IS_NOT_VERIFIED.getExceptionError(),
+	                HttpStatus.OK
+	        );
+	    }
+	}
+
+	private User handleSocialLogin(LoginRequest request) {
+
+	    // 1. Check existing by providerId
+	    Optional<User> existing = userRepository.findByProviderId(request.getProviderId());
+
+	    if (existing.isPresent()) {
+	        User user = existing.get();
+	        validateUserState(user);
+	        return user;
+	    }
+
+	    // 2. New Social User → Register
+	    User user = new User();
+	    user.setEmail(request.getEmailOrPhone());
+	    user.setProvider(request.getProvider());
+	    user.setProviderId(request.getProviderId());
+	    user.setPassword(passwordEncoder.encode("SOCIAL_USER"));
+
+	    user.setIsVerified(true);
+	    user.setIsActive(true);
+	    user.setEmailVerified(true);
+
+	    // PROFILE
+	    UserProfile profile = new UserProfile();
+	    profile.setUser(user);
+	    profile.setFullName(request.getFullName());
+	    user.setProfile(profile);
+
+	    // PREFERENCES
+	    UserPreference pref = new UserPreference();
+	    pref.setUser(user);
+	    user.setPreferences(pref);
+
+	    return userRepository.save(user);
+	}
+
+	private void verifyOtp(User user, String otp) {
+	    boolean valid = otpService.verifyOtp(
+	            user.getPhone(),
+	            otp,
+	            OtpPurpose.LOGIN
+	    );
+
+	    if (!valid) {
+	        throw new ApplicationException(
+	                ErrorEnum.INVALID_OTP.toString(),
+	                ErrorEnum.INVALID_OTP.getExceptionError(),
+	                HttpStatus.OK
+	        );
+	    }
+	}
+
+	private boolean isOtpLogin(LoginRequest request) {
+	   // return request.getOtp() != null && !request.getOtp().isEmpty();
+		 return request.getPassWord() != null && !request.getPassWord().isEmpty();
+	}
+
+
 
 	@Override
 	public boolean emailExists(String email) {
