@@ -18,7 +18,7 @@ public class LoginRequest {
     
     @NotBlank(message = "Email or phone is required")
     private String emailOrPhone;
-    private String passWord;
+    private String password;
    // private String otp; 
     private boolean rememberMe = false;
     

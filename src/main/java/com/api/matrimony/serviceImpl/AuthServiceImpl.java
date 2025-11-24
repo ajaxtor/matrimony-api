@@ -185,7 +185,7 @@ public class AuthServiceImpl implements AuthService {
 	        
 	        try {
 				Authentication authentication = authenticationManager
-						.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), request.getPassWord()));
+						.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), request.getPassword()));
 				 userDetails = (UserDetails) authentication.getPrincipal();
 			} catch (BadCredentialsException e) {
 				throw new ApplicationException(ErrorEnum.BAD_CREDENTIALS.toString(),
@@ -395,7 +395,7 @@ public class AuthServiceImpl implements AuthService {
 
 	private boolean isOtpLogin(LoginRequest request) {
 	   // return request.getOtp() != null && !request.getOtp().isEmpty();
-		 return request.getPassWord() != null && !request.getPassWord().isEmpty();
+		 return request.getPassword() != null && !request.getPassword().isEmpty();
 	}
 
 
